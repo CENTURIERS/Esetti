@@ -11,6 +11,7 @@ namespace Esseti
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
         public override void OnFrameworkInitializationCompleted()
