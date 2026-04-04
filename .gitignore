@@ -1,0 +1,29 @@
+## [ Standardowe pliki .NET / Visual Studio ]
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## [ Pliki tymczasowe kompilacji Avalonii ]
+.avalonia/
+*.axaml.g.cs
+
+## [ Paczki NuGet ]
+*.nupkg
+packages/
+node_modules/
+
+## [ Systemowe śmieci ]
+Thumbs.db
+.DS_Store
+
+## [ Baza Danych - WAŻNA DECYZJA ]
+# Jeśli chcesz, żeby wykładowca dostał bazę z Twoimi danymi (tę "nakarmioną"):
+# Zostaw te linie zakomentowane (z krzyżykiem).
+# Jeśli baza ma być tylko u Ciebie lokalnie, odkomentuj poniższe:
+# *.db
+# *.db-journal
+# *.db-wal
