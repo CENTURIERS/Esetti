@@ -1,8 +1,9 @@
-﻿using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Esseti.ViewModels
 {
-    public abstract class ViewModelBase : ReactiveObject
+    public partial class ViewModelBase : ObservableObject
     {
+
     }
 }

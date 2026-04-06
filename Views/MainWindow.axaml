@@ -1,20 +1,176 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Esseti.ViewModels"
+        xmlns:views="using:Esseti.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
+        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
         x:Class="Esseti.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Esseti">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    <Window.Styles>
+    
+        <Style Selector="Button.LeftPanelButton">
+            <Setter Property="Background" Value="{Binding SidebarButtonBackgroundColor}"/> 
+            <Setter Property="Foreground" Value="{Binding SidebarButtonTextColor}"/> 
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Padding" Value="20, 15"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/> 
+            <Setter Property="HorizontalContentAlignment" Value="Center" /> 
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="CornerRadius" Value="50"/> 
+            <Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Foreground" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+        
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Style Selector="Button.LeftPanelButton /template/ ContentPresenter">
+            <Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.LeftPanelButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{Binding SidebarButtonHoverBackgroundColor}"/> 
+        </Style>
+
+
+        <Style Selector="Button.LeftPanelButton:pointerover">
+	        <Setter Property="Foreground" Value="{Binding SidebarButtonHoverTextColor}"/> 
+        </Style>
+
+        <Style Selector="Button.LeftPanelButton > StackPanel">
+			<Setter Property="Width" Value="150" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.LeftPanelButton > StackPanel > :is(Control)">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.LeftPanelButton PathIcon">
+			<Setter Property="Foreground" Value="{Binding SidebarButtonTextColor}"/>
+
+            <Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.2" />
+					<BrushTransition Property="Foreground" Duration="0:0:0.2" />
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.LeftPanelButton:pointerover PathIcon">
+			<Setter Property="Foreground" Value="{Binding SidebarButtonHoverTextColor}"/>
+        </Style>
+
+        <Style Selector="Button.LeftPanelButton:pointerover TextBlock">
+			<Setter Property="Foreground" Value="{Binding SidebarButtonHoverTextColor}"/>
+        </Style>
+
+    </Window.Styles>
+
+    <Window.DataTemplates>
+        <DataTemplate DataType="{x:Type vm:StartViewModel}">
+			<views:StartView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:MemberViewModel}">
+			<views:MemberView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ActivitiesViewModel}">
+			<views:ActivitiesView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ClubInfoViewModel}">
+			<views:ClubInfoView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:DocumentsViewModel}">
+			<views:DocumentsView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ProjectsViewModel}">
+			<views:ProjectsView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+			<views:SettingsView />
+        </DataTemplate>
+    </Window.DataTemplates>
+
+
+    <Grid ColumnDefinitions="250, *">
+        <Grid RowDefinitions="Auto, *, Auto" Grid.Column="0" Background="{Binding SidebarColor}">
+			<Border Grid.Row="0" Padding="0,0,0,5">
+                <Image Source="{Binding HeaderLogo}" />
+            </Border>
+
+            <Border Grid.Row="1" VerticalAlignment="Top" Padding="5,0,5,0">
+                <StackPanel Orientation="Vertical" Spacing="5">
+					<Button Classes="LeftPanelButton" Command="{Binding ShowAllActivitiesCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="15" >
+							<PathIcon Height="24" Width="24"  Data="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2" />
+                            <TextBlock Text="Aktywności" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="LeftPanelButton" Command="{Binding ShowAllProjectsCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="15" >
+							<PathIcon Height="24" Width="24"  Data="m7.646 9.354-3.792 3.792a.5.5 0 0 0 .353.854h7.586a.5.5 0 0 0 .354-.854L8.354 9.354a.5.5 0 0 0-.708 0 M11.414 11H14.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h3.086l-1 1H1.5A1.5 1.5 0 0 1 0 10.5v-7A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v7a1.5 1.5 0 0 1-1.5 1.5h-2.086z" />
+                            <TextBlock Text="Projekty"  />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="LeftPanelButton" Command="{Binding ShowAllMembersCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="15" >
+							<PathIcon Height="24" Width="24"  Data="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                            <TextBlock Text="Członkowie"  />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="LeftPanelButton" Command="{Binding ShowClubInfoCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="15" >
+                            <PathIcon Width="24" Height="24"  Data="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16 M8.93 6.588 L6.64 6.875 L6.558 7.255 L7.008 7.338 C7.302 7.408 7.36 7.514 7.296 7.807 L6.558 11.275 C6.364 12.172 6.663 12.594 7.366 12.594 C7.911 12.594 8.544 12.342 8.831 11.996 L8.919 11.58 C8.719 11.756 8.427 11.826 8.233 11.826 C7.958 11.826 7.858 11.633 7.929 11.293 Z M9 4.5 a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                            <TextBlock Text="Informacje"  />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="LeftPanelButton" Command="{Binding ShowDocumentsPageCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="15" >
+							<PathIcon Height="24" Width="24"  Data="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1 M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z" />
+                            <TextBlock Text="Dokumenty"  />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="2" Margin="0, 0, 0, 20"  Padding="5,0,5,0">
+		        <Button Classes="LeftPanelButton" Command="{Binding ShowSettingsPageCommand}">
+					<StackPanel Orientation="Horizontal" Spacing="15">
+						<PathIcon Width="24" Height="24" Data="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492 M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0 M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z M7.163 1.626c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
+                        <TextBlock Text="Ustawienia" />
+                    </StackPanel>
+                </Button>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Column="1" RowDefinitions="Auto, *">
+
+			<Border Grid.Row="0" IsVisible="{Binding IsHeaderVisible}" Height="60" BorderBrush="LightGray" BorderThickness="0,0,0,1" Background="White">
+				<TextBlock Text="HEADER" FontSize="24" Foreground="BLACK" FontWeight="Bold" Margin="10"/>
+            </Border>
+
+            <Border Grid.Row="1" Background="#F5F5F5" Padding="0">
+                <ContentControl Content="{Binding CurrentViewModel}" />
+            </Border>
+
+        </Grid>
+    </Grid>
 
 </Window>
