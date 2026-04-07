@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Esseti.Views
+namespace Esseti.Views.Components
 {
-    public partial class MemberView : UserControl
+    public partial class NavigationItem : UserControl
     {
-        public MemberView() { 
+        public NavigationItem()
+        {
             InitializeComponent();
         }
     }

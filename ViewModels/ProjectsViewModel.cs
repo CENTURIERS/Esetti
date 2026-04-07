@@ -6,5 +6,7 @@ namespace Esseti.ViewModels
 {
     public partial class ProjectsViewModel : ViewModelBase
     {
+        public override string PageTitle => "Lista Projektów";
+
     }
 }

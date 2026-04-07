@@ -6,5 +6,6 @@ namespace Esseti.ViewModels
 {
     public partial class ActivitiesViewModel : ViewModelBase
     {
+        public override string PageTitle => "Lista Aktywności";
     }
 }

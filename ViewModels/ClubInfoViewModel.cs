@@ -6,5 +6,6 @@ namespace Esseti.ViewModels
 {
     public partial class ClubInfoViewModel : ViewModelBase
     {
+        public override string PageTitle => "O kole";
     }
 }

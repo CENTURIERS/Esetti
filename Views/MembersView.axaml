@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmc="using:Esseti.ViewModels"
+             x:DataType="vmc:MembersViewModel"
+             x:Class="Esseti.Views.MembersView">
+    
+    <Grid RowDefinitions="*">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+			<ItemsControl ItemsSource="{Binding Members}">
+
+               <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="200" 
+                                Height="250" 
+                                Margin="10"
+                                CornerRadius="15"
+                                Background="White"
+                                BoxShadow="0 4 8 0 #15000000">
+                            
+                            <StackPanel VerticalAlignment="Center" Spacing="10">
+                                <Ellipse Width="80" Height="80" Fill="LightGray"/>
+                                <TextBlock Text="{Binding FullName}" 
+                                           Foreground="Black"
+                                           FontWeight="Bold" 
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="{Binding Role}" 
+                                           Foreground="Gray" 
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+
+</UserControl>

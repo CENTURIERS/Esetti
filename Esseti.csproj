@@ -30,6 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\MembersView.axaml.cs">
+      <DependentUpon>MembersView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Data\esseti.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

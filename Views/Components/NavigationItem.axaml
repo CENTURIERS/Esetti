@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmc="using:Esseti.ViewModels.Components"
+             x:DataType="vmc:NavigationItemViewModel"
+             x:Class="Esseti.Views.Components.NavigationItem">             
+
+    <Button Classes="LeftPanelButton" Command="{Binding Command}">
+        <StackPanel Orientation="Horizontal" Spacing="15" >
+	        <PathIcon Height="24" Width="24"  Data="{Binding Icon}" />
+            <TextBlock Text="{Binding Label}" />
+        </StackPanel>
+    </Button>
+
+</UserControl>

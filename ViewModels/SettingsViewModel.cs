@@ -6,5 +6,6 @@ namespace Esseti.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
+        public override string PageTitle => "Ustawienia";
     }
 }
