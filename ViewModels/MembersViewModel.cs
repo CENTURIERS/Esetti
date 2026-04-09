@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Esseti.Repositories.Interfaces;
 using Esseti.ViewModels.Member;
 
 namespace Esseti.ViewModels
@@ -12,38 +16,83 @@ namespace Esseti.ViewModels
 
         public ObservableCollection<MemberItemViewModel> Members { get; } = new();
 
-        public MembersViewModel()
+        private readonly IMemberRepository _memberRepository;
+
+        private readonly List<MemberItemViewModel> _allMembers = new();
+
+        public MembersViewModel(IMemberRepository memberRepository)
         {
-            LoadSampleMembers();
+            _memberRepository = memberRepository;
+
+            Task.Run(() => LoadDataAsync());
         }
 
-        private void LoadSampleMembers()
+        protected override void OnSearchQueryUpdated(string value)
         {
-            string[] firstNames = { "Kacper", "Anna", "Marek", "Zofia", "Piotr", "Ewa", "Jan", "Maria" };
-            string[] lastNames = { "Kowalski", "Nowak", "Wiśniewska", "Wójcik", "Mazur", "Lewandowska" };
-            string[] roles = { "Prezes", "Programista", "Skarbnik", "Członek Zarządu", "Social Media", "Rekrutacja" };
-            string[] depts = { "Informatyka", "Elektronika", "Mechanika", "Zarządzanie" };
+            ApplyFilter();
+        }
 
-            Random rnd = new Random();
+        private async Task LoadDataAsync()
+        {
+            var membersFromDb = await _memberRepository.GetAllMembersAsync();
 
-            for (int i = 1; i <= 20; i++)
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
             {
-                string fName = firstNames[rnd.Next(firstNames.Length)];
-                string lName = lastNames[rnd.Next(lastNames.Length)];
-                string role = roles[rnd.Next(roles.Length)];
-                string dept = depts[rnd.Next(depts.Length)];
+                _allMembers.Clear();
 
-                Members.Add(new MemberItemViewModel(
+                _allMembers.Add(new MemberItemViewModel(
                     avatar: Array.Empty<byte>(),
-                    firstName: fName,
-                    lastName: lName,
-                    role: role,
-                    email: $"{fName.ToLower()}.{lName.ToLower()}{i}@esseti.pl",
-                    collegeDepartment: dept,
-                    major: "Automatyka i Robotyka",
-                    joinDate: DateTime.Now.AddMonths(-rnd.Next(1, 24)).ToString("dd.MM.yyyy"),
-                    isActive: i % 5 != 0 
+                    firstName: string.Empty,
+                    lastName: string.Empty,
+                    role: string.Empty,
+                    indexNumber: string.Empty,
+                    email: string.Empty,
+                    collegeDepartment: string.Empty,
+                    major: string.Empty,
+                    joinDate: string.Empty,
+                    isActive: true,
+                    isSystemAddTile: true
                 ));
+
+                foreach (var m in membersFromDb)
+                {
+                    var itemVm = new MemberItemViewModel(
+                        avatar: m.MemberAvatar ?? Array.Empty<byte>(),
+                        firstName: m.FirstName,
+                        lastName: m.LastName,
+                        role: m.AuthorityRole?.Name ?? "Brak roli",
+                        indexNumber: m.IndexNumber ?? "00000000",
+                        email: m.Account?.Email ?? "Brak@email.pl",
+                        collegeDepartment: m.Department?.Name ?? "Brak wydziału",
+                        major: m.Major ?? "Brak kierunku",
+                        joinDate: m.JoinDate.ToString("dd.MM.yyyy"),
+                        isActive: m.IsActive,
+                        isSystemAddTile: false
+                    );
+
+                    _allMembers.Add(itemVm);
+                }
+
+                ApplyFilter();
+            });
+        }
+
+        private void ApplyFilter()
+        {
+            Members.Clear();
+
+            var query = SearchQuery?.ToLower() ?? "";
+
+            foreach (var item in _allMembers)
+            {
+                if (item.IsSystemAddTile || 
+                    item.FullName.ToLower().Contains(query) ||
+                    item.Role.ToLower().Contains(query) ||
+                    item.Major.ToLower().Contains(query))
+                {
+                    Members.Add(item);
+                }
+
             }
         }
     }

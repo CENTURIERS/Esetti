@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 
 namespace Esseti.Repositories
 {
-    //public class ProjectRepository : IProjectRepository
-    //{
-    //    public async Task<List<Project>> GetAllProjectsAsync()
-    //    {
-    //        using (var db = DatabaseConfig.GetConnection())
-    //        {
-    //            var sql = "SELECT * FROM Projects";
-                
-    //        }
-    //    }
-    //}
+    public class ProjectRepository : IProjectRepository
+    {
+        public async Task<List<Project>> GetAllProjectsAsync()
+        {
+            return new List<Project>
+            {
+
+            };
+        }
+    }
 }

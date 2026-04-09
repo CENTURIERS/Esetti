@@ -34,5 +34,6 @@ namespace Models.Users
         public List<Project> Projects { get; set; } = new();
         public List<Activity> Activities { get; set; } = new();
         public CollegeDepartment? Department { get; set; }
+        public MemberClub? MemberClub { get; set; }
     }
 }

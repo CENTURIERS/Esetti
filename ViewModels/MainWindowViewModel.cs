@@ -3,9 +3,12 @@ using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.ViewModels.Components;
+using Esseti.ViewModels;
 using Esseti.Views;
+using Esseti.Repositories;
 using System;
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Esseti.ViewModels
 {
@@ -102,7 +105,7 @@ namespace Esseti.ViewModels
         [RelayCommand]
         public void ShowAllMembers()
         {
-            CurrentViewModel = new MembersViewModel();
+            CurrentViewModel = App.Services.GetRequiredService<MembersViewModel>();
 
             if (!_isViewChanged)
             {
@@ -145,6 +148,8 @@ namespace Esseti.ViewModels
 
         private void ChangeView()
         {
+            _isViewChanged = true;
+
             SidebarColor = "#0033A0";
             MainPanelColor = "#FFFFFF";
 

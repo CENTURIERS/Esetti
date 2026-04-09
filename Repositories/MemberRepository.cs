@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Esseti.Data;
 using Esseti.Repositories.Interfaces;
+using Models.ClubBase;
 using Models.University;
 using Models.Users;
 using System;
@@ -18,19 +19,30 @@ namespace Esseti.Repositories
         {
             using (var db = DatabaseConfig.GetConnection())
             {
-                var sql = "SELECT m.first_name, m.last_name, m.major, m.join_date, ua.account_id AS AccountID, ua.email, cd.college_department_id AS CollegeDepartmentId, cd.name FROM member m INNER JOIN member_club mc ON m.member_id = mc.member_id INNER JOIN club_info ci ON mc.club_id = ci.club_id INNER JOIN user_account ua ON m.account_id  = ua.account_id INNER JOIN college_department cd ON ci.department_id = cd.college_department_id;";
+                var sql = @"SELECT 
+                        m.first_name, m.last_name, m.major, m.join_date, m.is_active, m.member_avatar, m.index_number,
+                        ua.account_id AS AccountID, ua.email, 
+                        cd.college_department_id AS CollegeDepartmentId, cd.name AS Name, 
+                        ar.role_id AS AuthorityRoleId, ar.name AS Name, 
+                        mc.club_id AS MemberClubId, mc.club_role  
+                    FROM member m 
+                    LEFT JOIN member_club mc ON m.member_id = mc.member_id 
+                    LEFT JOIN club_info ci ON mc.club_id = ci.club_id 
+                    LEFT JOIN user_account ua ON m.account_id  = ua.account_id 
+                    LEFT JOIN college_department cd ON ci.department_id = cd.college_department_id
+                    LEFT JOIN authority_role ar ON ar.role_id = m.role_id;";
 
-                var results = await db.QueryAsync<Member, UserAccount, CollegeDepartment, Member>(
+                var results = await db.QueryAsync<Member, UserAccount, CollegeDepartment, AuthorityRole, MemberClub, Member>(
                         sql,
-                        (member, account, department) =>
+                        (member, account, department, authorityRole, memberClub) =>
                         {
                             member.Account = account;
                             member.Department = department;
-
+                            member.AuthorityRole = authorityRole;
+                            member.MemberClub = memberClub;
                             return member;
-                            
                         },
-                        splitOn: "AccountId,CollegeDepartmentId"
+                        splitOn: "AccountID, CollegeDepartmentId, AuthorityRoleId, MemberClubId"
                     );
 
                 return results.Distinct().ToList();

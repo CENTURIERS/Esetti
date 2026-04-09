@@ -5,7 +5,7 @@ namespace Esseti.Data
 {
     public class DatabaseConfig
     {
-        private const string ConnectionString = "Data Source=esseti.db";
+        private const string ConnectionString = "Data Source=Data/esseti.db";
 
         public static IDbConnection GetConnection()
         {

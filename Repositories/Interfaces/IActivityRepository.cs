@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Models.Activities;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Esseti.Repositories.Interfaces
 {
-    internal interface IActivityRepository
+    public interface IActivityRepository
     {
+        Task<List<Activity>> GetAllActivitiesAsync();
     }
 }
