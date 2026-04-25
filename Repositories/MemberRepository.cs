@@ -20,10 +20,10 @@ namespace Esseti.Repositories
         {
             return await _context.Members
                 .Include(m => m.Account)
-                .Include(m => m.Department)
                 .Include(m => m.AuthorityRole)
                 .Include(m => m.MemberClubs)
                     .ThenInclude(mc => mc.Club)
+                        .ThenInclude(c => c.Department)
                 .ToListAsync();
         }
     }

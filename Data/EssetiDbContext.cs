@@ -4,6 +4,9 @@ using Models.ClubBase;
 using Models.Other;
 using Models.University;
 using Models.Users;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Esseti.Data
@@ -25,25 +28,40 @@ namespace Esseti.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=Data/esseti.db");
+            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                entity.SetTableName(ToSnakeCase(entity.GetTableName()));
-                foreach (var property in entity.GetProperties())
-                {
-                    property.SetColumnName(ToSnakeCase(property.Name));
-                }
-            }
+            modelBuilder.Entity<AuthorityRole>().HasKey(e => e.RoleId);
+            modelBuilder.Entity<Trip>().HasKey(e => e.TripId);
+            modelBuilder.Entity<College>().HasKey(e => e.CollegeId);
+            modelBuilder.Entity<CollegeDepartment>().HasKey(e => e.CollegeDepartmentId);
+            modelBuilder.Entity<UserAccount>().HasKey(e => e.AccountId);
+            modelBuilder.Entity<Member>().HasKey(e => e.MemberId);
+            modelBuilder.Entity<ClubInfo>().HasKey(e => e.ClubId);
+            modelBuilder.Entity<Section>().HasKey(e => e.SectionId);
+            modelBuilder.Entity<Activity>().HasKey(e => e.ActivityId);
+            modelBuilder.Entity<Project>().HasKey(e => e.ProjectId);
 
-            modelBuilder.Entity<MemberClub>()
-                .HasKey(mc => new { mc.ClubId, mc.MemberId });
+            modelBuilder.Entity<MemberClub>().HasKey(mc => new { mc.ClubId, mc.MemberId });
+            modelBuilder.Entity<SectionMember>().HasKey(sm => new { sm.SectionId, sm.MemberId });
 
-            modelBuilder.Entity<SectionMember>()
-                .HasKey(sm => new { sm.SectionId, sm.MemberId });
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.Participants)
+                .WithMany(m => m.Projects)
+                .UsingEntity(j => j.ToTable("project_member"));
+
+            modelBuilder.Entity<Activity>()
+                .HasMany(a => a.Participants) 
+                .WithMany(m => m.Activities) 
+                .UsingEntity(j => j.ToTable("activity_member")); 
+
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.PersonInCharge)
+                .WithMany()
+                .HasForeignKey("PersonInChargeId");
 
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Account)
@@ -55,20 +73,29 @@ namespace Esseti.Data
                 .WithMany()
                 .HasForeignKey(m => m.RoleId);
 
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.Department)
-                .WithMany()
-                .HasForeignKey("DepartmentId");
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                if (entity.IsPropertyBag || entity.ClrType == null ||
+                   (entity.ClrType.IsGenericType && entity.ClrType.GetGenericTypeDefinition() == typeof(Dictionary<,>)))
+                    continue;
 
-            modelBuilder.Entity<MemberClub>()
-                .HasOne(mc => mc.Club)
-                .WithMany(c => c.MemberClubs)
-                .HasForeignKey(mc => mc.ClubId);
+                entity.SetTableName(ToSnakeCase(entity.ClrType.Name));
 
-            modelBuilder.Entity<MemberClub>()
-                .HasOne(mc => mc.Member)
-                .WithMany(m => m.MemberClubs)
-                .HasForeignKey(mc => mc.MemberId);
+                foreach (var property in entity.GetProperties())
+                {
+                    property.SetColumnName(ToSnakeCase(property.Name));
+                }
+
+                foreach (var key in entity.GetKeys())
+                {
+                    key.SetName(ToSnakeCase(key.GetName()));
+                }
+
+                foreach (var foreignKey in entity.GetForeignKeys())
+                {
+                    foreignKey.SetConstraintName(ToSnakeCase(foreignKey.GetConstraintName()));
+                }
+            }
         }
 
         private static string ToSnakeCase(string? name)

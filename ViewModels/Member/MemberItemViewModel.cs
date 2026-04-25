@@ -41,9 +41,25 @@ namespace Esseti.ViewModels.Member
         [ObservableProperty]
         private bool _isSystemAddTile;
 
-        private static readonly Bitmap DefaultAvatar = new Bitmap(AssetLoader.Open(new Uri("avares://Esseti/Assets/user-default.png")));
+        private static Bitmap? _defaultAvatar;
+        private static Bitmap? SafeDefaultAvatar
+        {
+            get
+            {
+                if (_defaultAvatar != null) return _defaultAvatar;
+                try
+                {
+                    _defaultAvatar = new Bitmap(AssetLoader.Open(new Uri("avares://Esseti/Assets/user-default.png")));
+                }
+                catch
+                {
+                    _defaultAvatar = null;
+                }
+                return _defaultAvatar;
+            }
+        }
 
-        public string FullName => $"{FirstName} {LastName}";
+        public string FullName => $"{FirstName} {LastName}".Trim();
 
         public string FullFromDate => $"Od {JoinDate} r.";
 
@@ -58,22 +74,27 @@ namespace Esseti.ViewModels.Member
                     {
                         Avatar = new Bitmap(ms);
                     }
-                } catch
+                }
+                catch
                 {
-                    Avatar = DefaultAvatar;
+                    Avatar = SafeDefaultAvatar;
                 }
             }
-            FirstName = firstName;
-            LastName = lastName;
-            Role = role;
-            IndexNumber = indexNumber;
-            Email = email;
-            CollegeDepartment = collegeDepartment;
-            Major = major;
-            JoinDate = joinDate;
+            else
+            {
+                Avatar = SafeDefaultAvatar;
+            }
+
+            FirstName = firstName ?? string.Empty;
+            LastName = lastName ?? string.Empty;
+            Role = role ?? string.Empty;
+            IndexNumber = indexNumber ?? string.Empty;
+            Email = email ?? string.Empty;
+            CollegeDepartment = collegeDepartment ?? string.Empty;
+            Major = major ?? string.Empty;
+            JoinDate = joinDate ?? string.Empty;
             IsActive = isActive;
             IsSystemAddTile = isSystemAddTile;
         }
-
     }
 }
