@@ -29,9 +29,13 @@ namespace Esseti.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
+
+            var directory = Path.GetDirectoryName(dbPath);
+            if (directory != null && !Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AuthorityRole>().HasKey(e => e.RoleId);
@@ -54,9 +58,9 @@ namespace Esseti.Data
                 .UsingEntity(j => j.ToTable("project_member"));
 
             modelBuilder.Entity<Activity>()
-                .HasMany(a => a.Participants) 
-                .WithMany(m => m.Activities) 
-                .UsingEntity(j => j.ToTable("activity_member")); 
+                .HasMany(a => a.Participants)
+                .WithMany(m => m.Activities)
+                .UsingEntity(j => j.ToTable("activity_member"));
 
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.PersonInCharge)

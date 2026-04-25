@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Models\" />
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="11.3.14" />
@@ -25,7 +25,6 @@
 		<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.9" />
 
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-		<PackageReference Include="Dapper" Version="2.1.72" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.7" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
@@ -34,15 +33,15 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Views\MembersView.axaml.cs">
-      <DependentUpon>MembersView.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Views\MembersView.axaml.cs">
+			<DependentUpon>MembersView.axaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\esseti.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Data\esseti.db">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>
