@@ -1,20 +1,26 @@
-﻿using Esseti.Repositories.Interfaces;
+﻿using Esseti.Data;
+using Esseti.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Models.Activities;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Esseti.Repositories
 {
     public class ActivityRepository : IActivityRepository
     {
+        private readonly EssetiDbContext _context;
+
+        public ActivityRepository(EssetiDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<List<Activity>> GetAllActivitiesAsync()
         {
-            return new List<Activity>
-            {
-
-            };
+            return await _context.Activities
+                .Include(a => a.Participants)
+                .ToListAsync();
         }
     }
 }
