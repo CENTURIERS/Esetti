@@ -79,12 +79,12 @@
     </Style>
 
     <Style Selector="Border.SearchBarBorder">
-        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Width" Value="350"/>
         <Setter Property="Height" Value="35"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="CornerRadius" Value="50"/>
-        <Setter Property="Margin" Value="0,0,20,0"/>
+        <Setter Property="Margin" Value="20,0"/>
     </Style>
 
         <Style Selector="Border.SearchBarBorder TextBox">
@@ -114,51 +114,93 @@
                 <Setter Property="CaretBrush" Value="Black"/>
             </Style>
 
-            
+    <Style Selector="StackPanel.MassActionText:pointerover TextBlock">
+        <Setter Property="Foreground" Value="Gray" />
+    </Style>
 
+    <Style Selector="Button.DeleteMassAction">
+        <Setter Property="Background" Value="#FFEBEE" />
+        <Setter Property="Foreground" Value="#D32F2F" />
+    </Style>
+    <Style Selector="Button.DeleteMassAction:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFCDD2" />
+    </Style>
+    
+    <Style Selector="Button.DeleteMassAction:pointerover TextBlock">
+        <Setter Property="Foreground" Value="#D32F2F" />
+    </Style>
+    <Style Selector="Button.DeleteMassAction:pointerover PathIcon">
+        <Setter Property="Foreground" Value="#D32F2F" /> 
+    </Style>
+
+   <Style Selector="CheckBox.MassAction">
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style Selector="CheckBox.MassAction:pointerover">
+        <Setter Property="Foreground" Value="#0033A0" />
+    </Style>
+
+    <Style Selector="CheckBox.MassAction /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="#0033A0" />
+        <Setter Property="BorderThickness" Value="1.5" />
+    </Style>
+
+    <Style Selector="CheckBox.MassAction:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="#0033A0" />
+        <Setter Property="Background" Value="#eef1ff" />
+    </Style>
+
+    <Style Selector="CheckBox.MassAction:checked /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="#0033A0" />
+        <Setter Property="BorderBrush" Value="#0033A0" />
+    </Style>
 </Window.Styles>
+
 
     <Window.DataTemplates>
         <DataTemplate DataType="{x:Type vm:StartViewModel}">
-			<views:StartView />
+            <views:StartView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:MembersViewModel}">
-			<views:MembersView />
+            <views:MembersView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ActivitiesViewModel}">
-			<views:ActivitiesView />
+            <views:ActivitiesView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ClubInfoViewModel}">
-			<views:ClubInfoView />
+            <views:ClubInfoView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:DocumentsViewModel}">
-			<views:DocumentsView />
+            <views:DocumentsView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ProjectsViewModel}">
-			<views:ProjectsView />
+            <views:ProjectsView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
-			<views:SettingsView />
+            <views:SettingsView />
         </DataTemplate>
     </Window.DataTemplates>
 
 
     <Grid ColumnDefinitions="250, *">
         <Grid RowDefinitions="Auto, *, Auto" Grid.Column="0" Background="{Binding SidebarColor}">
-			<Border Grid.Row="0" Padding="0,0,0,5">
+            <Border Grid.Row="0" Padding="0,0,0,5">
                 <Image Source="{Binding HeaderLogo}" />
             </Border>
 
             <Border Grid.Row="1" VerticalAlignment="Top" Padding="5,0,5,0">
                 <StackPanel Orientation="Vertical" Spacing="5">
                     <ItemsControl ItemsSource="{Binding MenuItems}">
-						<ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <components:NavigationItem  Classes="LeftPanelButton"/>
                             </DataTemplate>
@@ -168,9 +210,9 @@
             </Border>
 
             <Border Grid.Row="2" Margin="0, 0, 0, 20"  Padding="5,0,5,0">
-		        <Button Classes="LeftPanelButton" Command="{Binding ShowSettingsPageCommand}">
-					<StackPanel Orientation="Horizontal" Spacing="15">
-						<PathIcon Width="24" Height="24" Data="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492 M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0 M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z M7.163 1.626c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
+                <Button Classes="LeftPanelButton" Command="{Binding ShowSettingsPageCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="15">
+                        <PathIcon Width="24" Height="24" Data="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492 M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0 M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z M7.163 1.626c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
                         <TextBlock Text="Ustawienia" />
                     </StackPanel>
                 </Button>
@@ -179,7 +221,7 @@
 
         <Grid Grid.Column="1" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" IsVisible="{Binding IsHeaderVisible}" Height="60" BorderBrush="LightGray" BorderThickness="0,0,0,1" Background="White">
+            <Border Grid.Row="0" IsVisible="{Binding IsHeaderVisible}" Height="60" BorderBrush="LightGray" BorderThickness="0,0,0,1" Background="White">
                 <Grid ColumnDefinitions="Auto, *, Auto" Margin="20,0">
         
                     <TextBlock Grid.Column="0" 
@@ -192,7 +234,7 @@
                     <Border Grid.Column="1" Classes="SearchBarBorder">
             
                         <TextBox Text="{Binding CurrentViewModel.SearchQuery, FallbackValue=''}"
-                                 Watermark="Szukaj Członków..."
+                                 Watermark="Szukaj Członków..." 
                                  >
                             <TextBox.InnerLeftContent>
                                 <PathIcon Foreground="Gray" Height="16" Width="16" Margin="10,0,5,0" Data="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
@@ -200,6 +242,31 @@
                         </TextBox>
                     </Border>
         
+                    <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel}">
+                        <ContentControl.DataTemplates>
+                            <DataTemplate DataType="{x:Type vm:MembersViewModel}" x:DataType="vm:MembersViewModel">
+                                <StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
+                                
+                                    <CheckBox Classes="MassAction" 
+                                              IsChecked="{Binding IsAllSelected}" 
+                                              Content="Zaznacz wszystkich" 
+                                              VerticalAlignment="Center" />
+
+                                    <Button Classes="DeleteMassAction" Command="{Binding DeleteSelectedCommand}" Padding="12,6" CornerRadius="20">
+                                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                            <PathIcon Data="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" Width="12" Height="12"/>
+                                            <TextBlock Text="USUŃ ZAZNACZONE" FontWeight="Bold" FontSize="11" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                
+                                </StackPanel>
+                            </DataTemplate>
+        
+                            <DataTemplate DataType="{x:Type vm:ViewModelBase}">
+                                <Panel />
+                            </DataTemplate>
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
                 </Grid>
             </Border>
 
