@@ -22,18 +22,32 @@ namespace Esseti.ViewModels
         [ObservableProperty]
         private bool _isAllSelected;
 
+        [ObservableProperty]
+        private bool _isAnySelected;
+
+        [ObservableProperty]
+        private int _selectedCount;
+
         partial void OnIsAllSelectedChanged(bool value)
         {
             foreach (var member in Members.Where(m => !m.IsSystemAddTile))
             {
                 member.IsSelected = value;
             }
+            UpdateSelectionState();
         }
 
         public MembersViewModel(IMemberRepository memberRepository)
         {
             _memberRepository = memberRepository;
             _ = LoadDataAsync();
+        }
+
+        private void UpdateSelectionState()
+        {
+            var selected = Members.Where(m => !m.IsSystemAddTile && m.IsSelected).ToList();
+            SelectedCount = selected.Count;
+            IsAnySelected = SelectedCount > 0;
         }
 
         [RelayCommand]
@@ -48,6 +62,7 @@ namespace Esseti.ViewModels
                 _allMembers.Remove(item);
             }
             IsAllSelected = false;
+            UpdateSelectionState();
         }
 
         [RelayCommand]
@@ -70,6 +85,7 @@ namespace Esseti.ViewModels
             if (member == null) return;
             Members.Remove(member);
             _allMembers.Remove(member);
+            UpdateSelectionState();
         }
 
         [RelayCommand]
@@ -95,7 +111,7 @@ namespace Esseti.ViewModels
                         foreach (var m in membersFromDb)
                         {
                             var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziału";
-                            _allMembers.Add(new MemberItemViewModel(
+                            var vm = new MemberItemViewModel(
                                 memberId: m.MemberId,
                                 avatar: m.MemberAvatar ?? Array.Empty<byte>(),
                                 firstName: m.FirstName ?? string.Empty,
@@ -108,7 +124,15 @@ namespace Esseti.ViewModels
                                 joinDate: m.JoinDate.ToString("dd.MM.yyyy"),
                                 isActive: m.IsActive,
                                 isSystemAddTile: false
-                            ));
+                            );
+                            vm.PropertyChanged += (s, e) =>
+                            {
+                                if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
+                                {
+                                    UpdateSelectionState();
+                                }
+                            };
+                            _allMembers.Add(vm);
                         }
                     }
                     ApplyFilter();
@@ -126,6 +150,7 @@ namespace Esseti.ViewModels
                 if (item.IsSystemAddTile || item.FullName.ToLower().Contains(query) || item.Role.ToLower().Contains(query))
                     Members.Add(item);
             }
+            UpdateSelectionState();
         }
     }
 }
