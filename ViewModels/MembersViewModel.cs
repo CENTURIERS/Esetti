@@ -19,22 +19,22 @@ namespace Esseti.ViewModels
         private readonly IMemberRepository _memberRepository;
         private readonly List<MemberItemViewModel> _allMembers = new();
 
-        [ObservableProperty]
-        private bool _isAllSelected;
-
-        [ObservableProperty]
-        private bool _isAnySelected;
-
-        [ObservableProperty]
-        private int _selectedCount;
-
-        partial void OnIsAllSelectedChanged(bool value)
+        protected override void OnIsAllSelectedChangedVirtual(bool value)
         {
-            foreach (var member in Members.Where(m => !m.IsSystemAddTile))
+            if (_isUpdatingSelection) return;
+
+            _isUpdatingSelection = true;
+
+            try
             {
-                member.IsSelected = value;
+                foreach (var member in Members.Where(m => !m.IsSystemAddTile)) {
+                    member.IsSelected = value;
+                }
+                UpdateSelectionState();
+            } finally
+            {
+                _isUpdatingSelection = false;
             }
-            UpdateSelectionState();
         }
 
         public MembersViewModel(IMemberRepository memberRepository)
@@ -129,7 +129,22 @@ namespace Esseti.ViewModels
                             {
                                 if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
                                 {
-                                    UpdateSelectionState();
+                                    if (!_isUpdatingSelection)
+                                    {
+                                        _isUpdatingSelection = true;
+                                        try
+                                        {
+                                            var selectableMembers = Members.Where(m => !m.IsSystemAddTile).ToList();
+                                            if (selectableMembers.Any())
+                                            {
+                                                IsAllSelected = selectableMembers.All(m => m.IsSelected);
+                                            }
+                                        }
+                                        finally
+                                        {
+                                            _isUpdatingSelection = false;
+                                        }
+                                    }
                                 }
                             };
                             _allMembers.Add(vm);
