@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Users;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Esseti.Repositories
 {
@@ -25,6 +26,26 @@ namespace Esseti.Repositories
                     .ThenInclude(mc => mc.Club)
                         .ThenInclude(c => c.Department)
                 .ToListAsync();
+        }
+
+        public async Task DeleteSingleMemberAsync(int id)
+        {
+            var member = await _context.Members.FindAsync(id);
+            if (member != null)
+            {
+                member.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteMembersAsync(IEnumerable<int> memberIds)
+        {
+            var members = await _context.Members.Where(m => memberIds.Contains(m.MemberId)).ToListAsync();
+            foreach (var member in members)
+            {
+                member.IsActive = false;
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }

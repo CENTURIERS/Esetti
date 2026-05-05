@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 
 namespace Esseti.ViewModels
 {
@@ -20,6 +22,16 @@ namespace Esseti.ViewModels
         [ObservableProperty]
         private int _selectedCount;
 
+        [ObservableProperty]
+        private bool _isPopupVisible;
+
+        partial void OnIsPopupVisibleChanged(bool value)
+        {
+            if (!value) OnPopupClosed();
+        }
+
+        protected virtual void OnPopupClosed() { }
+
         partial void OnIsAllSelectedChanged(bool value)
         {
             OnIsAllSelectedChangedVirtual(value);
@@ -37,6 +49,35 @@ namespace Esseti.ViewModels
         protected virtual void OnSearchQueryUpdated(string value)
         {
 
+        }
+
+        [RelayCommand]
+        protected void RequestDelete()
+        {
+            if (IsAnySelected)
+            {
+                IsPopupVisible = true;
+            }
+        }
+
+        [RelayCommand]
+        protected void CancelDelete()
+        {
+            IsPopupVisible = false;
+        }
+
+
+        [RelayCommand]
+        private async Task ConfirmDeleteAsync()
+        {
+            IsPopupVisible = false;
+
+            await ExecuteConfirmDeleteAsync();
+        }
+
+        protected virtual async Task ExecuteConfirmDeleteAsync()
+        {
+            await Task.CompletedTask; 
         }
     }
 }

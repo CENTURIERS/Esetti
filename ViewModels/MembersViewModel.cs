@@ -18,6 +18,13 @@ namespace Esseti.ViewModels
         public ObservableCollection<MemberItemViewModel> Members { get; } = new();
         private readonly IMemberRepository _memberRepository;
         private readonly List<MemberItemViewModel> _allMembers = new();
+        private MemberItemViewModel? _memberToDelete;
+
+
+        protected override void OnPopupClosed()
+        {
+            _memberToDelete = null;
+        }
 
         protected override void OnIsAllSelectedChangedVirtual(bool value)
         {
@@ -50,19 +57,41 @@ namespace Esseti.ViewModels
             IsAnySelected = SelectedCount > 0;
         }
 
-        [RelayCommand]
-        private async Task DeleteSelectedAsync()
+        protected override async Task ExecuteConfirmDeleteAsync()
         {
-            var toDelete = Members.Where(m => m.IsSelected && !m.IsSystemAddTile).ToList();
-            if (!toDelete.Any()) return;
-
-            foreach (var item in toDelete)
+            try
             {
-                Members.Remove(item);
-                _allMembers.Remove(item);
+                if (_memberToDelete != null)
+                {
+                    await _memberRepository.DeleteSingleMemberAsync(_memberToDelete.MemberId);
+
+                    Members.Remove(_memberToDelete);
+                    _allMembers.Remove(_memberToDelete);
+
+                    _memberToDelete = null;
+                }
+                else
+                {
+                    var selectedVMs = Members.Where(m => m.IsSelected && !m.IsSystemAddTile).ToList();
+                    if (!selectedVMs.Any()) return;
+
+                    var idsToDelete = selectedVMs.Select(m => m.MemberId).ToList();
+                    await _memberRepository.DeleteMembersAsync(idsToDelete);
+
+                    foreach (var vm in selectedVMs)
+                    {
+                        Members.Remove(vm);
+                        _allMembers.Remove(vm);
+                    }
+                }
+
+                IsAllSelected = false;
+                UpdateSelectionState();
             }
-            IsAllSelected = false;
-            UpdateSelectionState();
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd bazy: {ex.Message}");
+            }
         }
 
         [RelayCommand]
@@ -72,7 +101,7 @@ namespace Esseti.ViewModels
             System.Diagnostics.Debug.WriteLine($"Otwieram profil: {member.FullName}");
         }
 
-        [RelayCommand]
+        [RelayCommand]  
         private void EditMember(MemberItemViewModel member)
         {
             if (member == null) return;
@@ -80,12 +109,12 @@ namespace Esseti.ViewModels
         }
 
         [RelayCommand]
-        private async Task DeleteMemberAsync(MemberItemViewModel member)
+        private void DeleteSingleMember(MemberItemViewModel member)
         {
             if (member == null) return;
-            Members.Remove(member);
-            _allMembers.Remove(member);
-            UpdateSelectionState();
+
+            _memberToDelete = member;
+            IsPopupVisible = true;
         }
 
         [RelayCommand]
@@ -93,6 +122,7 @@ namespace Esseti.ViewModels
         {
             System.Diagnostics.Debug.WriteLine("Otwieram formularz dodawania nowego członka...");
         }
+
 
         protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
 
@@ -129,6 +159,8 @@ namespace Esseti.ViewModels
                             {
                                 if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
                                 {
+                                    UpdateSelectionState();
+
                                     if (!_isUpdatingSelection)
                                     {
                                         _isUpdatingSelection = true;

@@ -257,7 +257,7 @@
                                   VerticalAlignment="Center"
                                   IsChecked="{Binding CurrentViewModel.IsAllSelected, FallbackValue=False}"/>
                         
-                        <Button Classes="BulkDeleteButton" ToolTip.Tip="Usuń zaznaczonych członków">
+                        <Button Classes="BulkDeleteButton" ToolTip.Tip="Usuń zaznaczonych członków" Command="{Binding CurrentViewModel.RequestDeleteCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" 
                                           Width="14" Height="14"/>
@@ -275,6 +275,68 @@
                 <ContentControl Content="{Binding CurrentViewModel}" />
             </Border>
 
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding CurrentViewModel.IsPopupVisible, FallbackValue=False}">
+            
+            <Border Background="#99000000" />
+
+            <Border Width="400" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    Padding="28,32"
+                    BoxShadow="0 10 40 0 #40000000">
+                
+                <StackPanel Spacing="20">
+                    <Panel HorizontalAlignment="Center" Width="60" Height="60">
+                        <Ellipse Fill="#FFF4F4" />
+                        <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" 
+                                  Foreground="#D32F2F" Width="24" Height="24"/>
+                    </Panel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Potwierdź usunięcie" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#000000" 
+                                   HorizontalAlignment="Center"/>
+                        
+                        <TextBlock Text="Czy na pewno chcesz usunąć zaznaczone elementy? Te zmiany są nieodwracalne." 
+                                   FontSize="13" 
+                                   Foreground="#7a8099" 
+                                   TextWrapping="Wrap" 
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Content="Anuluj" 
+                                Background="#f0f2f8" 
+                                Foreground="#7a8099"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Margin="0,0,8,0"
+                                Padding="0,12"
+                                CornerRadius="8"
+                                Command="{Binding CurrentViewModel.CancelDeleteCommand}"/>
+
+                        <Button Grid.Column="1" 
+                                Content="Usuń" 
+                                Background="#D32F2F" 
+                                Foreground="White"
+                                FontWeight="Bold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Margin="8,0,0,0"
+                                Padding="0,12"
+                                CornerRadius="8"
+                                Command="{Binding CurrentViewModel.ConfirmDeleteCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 
