@@ -73,9 +73,8 @@ namespace Esseti.ViewModels
         [RelayCommand]
         private async Task ConfirmDeleteAsync()
         {
-            IsPopupVisible = false;
-
             await ExecuteConfirmDeleteAsync();
+            IsPopupVisible = false;
         }
 
         protected virtual async Task ExecuteConfirmDeleteAsync()

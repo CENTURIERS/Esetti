@@ -7,7 +7,9 @@ using Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Esseti.ViewModels
@@ -36,7 +38,7 @@ namespace Esseti.ViewModels
 
         protected override void OnPopupClosed()
         {
-            _memberToDelete = null;
+            
         }
 
         protected override void OnIsAllSelectedChangedVirtual(bool value)
@@ -60,7 +62,7 @@ namespace Esseti.ViewModels
         public MembersViewModel(IMemberRepository memberRepository)
         {
             _memberRepository = memberRepository;
-            _ = LoadDataAsync();
+            _ = LoadDataAsync().ContinueWith(t => Debug.WriteLine(t.Exception), TaskContinuationOptions.OnlyOnFaulted); ;
         }
 
         private void UpdateSelectionState()
@@ -153,14 +155,18 @@ namespace Esseti.ViewModels
             if (string.IsNullOrWhiteSpace(NewFirstName) || string.IsNullOrWhiteSpace(NewLastName))
                 return;
 
-            var newMemberDb = new Member
+            var newMemberDb = new Models.Users.Member
             {
                 FirstName = NewFirstName,
                 LastName = NewLastName,
                 IndexNumber = NewIndexNumber,
                 IsActive = true,
                 JoinDate = System.DateTime.Now,
-                Account = new UserAccount { Email = NewEmail }
+                Account = string.IsNullOrWhiteSpace(NewEmail)? null: new UserAccount
+                            {
+                                Email = NewEmail,
+                                SystemRole = Models.Enums.SystemRole.User
+                            }
             };
 
             await _memberRepository.AddMemberAsync(newMemberDb);

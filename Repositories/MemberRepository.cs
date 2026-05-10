@@ -33,7 +33,7 @@ namespace Esseti.Repositories
         {
             var member = await _context.Members.FindAsync(id);
             if (member != null)
-            {
+            {  
                 member.IsActive = false;
 
                 _context.Members.Update(member);

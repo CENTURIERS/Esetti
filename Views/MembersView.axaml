@@ -149,7 +149,7 @@
                                                     <PathIcon Data="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                                                 </Button>
                                                 <Button Grid.Column="2" Classes="iconButton" ToolTip.Tip="Usuń" 
-                                                        Command="{Binding $parent[UserControl].((vmc:MembersViewModel)DataContext).DeleteSingleMemberCommand}"
+                                                        Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteSingleMemberCommand}"
                                                         CommandParameter="{Binding}"
                                                         >
                                                     <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -162,7 +162,7 @@
 
                             <Panel Classes="AddMemberTile" IsVisible="{Binding IsSystemAddTile}" Width="240" Height="280">
                                 <Rectangle />
-                                <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderThickness="0">
+                                <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderThickness="0" Command="{Binding $parent[UserControl].((vmc:MembersViewModel)DataContext).AddMemberCommand}">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
                                         <Panel Width="50" Height="50" HorizontalAlignment="Center">
                                             <Ellipse Fill="#eef1ff"/>

@@ -364,30 +364,134 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <!-- POPUP DODAWANIA -->
         <Grid Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding CurrentViewModel.IsAddPopupVisible, FallbackValue=False}">
-    
-            <!-- Tło (Backdrop) -->
+
             <Border Background="#99000000" />
 
-            <!-- Pudełko Modala -->
-            <Border Width="450" VerticalAlignment="Center" HorizontalAlignment="Center" Background="#FEFEFE" CornerRadius="14" Padding="32" BoxShadow="0 10 40 0 #40000000">
-                <StackPanel Spacing="16">
-            
-                    <TextBlock Text="Dodaj nowego członka" FontSize="20" FontWeight="Bold" />
+            <Border Width="420" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    Padding="32,28"
+                    BoxShadow="0 10 40 0 #40000000">
 
-                    <!-- Pola Tekstowe -->
-                    <TextBox Text="{Binding CurrentViewModel.NewFirstName}" Watermark="Imię" />
-                    <TextBox Text="{Binding CurrentViewModel.NewLastName}" Watermark="Nazwisko" />
-                    <TextBox Text="{Binding CurrentViewModel.NewEmail}" Watermark="Adres Email" />
-                    <TextBox Text="{Binding CurrentViewModel.NewIndexNumber}" Watermark="Numer indeksu" />
+                <Border.Styles>
+                    <Style Selector="TextBox">
+                        <Setter Property="Background" Value="#f5f7ff"/>
+                        <Setter Property="Foreground" Value="#1a1a2e"/>
+                        <Setter Property="BorderBrush" Value="#dde2f0"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="CornerRadius" Value="8"/>
+                        <Setter Property="Height" Value="42"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Padding" Value="12,0"/>
+                        <Setter Property="SelectionBrush" Value="#500033A0"/>
+                        <Setter Property="CaretBrush" Value="#0033A0"/>
+                    </Style>
+                    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+                        <Setter Property="BorderBrush" Value="#b0bde8"/>
+                        <Setter Property="Background" Value="#f5f7ff"/>
+                    </Style>
+                    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+                        <Setter Property="BorderBrush" Value="#0033A0"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="Background" Value="#ffffff"/>
+                    </Style>
+                    <Style Selector="TextBox:focus">
+                        <Setter Property="Foreground" Value="#1a1a2e"/>
+                    </Style>
+                </Border.Styles>
 
-                    <!-- Przyciski -->
-                    <Grid ColumnDefinitions="*, *" Margin="0,16,0,0">
-                        <Button Grid.Column="0" Classes="ModalCancelButton" Content="Anuluj" Margin="0,0,8,0" Command="{Binding CurrentViewModel.CancelAddCommand}"/>
-                        <Button Grid.Column="1" Classes="ModalDeleteButton" Content="Dodaj" Margin="8,0,0,0" Command="{Binding CurrentViewModel.ConfirmAddCommand}" Background="#0033A0" />
+                <StackPanel Spacing="12">
+
+                    <StackPanel Spacing="4" Margin="0,0,0,8">
+                        <TextBlock Text="Dodaj nowego członka"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#1a1a2e"/>
+                        <TextBlock Text="Wypełnij dane nowego członka organizacji."
+                                   FontSize="12"
+                                   Foreground="#7a8099"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*, 10, *">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="Imię" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                            <TextBox Watermark="np. Jan" Text="{ReflectionBinding CurrentViewModel.NewFirstName}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Spacing="4">
+                            <TextBlock Text="Nazwisko" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                            <TextBox Watermark="np. Kowalski" Text="{ReflectionBinding CurrentViewModel.NewLastName}"/>
+                        </StackPanel>
                     </Grid>
-            
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Adres e-mail" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Watermark="np. jan.kowalski@ur.edu.pl" Text="{ReflectionBinding CurrentViewModel.NewEmail}">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Foreground="#b0bde8" Height="14" Width="14" Margin="10,0,4,0"
+                                          Data="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Numer indeksu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Watermark="np. 123456" Text="{ReflectionBinding CurrentViewModel.NewIndexNumber}">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Foreground="#b0bde8" Height="14" Width="14" Margin="10,0,4,0"
+                                          Data="M5.5 2A3.5 3.5 0 0 0 2 5.5v5A3.5 3.5 0 0 0 5.5 14h5a3.5 3.5 0 0 0 3.5-3.5V8a.5.5 0 0 1 1 0v2.5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 1 10.5v-5A4.5 4.5 0 0 1 5.5 1H8a.5.5 0 0 1 0 1zm7 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m2-1a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                    </StackPanel>
+
+                    <Border Height="1" Background="#f0f2f8" Margin="0,4,0,4"/>
+
+                    <Grid ColumnDefinitions="*, 12, *">
+                        <Button Grid.Column="0"
+                                Content="Anuluj"
+                                VerticalContentAlignment="Center"
+                                Command="{ReflectionBinding CurrentViewModel.CancelAddCommand}"
+                                Background="#f0f2f8"
+                                Foreground="#7a8099"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                CornerRadius="8"
+                                Height="40"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Cursor="Hand">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#e2e6f2"/>
+                                    <Setter Property="Foreground" Value="#4a5099"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Grid.Column="2"
+                                Content="Dodaj członka"
+                                VerticalContentAlignment="Center"
+                                Command="{ReflectionBinding CurrentViewModel.ConfirmAddCommand}"
+                                Background="#0033A0"
+                                Foreground="White"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                CornerRadius="8"
+                                Height="40"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Cursor="Hand">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#002480"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+                    </Grid>
+
                 </StackPanel>
             </Border>
         </Grid>

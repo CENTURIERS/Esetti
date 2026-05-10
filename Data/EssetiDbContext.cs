@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Esseti.Data
 {
@@ -76,6 +77,19 @@ namespace Esseti.Data
                 .HasOne(m => m.AuthorityRole)
                 .WithMany()
                 .HasForeignKey(m => m.RoleId);
+
+            var systemRoleConverter = new ValueConverter<Models.Enums.SystemRole, string>(
+                v => v == Models.Enums.SystemRole.SuperAdmin ? "superadmin" :
+                     v == Models.Enums.SystemRole.CollegeAdmin ? "college_admin" : "user",
+                v => v == "superadmin" ? Models.Enums.SystemRole.SuperAdmin :
+                     v == "college_admin" ? Models.Enums.SystemRole.CollegeAdmin :
+                     Models.Enums.SystemRole.User
+            );
+
+            modelBuilder.Entity<UserAccount>()
+                .Property(u => u.SystemRole)
+                .HasConversion(systemRoleConverter);
+
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
