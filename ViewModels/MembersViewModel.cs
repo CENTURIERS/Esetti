@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
 using Esseti.ViewModels.Member;
+using Models.Users;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Esseti.ViewModels
 {
@@ -19,6 +20,18 @@ namespace Esseti.ViewModels
         private readonly IMemberRepository _memberRepository;
         private readonly List<MemberItemViewModel> _allMembers = new();
         private MemberItemViewModel? _memberToDelete;
+
+        [ObservableProperty] 
+        private string _newFirstName = string.Empty;
+
+        [ObservableProperty] 
+        private string _newLastName = string.Empty;
+
+        [ObservableProperty] 
+        private string _newEmail = string.Empty;
+
+        [ObservableProperty] 
+        private string _newIndexNumber = string.Empty;
 
 
         protected override void OnPopupClosed()
@@ -120,9 +133,42 @@ namespace Esseti.ViewModels
         [RelayCommand]
         private void AddMember()
         {
-            System.Diagnostics.Debug.WriteLine("Otwieram formularz dodawania nowego członka...");
+            NewFirstName = string.Empty;
+            NewLastName = string.Empty;
+            NewEmail = string.Empty;
+            NewIndexNumber = string.Empty;
+
+            IsAddPopupVisible = true;
         }
 
+        [RelayCommand]
+        private void CancelAdd()
+        {
+            IsAddPopupVisible = false;
+        }
+
+        [RelayCommand]
+        private async Task ConfirmAddAsync()
+        {
+            if (string.IsNullOrWhiteSpace(NewFirstName) || string.IsNullOrWhiteSpace(NewLastName))
+                return;
+
+            var newMemberDb = new Member
+            {
+                FirstName = NewFirstName,
+                LastName = NewLastName,
+                IndexNumber = NewIndexNumber,
+                IsActive = true,
+                JoinDate = System.DateTime.Now,
+                Account = new UserAccount { Email = NewEmail }
+            };
+
+            await _memberRepository.AddMemberAsync(newMemberDb);
+
+            await LoadDataAsync();
+
+            IsAddPopupVisible = false;
+        }
 
         protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
 

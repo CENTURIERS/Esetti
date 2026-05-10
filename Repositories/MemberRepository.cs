@@ -20,11 +20,12 @@ namespace Esseti.Repositories
         public async Task<List<Member>> GetAllMembersAsync()
         {
             return await _context.Members
+                .Where(m => m.IsActive)
                 .Include(m => m.Account)
                 .Include(m => m.AuthorityRole)
                 .Include(m => m.MemberClubs)
                     .ThenInclude(mc => mc.Club)
-                        .ThenInclude(c => c.Department)
+                        .ThenInclude(c => c!.Department)
                 .ToListAsync();
         }
 
@@ -34,6 +35,9 @@ namespace Esseti.Repositories
             if (member != null)
             {
                 member.IsActive = false;
+
+                _context.Members.Update(member);
+
                 await _context.SaveChangesAsync();
             }
         }
@@ -44,7 +48,16 @@ namespace Esseti.Repositories
             foreach (var member in members)
             {
                 member.IsActive = false;
+
+                _context.Members.Update(member);
+
             }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddMemberAsync(Member member)
+        {
+            _context.Members.Add(member);
             await _context.SaveChangesAsync();
         }
     }

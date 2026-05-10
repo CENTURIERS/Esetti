@@ -25,6 +25,9 @@ namespace Esseti.ViewModels
         [ObservableProperty]
         private bool _isPopupVisible;
 
+        [ObservableProperty]
+        private bool _isAddPopupVisible;
+
         partial void OnIsPopupVisibleChanged(bool value)
         {
             if (!value) OnPopupClosed();
