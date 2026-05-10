@@ -1,6 +1,7 @@
 ﻿using Esseti.Data;
 using Esseti.Repositories;
 using Esseti.Repositories.Interfaces;
+using Esseti.Services;
 using Esseti.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,11 +12,10 @@ namespace Esseti
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddDbContext<EssetiDbContext>();
-
+            services.AddSingleton<INavigationService, NavigationService>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
-
             return services;
         }
 
@@ -25,7 +25,6 @@ namespace Esseti
             services.AddTransient<ProjectsViewModel>();
             services.AddTransient<ActivitiesViewModel>();
             services.AddSingleton<MainWindowViewModel>();
-
             return services;
         }
     }

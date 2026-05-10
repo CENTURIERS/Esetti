@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
+using Esseti.Services;
 using Esseti.ViewModels.Member;
+using Microsoft.Extensions.DependencyInjection;
 using Models.Users;
 using System;
 using System.Collections.Generic;
@@ -35,6 +37,8 @@ namespace Esseti.ViewModels
         [ObservableProperty] 
         private string _newIndexNumber = string.Empty;
 
+        private readonly INavigationService _navigationService;
+
 
         protected override void OnPopupClosed()
         {
@@ -59,10 +63,11 @@ namespace Esseti.ViewModels
             }
         }
 
-        public MembersViewModel(IMemberRepository memberRepository)
+        public MembersViewModel(IMemberRepository memberRepository, INavigationService navigationService)
         {
             _memberRepository = memberRepository;
-            _ = LoadDataAsync().ContinueWith(t => Debug.WriteLine(t.Exception), TaskContinuationOptions.OnlyOnFaulted); ;
+            _navigationService = navigationService;
+            _ = LoadDataAsync();
         }
 
         private void UpdateSelectionState()
@@ -112,8 +117,13 @@ namespace Esseti.ViewModels
         [RelayCommand]
         private void OpenProfile(MemberItemViewModel member)
         {
-            if (member == null) return;
-            System.Diagnostics.Debug.WriteLine($"Otwieram profil: {member.FullName}");
+            if (member == null || member.IsSystemAddTile) return;
+            var profileVm = new MemberProfileViewModel(
+                member.MemberId,
+                _navigationService,
+                App.Services.GetRequiredService<IMemberRepository>()
+            );
+            _navigationService.NavigateTo(profileVm);
         }
 
         [RelayCommand]  

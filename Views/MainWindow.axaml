@@ -77,6 +77,19 @@
         <Setter Property="Foreground" Value="{ReflectionBinding $parent[Window].DataContext.SidebarButtonHoverTextColor}"/>
     </Style>
 
+    <Style Selector="Button.LeftPanelButton.Active /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFFFFF"/>
+    </Style>
+    <Style Selector="Button.LeftPanelButton.Active">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+    <Style Selector="Button.LeftPanelButton.Active PathIcon">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+    <Style Selector="Button.LeftPanelButton.Active TextBlock">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+
     <Style Selector="Border.SearchBarBorder">
         <Setter Property="HorizontalAlignment" Value="Right"/>
         <Setter Property="Width" Value="350"/>
@@ -231,6 +244,10 @@
 
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
 			<views:SettingsView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:MemberProfileViewModel}">
+            <views:MemberProfileView />
         </DataTemplate>
     </Window.DataTemplates>
 

@@ -14,6 +14,9 @@ namespace Esseti.ViewModels.Components
         [ObservableProperty]
         private string? _label;
 
+        [ObservableProperty]
+        private bool _isActive;
+
         public ICommand? Command { get; }
 
         public NavigationItemViewModel(string icon, string label, ICommand command)

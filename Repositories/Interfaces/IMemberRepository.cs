@@ -15,5 +15,7 @@ namespace Esseti.Repositories.Interfaces
         Task DeleteMembersAsync(IEnumerable<int> memberIds);
 
         Task AddMemberAsync(Member member);
+
+        Task<Member?> GetMemberByIdAsync(int id);
     }
 }

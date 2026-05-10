@@ -60,5 +60,25 @@ namespace Esseti.Repositories
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Member?> GetMemberByIdAsync(int id)
+        {
+            return await _context.Members
+                .Where(m => m.MemberId == id)
+                .Include(m => m.Account)
+                .Include(m => m.AuthorityRole)
+                .Include(m => m.MemberClubs)
+                    .ThenInclude(mc => mc.Club)
+                        .ThenInclude(c => c!.Department)
+                            .ThenInclude(d => d!.College)
+                .Include(m => m.Activities)
+                .Include(m => m.Projects)
+                    .ThenInclude(p => p.PersonInCharge)
+                .Include(m => m.Projects)
+                    .ThenInclude(p => p.Participants)
+                .Include(m => m.Projects)
+                    .ThenInclude(p => p.Sections)
+                .FirstOrDefaultAsync();
+        }
     }
 }
