@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -13,11 +13,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Models.Users;
+using Models.ClubBase;
 
 namespace Esseti.ViewModels
 {
     public class ActivityProfileItem
     {
+        public int ActivityId { get; init; }
         public string Name { get; init; } = "";
         public string PersonInCharge { get; init; } = "";
         public string Date { get; init; } = "";
@@ -25,6 +28,7 @@ namespace Esseti.ViewModels
 
     public class ProjectCardItem
     {
+        public int ProjectId { get; init; }
         public string Name { get; init; } = "";
         public string LeaderName { get; init; } = "";
         public int ParticipantCount { get; init; }
@@ -57,6 +61,15 @@ namespace Esseti.ViewModels
         [ObservableProperty] private bool _hasProjects;
         [ObservableProperty] private bool _hasActivities;
 
+        [ObservableProperty] private string _editFirstName = "";
+        [ObservableProperty] private string _editLastName = "";
+        [ObservableProperty] private string _editEmail = "";
+        [ObservableProperty] private string _editPhoneNumber = "";
+        [ObservableProperty] private string _editIndexNumber = "";
+        [ObservableProperty] private string _editMajor = "";
+        [ObservableProperty] private string _editDescription = "";
+        [ObservableProperty] private string _editRole = "";
+
         public ObservableCollection<ActivityProfileItem> Activities { get; } = new();
         public ObservableCollection<ProjectCardItem> Projects { get; } = new();
 
@@ -72,11 +85,14 @@ namespace Esseti.ViewModels
             }
         }
 
-        public MemberProfileViewModel(int memberId, INavigationService navigationService, IMemberRepository memberRepository)
+        private readonly bool _openEditImmediately;
+
+        public MemberProfileViewModel(int memberId, INavigationService navigationService, IMemberRepository memberRepository, bool openEditImmediately = false)
         {
             _memberId = memberId;
             _navigationService = navigationService;
             _memberRepository = memberRepository;
+            _openEditImmediately = openEditImmediately;
             _ = LoadAsync();
         }
 
@@ -85,7 +101,11 @@ namespace Esseti.ViewModels
             try
             {
                 var member = await _memberRepository.GetMemberByIdAsync(_memberId);
-                if (member == null) return;
+                if (member == null)
+                {
+                    Dispatcher.UIThread.Post(() => { IsLoading = false; Description = "Nie znaleziono użytkownika w bazie."; });
+                    return;
+                }
 
                 Dispatcher.UIThread.Post(() =>
                 {
@@ -121,6 +141,7 @@ namespace Esseti.ViewModels
                     {
                         Activities.Add(new ActivityProfileItem
                         {
+                            ActivityId = a.ActivityId,
                             Name = a.Name,
                             PersonInCharge = a.PersonInChargeName ?? "Uczestnik",
                             Date = a.Date.ToString("dd.MM.yy") + " r."
@@ -133,6 +154,7 @@ namespace Esseti.ViewModels
                     {
                         Projects.Add(new ProjectCardItem
                         {
+                            ProjectId = p.ProjectId,
                             Name = p.Name,
                             LeaderName = p.PersonInCharge != null
                                 ? $"{p.PersonInCharge.FirstName} {p.PersonInCharge.LastName}".Trim()
@@ -146,6 +168,10 @@ namespace Esseti.ViewModels
                     }
                     HasProjects = Projects.Any();
                     IsLoading = false;
+                    if (_openEditImmediately)
+                    {
+                        OpenEdit();
+                    }
                 });
             }
             catch (Exception ex)
@@ -158,6 +184,87 @@ namespace Esseti.ViewModels
         [RelayCommand]
         private void GoBack()
         {
+            _navigationService.NavigateTo(App.Services.GetRequiredService<MembersViewModel>());
+        }
+
+        [RelayCommand]
+        private void OpenEdit()
+        {
+            EditFirstName = FullName.Split(' ').FirstOrDefault() ?? "";
+            EditLastName = FullName.Split(' ').LastOrDefault() ?? "";
+            EditEmail = Email;
+            EditPhoneNumber = PhoneNumber;
+            EditIndexNumber = IndexNumber;
+            EditMajor = Major;
+            EditDescription = Description;
+            EditRole = Role;
+
+            IsEditPopupVisible = true;
+        }
+
+        [RelayCommand]
+        private void CancelEdit()
+        {
+            IsEditPopupVisible = false;
+        }
+
+        [RelayCommand]
+        private async Task SaveEditAsync()
+        {
+            var updatedMember = new Models.Users.Member 
+            {
+                MemberId = _memberId,
+                FirstName = EditFirstName,
+                LastName = EditLastName,
+                PhoneNumber = EditPhoneNumber,
+                IndexNumber = EditIndexNumber,
+                Major = EditMajor,
+                Description = EditDescription,
+                Account = !string.IsNullOrWhiteSpace(EditEmail) ? new UserAccount { Email = EditEmail } : null,
+                AuthorityRole = !string.IsNullOrWhiteSpace(EditRole) ? new AuthorityRole { Name = EditRole } : null
+            };
+
+            var remainingProjectIds = Projects.Select(p => p.ProjectId).ToList();
+            var remainingActivityIds = Activities.Select(a => a.ActivityId).ToList();
+
+
+            await _memberRepository.UpdateMemberAsync(updatedMember, remainingProjectIds, remainingActivityIds);
+
+            IsEditPopupVisible = false;
+
+            await LoadAsync();
+        }
+
+        [RelayCommand]
+        private void RemoveFromProject(ProjectCardItem project)
+        {
+            if (project != null)
+            {
+                Projects.Remove(project);
+                HasProjects = Projects.Any();
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveFromActivity(ActivityProfileItem activity)
+        {
+            if (activity != null)
+            {
+                Activities.Remove(activity);
+                HasActivities = Activities.Any();
+            }
+        }
+
+        [RelayCommand]
+        private void DeleteThisMember()
+        {
+            IsEditPopupVisible = false;
+            IsPopupVisible = true;
+        }
+
+        protected override async Task ExecuteConfirmDeleteAsync()
+        {
+            await _memberRepository.DeleteSingleMemberAsync(_memberId);
             _navigationService.NavigateTo(App.Services.GetRequiredService<MembersViewModel>());
         }
     }

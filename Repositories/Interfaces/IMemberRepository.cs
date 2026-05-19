@@ -17,5 +17,8 @@ namespace Esseti.Repositories.Interfaces
         Task AddMemberAsync(Member member);
 
         Task<Member?> GetMemberByIdAsync(int id);
+
+        Task UpdateMemberAsync(Member member, List<int> remainingProjectIds, List<int> remainingActivityIds);
+
     }
 }

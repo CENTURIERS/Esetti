@@ -292,9 +292,9 @@
                                FontWeight="Bold"
                                Foreground="#000000"/>
 
-                    <Border Grid.Column="1" Classes="SearchBarBorder" VerticalAlignment="Center">
+                    <Border Grid.Column="1" Classes="SearchBarBorder" VerticalAlignment="Center" IsVisible="{Binding CurrentViewModel.ShowActionHeader, FallbackValue=False}">
                         <TextBox Text="{Binding CurrentViewModel.SearchQuery, FallbackValue=''}"
-                                 Watermark="Szukaj Członków..." 
+                                 Watermark="{Binding CurrentViewModel.SearchPlaceholder, FallbackValue='Szukaj...'}" 
                                  >
                             <TextBox.InnerLeftContent>
                                 <PathIcon Foreground="Gray" Height="16" Width="16" Margin="10,0,5,0" Data="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
@@ -302,7 +302,7 @@
                         </TextBox>
                     </Border>
         
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" IsVisible="{Binding CurrentViewModel.ShowActionHeader, FallbackValue=False}">
                         
                         <CheckBox Classes="SelectAllCheckBox"
                                   Content="Zaznacz wszystkich" 
@@ -512,6 +512,20 @@
                 </StackPanel>
             </Border>
         </Grid>
+
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding CurrentViewModel.IsEditPopupVisible, FallbackValue=False}">
+            <Border Background="#99000000" />
+            <Border Width="800" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="16"
+                    Padding="32"
+                    BoxShadow="0 10 40 0 #40000000">
+                <views:MemberEditView DataContext="{Binding CurrentViewModel}" />
+            </Border>
+        </Grid>
+
     </Grid>
 
 </Window>

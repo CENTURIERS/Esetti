@@ -1,5 +1,660 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Esseti.Views.ActivitiesView">
-    <TextBlock Text="Lista Aktywności" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vmc="using:Esseti.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="Esseti.Views.ActivitiesView"
+             x:DataType="vmc:ActivitiesViewModel"
+             Background="Transparent">
+
+    <UserControl.Styles>
+        <Style Selector="TextBox.SearchBar">
+            <Setter Property="Background" Value="#f5f7ff"/>
+            <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Width" Value="320"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="14,0,14,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="SelectionBrush" Value="#500033A0"/>
+        </Style>
+        <Style Selector="TextBox.SearchBar:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="#f5f7ff"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+        </Style>
+        <Style Selector="TextBox.SearchBar:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1.5" />
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+        </Style>
+
+        <Style Selector="Button.pill-btn">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="#FEFEFE"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="18,6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.pill-btn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#002270"/>
+            <Setter Property="Foreground" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="Button.select-all-btn">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#ccd3ee"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="14,5"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.select-all-btn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#f5f7ff"/>
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+
+        <Style Selector="CheckBox.MemberCheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="CheckBox.MemberCheckBox /template/ Border#NormalRectangle">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="CheckBox.MemberCheckBox:pointerover /template/ Border#NormalRectangle">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+        </Style>
+
+        <Style Selector="Border.list-row">
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="11"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="ClipToBounds" Value="True"/>
+            <Setter Property="Margin" Value="0,0,0,9"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.list-row:pointerover">
+            <Setter Property="BoxShadow" Value="0 2 12 0 #140033A0"/>
+        </Style>
+        <Style Selector="Border.list-row.selected">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#f3f6ff"/>
+        </Style>
+
+        <Style Selector="Button.row-action-btn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.row-action-btn TextBlock">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        <Style Selector="Button.row-action-btn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#eef1ff"/>
+        </Style>
+        <Style Selector="Button.row-action-btn:pointerover TextBlock">
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+        <Style Selector="Button.row-action-btn.del:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#fff0f0"/>
+        </Style>
+        <Style Selector="Button.row-action-btn.del:pointerover TextBlock">
+            <Setter Property="Foreground" Value="#c0001a"/>
+        </Style>
+
+        <Style Selector="Button.bulk-action-btn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="16,6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#FEFEFE"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.bulk-action-btn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#26FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#80FFFFFF"/>
+            <Setter Property="Foreground" Value="#FEFEFE"/>
+        </Style>
+        <Style Selector="Button.bulk-action-btn.danger">
+            <Setter Property="BorderBrush" Value="#ff6b6b"/>
+            <Setter Property="Foreground" Value="#ffb3b3"/>
+        </Style>
+        <Style Selector="Button.bulk-action-btn.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#40C80000"/>
+            <Setter Property="BorderBrush" Value="#ff6b6b"/>
+            <Setter Property="Foreground" Value="#ffb3b3"/>
+        </Style>
+
+        <Style Selector="Panel.AddActivityTile">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Panel.AddActivityTile Rectangle">
+            <Setter Property="Fill" Value="#f7f8ff"/>
+            <Setter Property="Stroke" Value="#b0bde8"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+            <Setter Property="StrokeDashArray" Value="6, 4"/>
+            <Setter Property="RadiusX" Value="11"/>
+            <Setter Property="RadiusY" Value="11"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Fill" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Stroke" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Panel.AddActivityTile:pointerover Rectangle">
+            <Setter Property="Fill" Value="#eef1ff"/>
+            <Setter Property="Stroke" Value="#0033A0"/>
+        </Style>
+
+        <Style Selector="TextBlock.form-label">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-input">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-input:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-input:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-textarea">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-textarea:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-textarea:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+        
+        <Style Selector="ComboBox.form-select">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ComboBox.form-select:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="ComboBox.form-select:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="Button.btn-cancel">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="20,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.btn-cancel:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#f5f7ff"/>
+            <Setter Property="BorderBrush" Value="#ccd3ee"/>
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+
+        <Style Selector="Button.btn-save">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="22,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.btn-save:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#002270"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.modal-close">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.12"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.modal-close:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2EFFFFFF"/>
+            <Setter Property="Opacity" Value="1.0"/>
+        </Style>
+
+        <!-- Action and Delete Buttons from MemberProfileView -->
+        <Style Selector="Button.ActionBtn">
+            <Setter Property="Background" Value="#f4f6fc"/>
+            <Setter Property="BorderBrush" Value="#d0d8ed"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.ActionBtn:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.ActionBtn PathIcon">
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.DeleteBtn">
+            <Setter Property="Background" Value="#fff5f5"/>
+            <Setter Property="BorderBrush" Value="#fcdada"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#D32F2F"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#D32F2F"/>
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.DeleteBtn PathIcon">
+            <Setter Property="Foreground" Value="#D32F2F"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Border Background="#FEFEFE" 
+                CornerRadius="14" 
+                BorderBrush="#d0d4e8" 
+                BorderThickness="1" 
+                BoxShadow="0 6 28 0 #1A0033A0" 
+                ClipToBounds="True"
+                Margin="20">
+            <DockPanel>
+                <ScrollViewer Padding="20,16,20,30">
+                    <StackPanel Spacing="9" HorizontalAlignment="Stretch">
+                        <!-- Add activity tile at the top -->
+                        <Panel Classes="AddActivityTile" Height="58" Margin="0,0,0,9">
+                            <Rectangle />
+                            <Button HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch" 
+                                    Background="Transparent" 
+                                    BorderThickness="0" 
+                                    Command="{Binding OpenAddPopupCommand}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                                    <Panel Width="32" Height="32">
+                                        <Ellipse Fill="#0033A0"/>
+                                        <PathIcon Data="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" 
+                                                  Foreground="White" 
+                                                  Width="14" Height="14" 
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Panel>
+                                    <TextBlock Text="DODAJ AKTYWNOŚĆ" FontWeight="UltraBlack" Foreground="#0033A0" FontSize="12" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Panel>
+
+                        <!-- ItemsControl of activities -->
+                        <ItemsControl ItemsSource="{Binding Activities}" Margin="0,0,0,16">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" Spacing="9"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-row" Classes.selected="{Binding IsSelected}" Padding="16,0" Height="58">
+                                        <Grid ColumnDefinitions="40, *, Auto">
+                                            <!-- Column 0: Checkbox -->
+                                            <CheckBox Grid.Column="0" 
+                                                      Classes="MemberCheckBox" 
+                                                      IsChecked="{Binding IsSelected}" 
+                                                      HorizontalAlignment="Center" 
+                                                      VerticalAlignment="Center"/>
+                                            
+                                            <!-- Column 1: Info (Name, Description) -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,20,0">
+                                                <TextBlock Text="{Binding Name}" 
+                                                           FontFamily="Georgia" 
+                                                           FontStyle="Italic" 
+                                                           FontSize="14" 
+                                                           FontWeight="Bold" 
+                                                           Foreground="Black"/>
+                                                <TextBlock Text="{Binding Description}" 
+                                                           FontSize="11.5" 
+                                                           Foreground="#555555" 
+                                                           TextWrapping="NoWrap" 
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                            
+                                            <!-- Column 2: Date + Action Buttons in one horizontal line -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                <!-- Date Badge -->
+                                                <Border Background="#f0f2f8" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding DateString}" FontSize="11.5" FontWeight="SemiBold" Foreground="#0033A0"/>
+                                                </Border>
+                                                
+                                                <!-- Action Buttons -->
+                                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                    <Button Classes="ActionBtn" 
+                                                            Command="{ReflectionBinding $parent[UserControl].DataContext.OpenEditPopupCommand}" 
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,6"
+                                                            FontSize="11">
+                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                            <PathIcon Width="11" Height="11" Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                                            <TextBlock Text="Edytuj" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button Classes="DeleteBtn" 
+                                                            Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteSingleActivityCommand}" 
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,6"
+                                                            FontSize="11">
+                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                            <PathIcon Width="11" Height="11" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                                            <TextBlock Text="Usuń" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <!-- Spacer to ensure the last item has enough breathing room at the bottom -->
+                        <Border Height="20" Background="Transparent" />
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <Grid IsVisible="{Binding IsAddEditPopupVisible, FallbackValue=False}">
+            <Border Background="#4000195A" />
+            
+            <Border Width="540" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding PopupTitle, FallbackValue='Nowa aktywność'}" 
+                                       FontFamily="Georgia" 
+                                       FontStyle="Italic" 
+                                       FontSize="15" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding ClosePopupCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding ClosePopupCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz aktywność" Command="{Binding SaveActivityCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer MaxHeight="450" Padding="22,20">
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Margin="0" HorizontalAlignment="Stretch">
+                            
+                            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Nazwa aktywności" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Piknik Moc Odkrywców" Text="{Binding NewActivityName}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Data i godzina" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 26.02.2025 12:00" Text="{Binding NewActivityDate}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Miasto" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Rzeszów" Text="{Binding NewActivityCity}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Ulica" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Al. Tadeusza Rejtana 16C" Text="{Binding NewActivityStreet}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Opis" Classes="form-label" />
+                                <TextBox Classes="form-textarea" Height="68" Watermark="Krótki opis aktywności..." Text="{Binding NewActivityDescription}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Osoba odpowiedzialna (koło)" Classes="form-label" />
+                                <ComboBox Classes="form-select" ItemsSource="{Binding ClubMembers}" SelectedItem="{Binding NewActivityPersonInChargeClub}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="4" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Osoba odpowiedzialna (wydarzenie)" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Jan Kowalski" Text="{Binding NewActivityPersonInChargeEvent}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" Spacing="5">
+                                <TextBlock Text="Pozostałe informacje" Classes="form-label" />
+                                <TextBox Classes="form-textarea" Height="68" Watermark="Dodatkowe uwagi..." Text="{Binding NewActivityAdditionalInfo}"/>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <Grid IsVisible="{Binding IsConfirmDeletePopupVisible, FallbackValue=False}">
+            <Border Background="#4000195A" />
+            
+            <Border Width="380" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" Text="Potwierdź usunięcie" FontFamily="Georgia" FontStyle="Italic" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelDeleteCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="14">
+                            <Button Classes="btn-cancel" Content="Anuluj" Padding="28,8" Command="{Binding CancelDeleteActivityCommand}"/>
+                            <Button Classes="btn-save" Content="Tak, usuń" Background="#c0001a" Padding="28,8" Command="{Binding ConfirmDeleteActivityCommand}">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#a00014"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Style>
+                                </Button.Styles>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                    
+                    <StackPanel Margin="24,28,24,20" HorizontalAlignment="Center">
+                        <Panel Width="60" Height="60" HorizontalAlignment="Center" Margin="0,0,0,12">
+                            <Ellipse Fill="#FFF4F4"/>
+                            <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" 
+                                      Foreground="#D32F2F" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Panel>
+                        <TextBlock Text="{Binding DeleteConfirmMessage, FallbackValue='Usunąć 2 aktywności?'}" 
+                                   FontSize="15" FontWeight="Bold" Foreground="#000000" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock Text="Ta operacja jest nieodwracalna.&#x0a;Zaznaczone rekordy zostaną trwale usunięte z systemu." 
+                                   FontSize="12.5" Foreground="#555555" TextAlignment="Center" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

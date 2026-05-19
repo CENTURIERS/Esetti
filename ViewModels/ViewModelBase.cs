@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
 
@@ -7,6 +7,10 @@ namespace Esseti.ViewModels
     public partial class ViewModelBase : ObservableObject
     {
         public virtual string PageTitle => "Aplikacja Esseti";
+
+        public virtual bool ShowActionHeader => false;
+
+        public virtual string SearchPlaceholder => "Szukaj...";
 
         [ObservableProperty]
         private string _searchQuery = string.Empty;
@@ -27,6 +31,9 @@ namespace Esseti.ViewModels
 
         [ObservableProperty]
         private bool _isAddPopupVisible;
+
+        [ObservableProperty]
+        private bool _isEditPopupVisible;
 
         partial void OnIsPopupVisibleChanged(bool value)
         {

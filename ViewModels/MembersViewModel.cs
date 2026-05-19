@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
@@ -20,6 +20,10 @@ namespace Esseti.ViewModels
     {
         public override string PageTitle => "Lista członków";
 
+        public override bool ShowActionHeader => true;
+
+        public override string SearchPlaceholder => "Szukaj członków...";
+
         public ObservableCollection<MemberItemViewModel> Members { get; } = new();
         private readonly IMemberRepository _memberRepository;
         private readonly List<MemberItemViewModel> _allMembers = new();
@@ -38,7 +42,6 @@ namespace Esseti.ViewModels
         private string _newIndexNumber = string.Empty;
 
         private readonly INavigationService _navigationService;
-
 
         protected override void OnPopupClosed()
         {
@@ -126,12 +129,6 @@ namespace Esseti.ViewModels
             _navigationService.NavigateTo(profileVm);
         }
 
-        [RelayCommand]  
-        private void EditMember(MemberItemViewModel member)
-        {
-            if (member == null) return;
-            System.Diagnostics.Debug.WriteLine($"Edytuję członka: {member.FullName}");
-        }
 
         [RelayCommand]
         private void DeleteSingleMember(MemberItemViewModel member)

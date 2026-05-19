@@ -37,6 +37,7 @@ namespace Esseti.Data
 
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AuthorityRole>().HasKey(e => e.RoleId);
@@ -54,14 +55,31 @@ namespace Esseti.Data
             modelBuilder.Entity<SectionMember>().HasKey(sm => new { sm.SectionId, sm.MemberId });
 
             modelBuilder.Entity<Project>()
+                .HasMany(p => p.Sections)
+                .WithMany(s => s.Projects)
+                .UsingEntity<Dictionary<string, object>>(
+                    "project_sections",
+                    j => j.HasOne<Section>().WithMany().HasForeignKey("section_id"),
+                    j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
+                );
+
+            modelBuilder.Entity<Project>()
                 .HasMany(p => p.Participants)
                 .WithMany(m => m.Projects)
-                .UsingEntity(j => j.ToTable("project_member"));
+                .UsingEntity<Dictionary<string, object>>(
+                    "project_member",
+                    j => j.HasOne<Member>().WithMany().HasForeignKey("member_id"),
+                    j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
+                );
 
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Participants)
                 .WithMany(m => m.Activities)
-                .UsingEntity(j => j.ToTable("activity_member"));
+                .UsingEntity<Dictionary<string, object>>(
+                    "activity_member",
+                    j => j.HasOne<Member>().WithMany().HasForeignKey("member_id"),
+                    j => j.HasOne<Activity>().WithMany().HasForeignKey("activity_id")
+                );
 
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.PersonInCharge)
@@ -90,6 +108,9 @@ namespace Esseti.Data
                 .Property(u => u.SystemRole)
                 .HasConversion(systemRoleConverter);
 
+            modelBuilder.Entity<College>()
+                .Property(c => c.NIP)
+                .HasColumnName("NIP");
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
@@ -101,7 +122,10 @@ namespace Esseti.Data
 
                 foreach (var property in entity.GetProperties())
                 {
-                    property.SetColumnName(ToSnakeCase(property.Name));
+                    if (property.Name != "NIP")
+                    {
+                        property.SetColumnName(ToSnakeCase(property.Name));
+                    }
                 }
 
                 foreach (var key in entity.GetKeys())

@@ -1,4 +1,4 @@
-﻿using Avalonia.Media.Imaging;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -97,7 +97,7 @@ namespace Esseti.ViewModels
         [RelayCommand]
         public void ShowAllActivities()
         {
-            CurrentViewModel = new ActivitiesViewModel();
+            CurrentViewModel = App.Services.GetRequiredService<ActivitiesViewModel>();
             SetActiveMenuItem(0);
 
             if (!_isViewChanged)
