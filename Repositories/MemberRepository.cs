@@ -1,52 +1,84 @@
-﻿using Dapper;
-using Esseti.Data;
+﻿using Esseti.Data;
 using Esseti.Repositories.Interfaces;
-using Models.ClubBase;
-using Models.University;
+using Microsoft.EntityFrameworkCore;
 using Models.Users;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
+using System.Linq;
 
 namespace Esseti.Repositories
 {
     public class MemberRepository : IMemberRepository
     {
+        private readonly EssetiDbContext _context;
+
+        public MemberRepository(EssetiDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<List<Member>> GetAllMembersAsync()
         {
-            using (var db = DatabaseConfig.GetConnection())
-            {
-                var sql = @"SELECT 
-                        m.first_name, m.last_name, m.major, m.join_date, m.is_active, m.member_avatar, m.index_number,
-                        ua.account_id AS AccountID, ua.email, 
-                        cd.college_department_id AS CollegeDepartmentId, cd.name AS Name, 
-                        ar.role_id AS AuthorityRoleId, ar.name AS Name, 
-                        mc.club_id AS MemberClubId, mc.club_role  
-                    FROM member m 
-                    LEFT JOIN member_club mc ON m.member_id = mc.member_id 
-                    LEFT JOIN club_info ci ON mc.club_id = ci.club_id 
-                    LEFT JOIN user_account ua ON m.account_id  = ua.account_id 
-                    LEFT JOIN college_department cd ON ci.department_id = cd.college_department_id
-                    LEFT JOIN authority_role ar ON ar.role_id = m.role_id;";
+            return await _context.Members
+                .Where(m => m.IsActive)
+                .Include(m => m.Account)
+                .Include(m => m.AuthorityRole)
+                .Include(m => m.MemberClubs)
+                    .ThenInclude(mc => mc.Club)
+                        .ThenInclude(c => c!.Department)
+                .ToListAsync();
+        }
 
-                var results = await db.QueryAsync<Member, UserAccount, CollegeDepartment, AuthorityRole, MemberClub, Member>(
-                        sql,
-                        (member, account, department, authorityRole, memberClub) =>
-                        {
-                            member.Account = account;
-                            member.Department = department;
-                            member.AuthorityRole = authorityRole;
-                            member.MemberClub = memberClub;
-                            return member;
-                        },
-                        splitOn: "AccountID, CollegeDepartmentId, AuthorityRoleId, MemberClubId"
-                    );
+        public async Task DeleteSingleMemberAsync(int id)
+        {
+            var member = await _context.Members.FindAsync(id);
+            if (member != null)
+            {  
+                member.IsActive = false;
 
-                return results.Distinct().ToList();
+                _context.Members.Update(member);
+
+                await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task DeleteMembersAsync(IEnumerable<int> memberIds)
+        {
+            var members = await _context.Members.Where(m => memberIds.Contains(m.MemberId)).ToListAsync();
+            foreach (var member in members)
+            {
+                member.IsActive = false;
+
+                _context.Members.Update(member);
+
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddMemberAsync(Member member)
+        {
+            _context.Members.Add(member);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Member?> GetMemberByIdAsync(int id)
+        {
+            return await _context.Members
+                .Where(m => m.MemberId == id)
+                .Include(m => m.Account)
+                .Include(m => m.AuthorityRole)
+                .Include(m => m.MemberClubs)
+                    .ThenInclude(mc => mc.Club)
+                        .ThenInclude(c => c!.Department)
+                            .ThenInclude(d => d!.College)
+                .Include(m => m.Activities)
+                .Include(m => m.Projects)
+                    .ThenInclude(p => p.PersonInCharge)
+                .Include(m => m.Projects)
+                    .ThenInclude(p => p.Participants)
+                .Include(m => m.Projects)
+                    .ThenInclude(p => p.Sections)
+                .FirstOrDefaultAsync();
         }
     }
 }

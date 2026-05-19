@@ -19,7 +19,6 @@
     <Style Selector="Button.LeftPanelButton">
         <Setter Property="Background" Value="{ReflectionBinding $parent[Window].DataContext.SidebarButtonBackgroundColor}"/> 
         <Setter Property="Foreground" Value="{ReflectionBinding $parent[Window].DataContext.SidebarButtonTextColor}"/> 
-        
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="Padding" Value="20, 15"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/> 
@@ -78,6 +77,19 @@
         <Setter Property="Foreground" Value="{ReflectionBinding $parent[Window].DataContext.SidebarButtonHoverTextColor}"/>
     </Style>
 
+    <Style Selector="Button.LeftPanelButton.Active /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFFFFF"/>
+    </Style>
+    <Style Selector="Button.LeftPanelButton.Active">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+    <Style Selector="Button.LeftPanelButton.Active PathIcon">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+    <Style Selector="Button.LeftPanelButton.Active TextBlock">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+
     <Style Selector="Border.SearchBarBorder">
         <Setter Property="HorizontalAlignment" Value="Right"/>
         <Setter Property="Width" Value="350"/>
@@ -87,34 +99,121 @@
         <Setter Property="Margin" Value="0,0,20,0"/>
     </Style>
 
-        <Style Selector="Border.SearchBarBorder TextBox">
-            <Setter Property="Background" Value="#f5f7ff"/>
-            <Setter Property="Foreground" Value="#000"/>
-            <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="BorderBrush" Value="#dde2f0"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="CornerRadius" Value="50"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="SelectionBrush" Value="#500033A0"/>
-        </Style>
+    <Style Selector="Border.SearchBarBorder TextBox">
+        <Setter Property="Background" Value="#f5f7ff"/>
+        <Setter Property="Foreground" Value="#000"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+        <Setter Property="BorderBrush" Value="#dde2f0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="CornerRadius" Value="50"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="SelectionBrush" Value="#500033A0"/>
+    </Style>
 
-            <Style Selector="Border.SearchBarBorder TextBox:pointerover /template/ Border#PART_BorderElement">
-                <Setter Property="Background" Value="#f5f7ff"/>
-                <Setter Property="BorderBrush" Value="#dde2f0"/>
-            </Style>
+    <Style Selector="Border.SearchBarBorder TextBox:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="#f5f7ff"/>
+        <Setter Property="BorderBrush" Value="#dde2f0"/>
+    </Style>
 
-            <Style Selector="Border.SearchBarBorder TextBox:focus /template/ Border#PART_BorderElement">
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="BorderBrush" Value="#0033A0"/>
-            </Style>
+    <Style Selector="Border.SearchBarBorder TextBox:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="BorderBrush" Value="#0033A0"/>
+    </Style>
 
-            <Style Selector="Border.SearchBarBorder TextBox:focus">
-                <Setter Property="Foreground" Value="Black"/>
-                <Setter Property="CaretBrush" Value="Black"/>
-            </Style>
+    <Style Selector="Border.SearchBarBorder TextBox:focus">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="CaretBrush" Value="Black"/>
+    </Style>
 
-            
+    <Style Selector="Button.BulkDeleteButton">
+        <Setter Property="Background" Value="#FFF4F4"/>
+        <Setter Property="BorderBrush" Value="#FFE0E0"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button.BulkDeleteButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#FFE5E5"/>
+        <Setter Property="BorderBrush" Value="#FFD0D0"/>
+    </Style>
+
+    <Style Selector="Button.BulkDeleteButton PathIcon">
+        <Setter Property="Foreground" Value="#D32F2F"/>
+    </Style>
+
+    <Style Selector="Button.BulkDeleteButton TextBlock">
+        <Setter Property="Foreground" Value="#D32F2F"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style Selector="CheckBox.SelectAllCheckBox">
+        <Setter Property="Foreground" Value="#7a8099"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <Style Selector="CheckBox.SelectAllCheckBox:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+
+    <Style Selector="CheckBox.SelectAllCheckBox:checked:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="#0033A0"/>
+    </Style>
+    
+    <Style Selector="CheckBox.SelectAllCheckBox /template/ Border#NormalRectangle">
+        <Setter Property="BorderBrush" Value="#b0bde8"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+        <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+
+    <Style Selector="CheckBox.SelectAllCheckBox:pointerover /template/ Border#NormalRectangle">
+        <Setter Property="BorderBrush" Value="#0033A0"/>
+    </Style>
+
+    <Style Selector="Button.ModalCancelButton">
+        <Setter Property="Background" Value="#f0f2f8"/>
+        <Setter Property="Foreground" Value="#7a8099"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="0,12"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.ModalCancelButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#e2e6f2"/>
+    </Style>
+
+    <Style Selector="Button.ModalDeleteButton">
+        <Setter Property="Background" Value="#D32F2F"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="0,12"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.2"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.ModalDeleteButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#B71C1C"/>
+    </Style>
 
 </Window.Styles>
 
@@ -145,6 +244,10 @@
 
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
 			<views:SettingsView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:MemberProfileViewModel}">
+            <views:MemberProfileView />
         </DataTemplate>
     </Window.DataTemplates>
 
@@ -179,18 +282,17 @@
 
         <Grid Grid.Column="1" RowDefinitions="Auto, *">
 
-			<Border Grid.Row="0" IsVisible="{Binding IsHeaderVisible}" Height="60" BorderBrush="LightGray" BorderThickness="0,0,0,1" Background="White">
-                <Grid ColumnDefinitions="Auto, *, Auto" Margin="20,0">
+            <Border Grid.Row="0" IsVisible="{Binding IsHeaderVisible}" Height="54" BorderBrush="#e4e7f0" BorderThickness="0,0,0,1" Background="#FEFEFE" Padding="20,0">
+                <Grid ColumnDefinitions="Auto, *, Auto">
         
                     <TextBlock Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Text="{Binding CurrentViewModel.PageTitle}" 
-                               FontSize="20" 
-                               FontWeight="SemiBold"
-                               Foreground="Black"/>
+                               FontSize="14" 
+                               FontWeight="Bold"
+                               Foreground="#000000"/>
 
-                    <Border Grid.Column="1" Classes="SearchBarBorder">
-            
+                    <Border Grid.Column="1" Classes="SearchBarBorder" VerticalAlignment="Center">
                         <TextBox Text="{Binding CurrentViewModel.SearchQuery, FallbackValue=''}"
                                  Watermark="Szukaj Członków..." 
                                  >
@@ -200,6 +302,26 @@
                         </TextBox>
                     </Border>
         
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                        
+                        <CheckBox Classes="SelectAllCheckBox"
+                                  Content="Zaznacz wszystkich" 
+                                  IsChecked="{Binding CurrentViewModel.IsAllSelected, FallbackValue=False}"
+                                  FontWeight="SemiBold" 
+                                  FontSize="13"
+                                  VerticalAlignment="Center"/>
+                        
+                        <Button Classes="BulkDeleteButton" ToolTip.Tip="Usuń zaznaczonych członków" Command="{Binding CurrentViewModel.RequestDeleteCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" 
+                                          Width="14" Height="14"/>
+                                <TextBlock Text="Usuń zaznaczone" 
+                                           FontSize="12" 
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
                 </Grid>
             </Border>
 
@@ -207,6 +329,188 @@
                 <ContentControl Content="{Binding CurrentViewModel}" />
             </Border>
 
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding CurrentViewModel.IsPopupVisible, FallbackValue=False}">
+            
+            <Border Background="#99000000" />
+
+            <Border Width="400" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    Padding="28,32"
+                    BoxShadow="0 10 40 0 #40000000">
+                
+                <StackPanel Spacing="20">
+                    <Panel HorizontalAlignment="Center" Width="60" Height="60">
+                        <Ellipse Fill="#FFF4F4" />
+                        <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" 
+                                  Foreground="#D32F2F" Width="24" Height="24"/>
+                    </Panel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Potwierdź usunięcie" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#000000" 
+                                   HorizontalAlignment="Center"/>
+                        
+                        <TextBlock Text="Czy na pewno chcesz usunąć zaznaczone elementy? Te zmiany są nieodwracalne." 
+                                   FontSize="13" 
+                                   Foreground="#7a8099" 
+                                   TextWrapping="Wrap" 
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Classes="ModalCancelButton"
+                                Content="Anuluj" 
+                                Margin="0,0,8,0"
+                                Command="{Binding CurrentViewModel.CancelDeleteCommand}"/>
+
+                        <Button Grid.Column="1" 
+                                Classes="ModalDeleteButton"
+                                Content="Usuń" 
+                                Margin="8,0,0,0"
+                                Command="{Binding CurrentViewModel.ConfirmDeleteCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding CurrentViewModel.IsAddPopupVisible, FallbackValue=False}">
+
+            <Border Background="#99000000" />
+
+            <Border Width="420" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    Padding="32,28"
+                    BoxShadow="0 10 40 0 #40000000">
+
+                <Border.Styles>
+                    <Style Selector="TextBox">
+                        <Setter Property="Background" Value="#f5f7ff"/>
+                        <Setter Property="Foreground" Value="#1a1a2e"/>
+                        <Setter Property="BorderBrush" Value="#dde2f0"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="CornerRadius" Value="8"/>
+                        <Setter Property="Height" Value="42"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Padding" Value="12,0"/>
+                        <Setter Property="SelectionBrush" Value="#500033A0"/>
+                        <Setter Property="CaretBrush" Value="#0033A0"/>
+                    </Style>
+                    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+                        <Setter Property="BorderBrush" Value="#b0bde8"/>
+                        <Setter Property="Background" Value="#f5f7ff"/>
+                    </Style>
+                    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+                        <Setter Property="BorderBrush" Value="#0033A0"/>
+                        <Setter Property="BorderThickness" Value="1.5"/>
+                        <Setter Property="Background" Value="#ffffff"/>
+                    </Style>
+                    <Style Selector="TextBox:focus">
+                        <Setter Property="Foreground" Value="#1a1a2e"/>
+                    </Style>
+                </Border.Styles>
+
+                <StackPanel Spacing="12">
+
+                    <StackPanel Spacing="4" Margin="0,0,0,8">
+                        <TextBlock Text="Dodaj nowego członka"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#1a1a2e"/>
+                        <TextBlock Text="Wypełnij dane nowego członka organizacji."
+                                   FontSize="12"
+                                   Foreground="#7a8099"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*, 10, *">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="Imię" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                            <TextBox Watermark="np. Jan" Text="{ReflectionBinding CurrentViewModel.NewFirstName}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Spacing="4">
+                            <TextBlock Text="Nazwisko" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                            <TextBox Watermark="np. Kowalski" Text="{ReflectionBinding CurrentViewModel.NewLastName}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Adres e-mail" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Watermark="np. jan.kowalski@ur.edu.pl" Text="{ReflectionBinding CurrentViewModel.NewEmail}">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Foreground="#b0bde8" Height="14" Width="14" Margin="10,0,4,0"
+                                          Data="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Numer indeksu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Watermark="np. 123456" Text="{ReflectionBinding CurrentViewModel.NewIndexNumber}">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Foreground="#b0bde8" Height="14" Width="14" Margin="10,0,4,0"
+                                          Data="M5.5 2A3.5 3.5 0 0 0 2 5.5v5A3.5 3.5 0 0 0 5.5 14h5a3.5 3.5 0 0 0 3.5-3.5V8a.5.5 0 0 1 1 0v2.5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 1 10.5v-5A4.5 4.5 0 0 1 5.5 1H8a.5.5 0 0 1 0 1zm7 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2m2-1a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                    </StackPanel>
+
+                    <Border Height="1" Background="#f0f2f8" Margin="0,4,0,4"/>
+
+                    <Grid ColumnDefinitions="*, 12, *">
+                        <Button Grid.Column="0"
+                                Content="Anuluj"
+                                VerticalContentAlignment="Center"
+                                Command="{ReflectionBinding CurrentViewModel.CancelAddCommand}"
+                                Background="#f0f2f8"
+                                Foreground="#7a8099"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                CornerRadius="8"
+                                Height="40"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Cursor="Hand">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#e2e6f2"/>
+                                    <Setter Property="Foreground" Value="#4a5099"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Grid.Column="2"
+                                Content="Dodaj członka"
+                                VerticalContentAlignment="Center"
+                                Command="{ReflectionBinding CurrentViewModel.ConfirmAddCommand}"
+                                Background="#0033A0"
+                                Foreground="White"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                CornerRadius="8"
+                                Height="40"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Cursor="Hand">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#002480"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+                    </Grid>
+
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 

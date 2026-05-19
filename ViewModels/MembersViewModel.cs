@@ -1,12 +1,18 @@
-﻿using System;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Esseti.Repositories.Interfaces;
+using Esseti.Services;
+using Esseti.ViewModels.Member;
+using Microsoft.Extensions.DependencyInjection;
+using Models.Users;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Esseti.Repositories.Interfaces;
-using Esseti.ViewModels.Member;
 
 namespace Esseti.ViewModels
 {
@@ -15,85 +21,245 @@ namespace Esseti.ViewModels
         public override string PageTitle => "Lista członków";
 
         public ObservableCollection<MemberItemViewModel> Members { get; } = new();
-
         private readonly IMemberRepository _memberRepository;
-
         private readonly List<MemberItemViewModel> _allMembers = new();
+        private MemberItemViewModel? _memberToDelete;
 
-        public MembersViewModel(IMemberRepository memberRepository)
+        [ObservableProperty] 
+        private string _newFirstName = string.Empty;
+
+        [ObservableProperty] 
+        private string _newLastName = string.Empty;
+
+        [ObservableProperty] 
+        private string _newEmail = string.Empty;
+
+        [ObservableProperty] 
+        private string _newIndexNumber = string.Empty;
+
+        private readonly INavigationService _navigationService;
+
+
+        protected override void OnPopupClosed()
+        {
+            
+        }
+
+        protected override void OnIsAllSelectedChangedVirtual(bool value)
+        {
+            if (_isUpdatingSelection) return;
+
+            _isUpdatingSelection = true;
+
+            try
+            {
+                foreach (var member in Members.Where(m => !m.IsSystemAddTile)) {
+                    member.IsSelected = value;
+                }
+                UpdateSelectionState();
+            } finally
+            {
+                _isUpdatingSelection = false;
+            }
+        }
+
+        public MembersViewModel(IMemberRepository memberRepository, INavigationService navigationService)
         {
             _memberRepository = memberRepository;
-
-            Task.Run(() => LoadDataAsync());
+            _navigationService = navigationService;
+            _ = LoadDataAsync();
         }
 
-        protected override void OnSearchQueryUpdated(string value)
+        private void UpdateSelectionState()
         {
-            ApplyFilter();
+            var selected = Members.Where(m => !m.IsSystemAddTile && m.IsSelected).ToList();
+            SelectedCount = selected.Count;
+            IsAnySelected = SelectedCount > 0;
         }
+
+        protected override async Task ExecuteConfirmDeleteAsync()
+        {
+            try
+            {
+                if (_memberToDelete != null)
+                {
+                    await _memberRepository.DeleteSingleMemberAsync(_memberToDelete.MemberId);
+
+                    Members.Remove(_memberToDelete);
+                    _allMembers.Remove(_memberToDelete);
+
+                    _memberToDelete = null;
+                }
+                else
+                {
+                    var selectedVMs = Members.Where(m => m.IsSelected && !m.IsSystemAddTile).ToList();
+                    if (!selectedVMs.Any()) return;
+
+                    var idsToDelete = selectedVMs.Select(m => m.MemberId).ToList();
+                    await _memberRepository.DeleteMembersAsync(idsToDelete);
+
+                    foreach (var vm in selectedVMs)
+                    {
+                        Members.Remove(vm);
+                        _allMembers.Remove(vm);
+                    }
+                }
+
+                IsAllSelected = false;
+                UpdateSelectionState();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd bazy: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private void OpenProfile(MemberItemViewModel member)
+        {
+            if (member == null || member.IsSystemAddTile) return;
+            var profileVm = new MemberProfileViewModel(
+                member.MemberId,
+                _navigationService,
+                App.Services.GetRequiredService<IMemberRepository>()
+            );
+            _navigationService.NavigateTo(profileVm);
+        }
+
+        [RelayCommand]  
+        private void EditMember(MemberItemViewModel member)
+        {
+            if (member == null) return;
+            System.Diagnostics.Debug.WriteLine($"Edytuję członka: {member.FullName}");
+        }
+
+        [RelayCommand]
+        private void DeleteSingleMember(MemberItemViewModel member)
+        {
+            if (member == null) return;
+
+            _memberToDelete = member;
+            IsPopupVisible = true;
+        }
+
+        [RelayCommand]
+        private void AddMember()
+        {
+            NewFirstName = string.Empty;
+            NewLastName = string.Empty;
+            NewEmail = string.Empty;
+            NewIndexNumber = string.Empty;
+
+            IsAddPopupVisible = true;
+        }
+
+        [RelayCommand]
+        private void CancelAdd()
+        {
+            IsAddPopupVisible = false;
+        }
+
+        [RelayCommand]
+        private async Task ConfirmAddAsync()
+        {
+            if (string.IsNullOrWhiteSpace(NewFirstName) || string.IsNullOrWhiteSpace(NewLastName))
+                return;
+
+            var newMemberDb = new Models.Users.Member
+            {
+                FirstName = NewFirstName,
+                LastName = NewLastName,
+                IndexNumber = NewIndexNumber,
+                IsActive = true,
+                JoinDate = System.DateTime.Now,
+                Account = string.IsNullOrWhiteSpace(NewEmail)? null: new UserAccount
+                            {
+                                Email = NewEmail,
+                                SystemRole = Models.Enums.SystemRole.User
+                            }
+            };
+
+            await _memberRepository.AddMemberAsync(newMemberDb);
+
+            await LoadDataAsync();
+
+            IsAddPopupVisible = false;
+        }
+
+        protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
 
         private async Task LoadDataAsync()
         {
-            var membersFromDb = await _memberRepository.GetAllMembersAsync();
-
-            Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
+            try
             {
-                _allMembers.Clear();
-
-                _allMembers.Add(new MemberItemViewModel(
-                    avatar: Array.Empty<byte>(),
-                    firstName: string.Empty,
-                    lastName: string.Empty,
-                    role: string.Empty,
-                    indexNumber: string.Empty,
-                    email: string.Empty,
-                    collegeDepartment: string.Empty,
-                    major: string.Empty,
-                    joinDate: string.Empty,
-                    isActive: true,
-                    isSystemAddTile: true
-                ));
-
-                foreach (var m in membersFromDb)
+                var membersFromDb = await _memberRepository.GetAllMembersAsync();
+                Dispatcher.UIThread.Post(() =>
                 {
-                    var itemVm = new MemberItemViewModel(
-                        avatar: m.MemberAvatar ?? Array.Empty<byte>(),
-                        firstName: m.FirstName,
-                        lastName: m.LastName,
-                        role: m.AuthorityRole?.Name ?? "Brak roli",
-                        indexNumber: m.IndexNumber ?? "00000000",
-                        email: m.Account?.Email ?? "Brak@email.pl",
-                        collegeDepartment: m.Department?.Name ?? "Brak wydziału",
-                        major: m.Major ?? "Brak kierunku",
-                        joinDate: m.JoinDate.ToString("dd.MM.yyyy"),
-                        isActive: m.IsActive,
-                        isSystemAddTile: false
-                    );
+                    _allMembers.Clear();
+                    _allMembers.Add(new MemberItemViewModel(0, Array.Empty<byte>(), "", "", "", "", "", "", "", "", true, true));
 
-                    _allMembers.Add(itemVm);
-                }
+                    if (membersFromDb != null)
+                    {
+                        foreach (var m in membersFromDb)
+                        {
+                            var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziału";
+                            var vm = new MemberItemViewModel(
+                                memberId: m.MemberId,
+                                avatar: m.MemberAvatar ?? Array.Empty<byte>(),
+                                firstName: m.FirstName ?? string.Empty,
+                                lastName: m.LastName ?? string.Empty,
+                                role: m.AuthorityRole?.Name ?? "Brak roli",
+                                indexNumber: m.IndexNumber ?? string.Empty,
+                                email: m.Account?.Email ?? string.Empty,
+                                collegeDepartment: dept,
+                                major: m.Major ?? string.Empty,
+                                joinDate: m.JoinDate.ToString("dd.MM.yyyy"),
+                                isActive: m.IsActive,
+                                isSystemAddTile: false
+                            );
+                            vm.PropertyChanged += (s, e) =>
+                            {
+                                if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
+                                {
+                                    UpdateSelectionState();
 
-                ApplyFilter();
-            });
+                                    if (!_isUpdatingSelection)
+                                    {
+                                        _isUpdatingSelection = true;
+                                        try
+                                        {
+                                            var selectableMembers = Members.Where(m => !m.IsSystemAddTile).ToList();
+                                            if (selectableMembers.Any())
+                                            {
+                                                IsAllSelected = selectableMembers.All(m => m.IsSelected);
+                                            }
+                                        }
+                                        finally
+                                        {
+                                            _isUpdatingSelection = false;
+                                        }
+                                    }
+                                }
+                            };
+                            _allMembers.Add(vm);
+                        }
+                    }
+                    ApplyFilter();
+                });
+            }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
         }
 
         private void ApplyFilter()
         {
             Members.Clear();
-
             var query = SearchQuery?.ToLower() ?? "";
-
             foreach (var item in _allMembers)
             {
-                if (item.IsSystemAddTile || 
-                    item.FullName.ToLower().Contains(query) ||
-                    item.Role.ToLower().Contains(query) ||
-                    item.Major.ToLower().Contains(query))
-                {
+                if (item.IsSystemAddTile || item.FullName.ToLower().Contains(query) || item.Role.ToLower().Contains(query))
                     Members.Add(item);
-                }
-
             }
+            UpdateSelectionState();
         }
     }
 }
