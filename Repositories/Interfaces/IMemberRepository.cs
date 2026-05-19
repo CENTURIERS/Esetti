@@ -9,5 +9,16 @@ namespace Esseti.Repositories.Interfaces
     public interface IMemberRepository
     {
         Task<List<Member>> GetAllMembersAsync();
+    
+        Task DeleteSingleMemberAsync(int id);
+
+        Task DeleteMembersAsync(IEnumerable<int> memberIds);
+
+        Task AddMemberAsync(Member member);
+
+        Task<Member?> GetMemberByIdAsync(int id);
+
+        Task UpdateMemberAsync(Member member, List<int> remainingProjectIds, List<int> remainingActivityIds);
+
     }
 }
