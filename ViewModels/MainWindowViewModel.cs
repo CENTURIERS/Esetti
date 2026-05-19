@@ -9,7 +9,6 @@ using Esseti.Repositories;
 using System;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.DependencyInjection;
-using Esseti.Services;
 
 namespace Esseti.ViewModels
 {
@@ -51,17 +50,10 @@ namespace Esseti.ViewModels
 
         public ObservableCollection<NavigationItemViewModel> MenuItems { get; }
 
-        public MainWindowViewModel(INavigationService navigationService)
+        public MainWindowViewModel()
         {
-            if (navigationService is NavigationService nav)
-                nav.OnNavigate = vm =>
-                {
-                    CurrentViewModel = vm;
-                    if (vm is MemberProfileViewModel) SetActiveMenuItem(2);
-                    if (!_isViewChanged) ChangeView();
-                };
+            CurrentViewModel = new StartViewModel(); 
 
-            CurrentViewModel = new StartViewModel();
             LoadLogo(HeaderLogoPath);
 
             MenuItems = new ObservableCollection<NavigationItemViewModel> { 
@@ -88,17 +80,10 @@ namespace Esseti.ViewModels
             };
         }
 
-        private void SetActiveMenuItem(int index)
-        {
-            for (int i = 0; i < MenuItems.Count; i++)
-                MenuItems[i].IsActive = (i == index);
-        }
-
         [RelayCommand]
         public void ShowAllActivities()
         {
             CurrentViewModel = new ActivitiesViewModel();
-            SetActiveMenuItem(0);
 
             if (!_isViewChanged)
             {
@@ -110,7 +95,7 @@ namespace Esseti.ViewModels
         public void ShowAllProjects()
         {
             CurrentViewModel = new ProjectsViewModel();
-            SetActiveMenuItem(1);
+
             if (!_isViewChanged)
             {
                 ChangeView();
@@ -121,7 +106,7 @@ namespace Esseti.ViewModels
         public void ShowAllMembers()
         {
             CurrentViewModel = App.Services.GetRequiredService<MembersViewModel>();
-            SetActiveMenuItem(2);
+
             if (!_isViewChanged)
             {
                 ChangeView();
@@ -132,7 +117,7 @@ namespace Esseti.ViewModels
         public void ShowClubInfo()
         {
             CurrentViewModel = new ClubInfoViewModel();
-            SetActiveMenuItem(3);
+
             if (!_isViewChanged)
             {
                 ChangeView();
@@ -143,7 +128,7 @@ namespace Esseti.ViewModels
         public void ShowDocumentsPage()
         {
             CurrentViewModel = new DocumentsViewModel();
-            SetActiveMenuItem(4);
+
             if (!_isViewChanged)
             {
                 ChangeView();

@@ -1,187 +1,262 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vmc="using:Esseti.ViewModels"
              xmlns:vmm="using:Esseti.ViewModels.Member"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-             x:Class="Esseti.Views.MembersView"
              x:DataType="vmc:MembersViewModel"
-             Background="Transparent">
+             x:Class="Esseti.Views.MembersView">
 
     <UserControl.Styles>
-        <Style Selector="Button.iconButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-        <Style Selector="Button.iconButton PathIcon">
-            <Setter Property="Foreground" Value="#7a8099"/>
-            <Setter Property="Width" Value="16"/>
-            <Setter Property="Height" Value="16"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.iconButton:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#f0f2f8"/>
-        </Style>
-        <Style Selector="Button.iconButton:pointerover PathIcon">
-            <Setter Property="Foreground" Value="#0033A0"/>
+        <Style Selector="Button.Action">
+			<Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
         </Style>
 
-        <Style Selector="Panel.AddMemberTile">
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-        <Style Selector="Panel.AddMemberTile Rectangle">
-            <Setter Property="Fill" Value="#f7f8ff"/>
-            <Setter Property="Stroke" Value="#b0bde8"/>
-            <Setter Property="StrokeThickness" Value="2"/>
-            <Setter Property="StrokeDashArray" Value="6, 4"/>
-            <Setter Property="RadiusX" Value="14"/>
-            <Setter Property="RadiusY" Value="14"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="Fill" Duration="0:0:0.2"/>
-                    <BrushTransition Property="Stroke" Duration="0:0:0.2"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Panel.AddMemberTile:pointerover Rectangle">
-            <Setter Property="Fill" Value="#eef1ff"/>
-            <Setter Property="Stroke" Value="#0033A0"/>
+		    <Style Selector="Button.Action StackPanel">
+			    <Setter Property="Orientation" Value="Horizontal" /> 
+                <Setter Property="Spacing" Value="2" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+                <Style Selector="Button.Action StackPanel TextBlock">
+			        <Setter Property="Foreground" Value="Gray" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Transitions">
+				        <Transitions>
+					        <BrushTransition Property="Foreground" Duration="0:0:0.2" />
+                            <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                        </Transitions>
+                    </Setter>
+                </Style>
+
+                <Style Selector="Button.Action StackPanel PathIcon">
+                    <Setter Property="Foreground" Value="Gray" />
+			        <Setter Property="Height" Value="14" />
+                    <Setter Property="Width" Value="14" />
+                    <Setter Property="Transitions">
+				        <Transitions>
+					        <BrushTransition Property="Foreground" Duration="0:0:0.2" />
+                        </Transitions>
+                    </Setter>
+                </Style>
+
+                <Style Selector="Button.Action PathIcon, Button.Action TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                </Style>
+
+
+                <Style Selector="Button.Action:pointerover TextBlock">
+                    <Setter Property="Foreground" Value="#0033A0" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+
+                <Style Selector="Button.Action:pointerover PathIcon">
+                    <Setter Property="Foreground" Value="#0033A0" />
+                </Style>
+
+        <Style Selector="Panel.AddMember">
+            <Setter Property="Cursor" Value="Hand" />
         </Style>
 
-        <Style Selector="CheckBox.MemberCheckBox">
-            <Setter Property="Cursor" Value="Hand"/>
+            <Style Selector="Panel.AddMember Rectangle">
+                <Setter Property="Fill" Value="#f7f8ff" />
+			    <Setter Property="Stroke" Value="#b0bde8" />
+                <Setter Property="StrokeThickness" Value="2" />
+                <Setter Property="StrokeDashArray" Value="4, 2" />
+                <Setter Property="RadiusX" Value="15" />
+                <Setter Property="RadiusY" Value="15" />
+                <Setter Property="Margin" Value="2" />
+
+                <Setter Property="Transitions">
+					<Transitions>
+						<BrushTransition Property="Fill" Duration="0:0:0.2" />
+                        <BrushTransition Property="Stroke" Duration="0:0:0.2" />
+                    </Transitions>
+                </Setter>
+            </Style>
+
+            <Style Selector="Panel.AddMember Button">
+			    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="CornerRadius" Value="15" />
+            </Style>
+
+                <Style Selector="Panel.AddMember Button StackPanel">
+			        <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Spacing" Value="10" />
+                </Style>
+
+                <Style Selector="Panel.AddMember Button Panel">
+			        <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+
+                    <Style Selector="Panel.AddMember Button Panel Ellipse">
+			            <Setter Property="Fill" Value="#0033A0" />
+                        <Setter Property="Height" Value="50" />
+                        <Setter Property="Width" Value="50" />
+                    </Style>
+
+                <Style Selector="Panel.AddMember Button TextBlock">
+			        <Setter Property="FontWeight" Value="UltraBlack" />
+                    <Setter Property="Foreground" Value="#0033A0" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                </Style>
+
+        <Style Selector="Panel.AddMember:pointerover Rectangle">
+            <Setter Property="Stroke" Value="#0033A0" />
+            <Setter Property="Fill" Value="#eef1ff" />
         </Style>
-        <Style Selector="CheckBox.MemberCheckBox /template/ Border#NormalRectangle">
-            <Setter Property="BorderBrush" Value="#b0bde8"/>
-            <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="CornerRadius" Value="4"/>
-        </Style>
-        <Style Selector="CheckBox.MemberCheckBox:pointerover /template/ Border#NormalRectangle">
-            <Setter Property="BorderBrush" Value="#0033A0"/>
-        </Style>
+
+
+
     </UserControl.Styles>
-
+    
     <Grid RowDefinitions="*">
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="10">
-            <ItemsControl ItemsSource="{Binding Members}">
-                
-                <ItemsControl.ItemsPanel>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+			<ItemsControl ItemsSource="{Binding Members}">
+
+               <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vmm:MemberItemViewModel">
-                        <Panel Margin="10">
-                            
-                            <Border IsVisible="{Binding !IsSystemAddTile}"
-                                    Width="240"
-                                    Background="#FEFEFE"
-                                    CornerRadius="14"
-                                    BorderBrush="#d0d4e8"
-                                    BorderThickness="1"
-                                    Padding="20,24,20,16"
-                                    BoxShadow="0 6 28 0 #1A0033A0">
-                                
-                                <Panel>
-                                    <CheckBox Classes="MemberCheckBox"
-                                              IsChecked="{Binding IsSelected}"
-                                              HorizontalAlignment="Left"
-                                              VerticalAlignment="Top"
-                                              Margin="-8,-12,0,0"/>
-
-                                    <Grid RowDefinitions="Auto, *, Auto">
-                                        <Ellipse Grid.Row="0" Width="72" Height="72" HorizontalAlignment="Center" Margin="0,0,0,16">
-                                            <Ellipse.Fill>
-                                                <ImageBrush Source="{Binding Avatar}" Stretch="UniformToFill"/>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-
-                                        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Spacing="4">
+                        <Border Width="200" 
+                                Height="240" 
+                                Margin="10"
+                                CornerRadius="15"
+                                Background="White"
+                                BoxShadow="0 4 8 0 #15000000">
+            
+                            <Panel>
+									<Grid IsVisible="{Binding !IsSystemAddTile}" RowDefinitions="*, Auto">
+                                        <StackPanel Grid.Row="0" VerticalAlignment="Top" Spacing="1">
+                                            <Border Background="#0033A0" CornerRadius="15, 15, 0, 0" Padding="5">
+											    <Panel Width="60" Height="60">
+                                                    <Ellipse Fill="White" />
+												    <Ellipse  Margin="2">
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush Source="{Binding Avatar}" Stretch="UniformToFill"/>
+                                                        </Ellipse.Fill>    
+                                                    </Ellipse>
+                                                </Panel>
+                                            </Border>
+                    
                                             <TextBlock Text="{Binding FullName}" 
-                                                       FontWeight="Bold" 
-                                                       FontSize="16" 
-                                                       Foreground="#000000" 
-                                                       HorizontalAlignment="Center"
-                                                       TextWrapping="Wrap"
-                                                       TextAlignment="Center"/>
+                                                       Foreground="Black"
+                                                       FontWeight="Black" 
+                                                       FontSize="16"
+                                                       Margin="0,5,0,0"
+                                                       HorizontalAlignment="Center" />
+                    
+                                            <TextBlock Text="{Binding IndexNumber}" 
+                                                       Foreground="Gray"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center" />
+
                                             <TextBlock Text="{Binding Role}" 
-                                                       FontSize="12" 
-                                                       Foreground="#7a8099" 
-                                                       HorizontalAlignment="Center"/>
+                                                       Foreground="Gray"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center" />
+                    
                                             <TextBlock Text="{Binding Email}" 
-                                                       FontSize="12" 
                                                        Foreground="#0033A0" 
-                                                       FontWeight="SemiBold"
-                                                       HorizontalAlignment="Center" 
-                                                       Margin="0,4,0,4"/>
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center" />
+                    
                                             <TextBlock Text="{Binding CollegeDepartment}" 
-                                                       FontSize="11" 
-                                                       Foreground="#7a8099" 
-                                                       HorizontalAlignment="Center"
-                                                       TextWrapping="Wrap"
-                                                       TextAlignment="Center"/>
+                                                       Foreground="Gray" 
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center" />
+
                                             <TextBlock Text="{Binding Major}" 
-                                                       FontSize="11" 
-                                                       Foreground="#7a8099" 
-                                                       HorizontalAlignment="Center"
-                                                       TextWrapping="Wrap"
-                                                       TextAlignment="Center"/>
+                                                       Foreground="Gray" 
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center" />
+                    
+                                            <Border Background="#0033A0" 
+                                                    CornerRadius="20" 
+                                                    Padding="5,2" 
+                                                    HorizontalAlignment="Stretch" 
+                                                    Margin="10,5,10,5">
+
+                                                <TextBlock Text="{Binding FullFromDate}"
+                                                           HorizontalAlignment="Center"
+                                                           Foreground="White" 
+                                                           FontSize="12"/>
+                                            </Border>
                                         </StackPanel>
 
-                                        <Border Grid.Row="2" Margin="0,20,0,0" BorderThickness="0,1,0,0" BorderBrush="#e4e7f0" Padding="0,12,0,0">
-                                            <Grid ColumnDefinitions="*, *, *">
-                                                <Button Grid.Column="0" Classes="iconButton" ToolTip.Tip="Profil"
-                                                        Command="{ReflectionBinding $parent[UserControl].DataContext.OpenProfileCommand}"
-                                                        CommandParameter="{Binding}">
-                                                    <PathIcon Data="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                                                </Button>
-                                                <Button Grid.Column="1" Classes="iconButton" ToolTip.Tip="Edytuj">
-                                                    <PathIcon Data="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                                </Button>
-                                                <Button Grid.Column="2" Classes="iconButton" ToolTip.Tip="Usuń" 
-                                                        Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteSingleMemberCommand}"
-                                                        CommandParameter="{Binding}"
-                                                        >
-                                                    <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                                                </Button>
+                                        <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1,0,0">
+									        <Grid ColumnDefinitions="*, *, *" HorizontalAlignment="Stretch">
+
+                                                <Border Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+												    <Button Classes="Action">
+													    <StackPanel>
+                                                            <PathIcon Data="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+														    <TextBlock Text="Profil" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                </Border>
+
+                                                <Border Grid.Column="1" BorderThickness="1,0,1,0" BorderBrush="LightGray">
+                                                    <Button Classes="Action">
+													    <StackPanel>
+                                                            <PathIcon Data="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+														    <TextBlock Text="Edytuj" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                </Border>
+
+                                                <Border Grid.Column="2">
+													<Button Classes="Action">
+                                                        <StackPanel>
+                                                            <PathIcon  Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+														    <TextBlock Text="Usuń" />
+                                                        </StackPanel>												
+                                                    </Button>
+                                                </Border>
                                             </Grid>
                                         </Border>
                                     </Grid>
+
+                                <Panel Classes="AddMember" IsVisible="{Binding IsSystemAddTile}">
+									<Rectangle />
+
+                                    <Button>
+                                        <StackPanel>
+											
+                                        
+                                            <Panel>
+                                                <Ellipse/>
+                                                <PathIcon Data="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                                            </Panel>
+                                            <TextBlock Text="DODAJ CZŁONKA"/>
+                                       </StackPanel>
+                                    </Button>
+
                                 </Panel>
-                            </Border>
 
-                            <Panel Classes="AddMemberTile" IsVisible="{Binding IsSystemAddTile}" Width="240" Height="280">
-                                <Rectangle />
-                                <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" BorderThickness="0" Command="{Binding $parent[UserControl].((vmc:MembersViewModel)DataContext).AddMemberCommand}">
-                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
-                                        <Panel Width="50" Height="50" HorizontalAlignment="Center">
-                                            <Ellipse Fill="#eef1ff"/>
-                                            <PathIcon Data="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" 
-                                                      Foreground="#0033A0" 
-                                                      Width="20" Height="20" 
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Panel>
-                                        <TextBlock Text="DODAJ CZŁONKA" FontWeight="UltraBlack" Foreground="#0033A0" FontSize="12" HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Button>
+                                
                             </Panel>
-
-                        </Panel>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
+
             </ItemsControl>
         </ScrollViewer>
     </Grid>
+
 </UserControl>
