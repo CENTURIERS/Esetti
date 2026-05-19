@@ -7,8 +7,7 @@ namespace Esseti.Views
 {
     public partial class MembersView : UserControl
     {
-        public MembersView()
-        {
+        public MembersView() { 
             InitializeComponent();
         }
     }

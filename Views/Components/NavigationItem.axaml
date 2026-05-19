@@ -4,9 +4,9 @@
              x:DataType="vmc:NavigationItemViewModel"
              x:Class="Esseti.Views.Components.NavigationItem">             
 
-    <Button Classes="LeftPanelButton" Classes.Active="{Binding IsActive}" Command="{Binding Command}">
-        <StackPanel Orientation="Horizontal" Spacing="15">
-            <PathIcon Height="24" Width="24" Data="{Binding Icon}" />
+    <Button Classes="LeftPanelButton" Command="{Binding Command}">
+        <StackPanel Orientation="Horizontal" Spacing="15" >
+	        <PathIcon Height="24" Width="24"  Data="{Binding Icon}" />
             <TextBlock Text="{Binding Label}" />
         </StackPanel>
     </Button>

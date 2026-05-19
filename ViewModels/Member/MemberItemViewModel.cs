@@ -8,11 +8,6 @@ namespace Esseti.ViewModels.Member
 {
     public partial class MemberItemViewModel : ViewModelBase
     {
-        public int MemberId { get; }
-
-        [ObservableProperty]
-        private bool _isSelected;
-
         [ObservableProperty]
         private Bitmap? _avatar;
 
@@ -46,24 +41,28 @@ namespace Esseti.ViewModels.Member
         [ObservableProperty]
         private bool _isSystemAddTile;
 
-        public string FullName => $"{FirstName} {LastName}".Trim();
+        private static readonly Bitmap DefaultAvatar = new Bitmap(AssetLoader.Open(new Uri("avares://Esseti/Assets/user-default.png")));
+
+        public string FullName => $"{FirstName} {LastName}";
+
         public string FullFromDate => $"Od {JoinDate} r.";
 
-        private static Bitmap? _defaultAvatar;
-        private static Bitmap? SafeDefaultAvatar
-        {
-            get
-            {
-                if (_defaultAvatar != null) return _defaultAvatar;
-                try { _defaultAvatar = new Bitmap(AssetLoader.Open(new Uri("avares://Esseti/Assets/user-default.png"))); }
-                catch { }
-                return _defaultAvatar;
-            }
-        }
 
-        public MemberItemViewModel(int memberId, byte[] avatar, string firstName, string lastName, string role, string indexNumber, string email, string collegeDepartment, string major, string joinDate, bool isActive, bool isSystemAddTile = false)
+        public MemberItemViewModel(byte[] avatar, string firstName, string lastName, string role, string indexNumber, string email, string collegeDepartment, string major, string joinDate, bool isActive, bool isSystemAddTile = false)
         {
-            MemberId = memberId;
+            if (avatar != null && avatar.Length > 0)
+            {
+                try
+                {
+                    using (var ms = new MemoryStream(avatar))
+                    {
+                        Avatar = new Bitmap(ms);
+                    }
+                } catch
+                {
+                    Avatar = DefaultAvatar;
+                }
+            }
             FirstName = firstName;
             LastName = lastName;
             Role = role;
@@ -74,13 +73,7 @@ namespace Esseti.ViewModels.Member
             JoinDate = joinDate;
             IsActive = isActive;
             IsSystemAddTile = isSystemAddTile;
-
-            if (avatar != null && avatar.Length > 0)
-            {
-                try { using var ms = new MemoryStream(avatar); Avatar = new Bitmap(ms); }
-                catch { Avatar = SafeDefaultAvatar; }
-            }
-            else Avatar = SafeDefaultAvatar;
         }
+
     }
 }
