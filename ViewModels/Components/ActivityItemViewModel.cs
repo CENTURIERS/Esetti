@@ -19,13 +19,17 @@ namespace Esseti.ViewModels.Components
         [ObservableProperty]
         private bool _isSelected;
 
-        public ActivityItemViewModel(string activityId, string name, string description, string dateString, bool isSelected)
+        [ObservableProperty]
+        private bool _isRepeatable;
+
+        public ActivityItemViewModel(string activityId, string name, string description, string dateString, bool isSelected, bool isRepeatable)
         {
             _activityId = activityId;
             _name = name;
             _description = description;
             _dateString = dateString;
             _isSelected = isSelected;
+            _isRepeatable = isRepeatable;
         }
     }
 }

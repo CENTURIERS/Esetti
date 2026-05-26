@@ -1,0 +1,546 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Esseti.ViewModels"
+             xmlns:mu="using:Models.Users"
+             x:Class="Esseti.Views.ProjectProfileView"
+             x:DataType="vm:ProjectProfileViewModel"
+             Background="Transparent">
+
+    <UserControl.Styles>
+        <Style Selector="Button.BackBtn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#7a8099"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+        <Style Selector="Button.BackBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#eef1ff"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+        <Style Selector="Button.BackBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+        <Style Selector="Button.BackBtn:pointerover TextBlock">
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+
+        <Style Selector="Button.ActionBtn">
+            <Setter Property="Background" Value="#f4f6fc"/>
+            <Setter Property="BorderBrush" Value="#d0d8ed"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.ActionBtn:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.ActionBtn PathIcon">
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.DeleteBtn">
+            <Setter Property="Background" Value="#fff5f5"/>
+            <Setter Property="BorderBrush" Value="#fcdada"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#D32F2F"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#D32F2F"/>
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.DeleteBtn PathIcon">
+            <Setter Property="Foreground" Value="#D32F2F"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="TextBlock.form-label">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-input">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-input:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-input:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-textarea">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-textarea:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-textarea:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="ComboBox.form-select">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ComboBox.form-select:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="ComboBox.form-select:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="Button.btn-cancel">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="20,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.btn-cancel:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#f5f7ff"/>
+            <Setter Property="BorderBrush" Value="#ccd3ee"/>
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+
+        <Style Selector="Button.btn-save">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="22,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.btn-save:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#002270"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.modal-close">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.12"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.modal-close:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2EFFFFFF"/>
+            <Setter Property="Opacity" Value="1.0"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Panel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16" Margin="28,20,28,32">
+                
+                <!-- BACK BUTTON -->
+                <Button Classes="BackBtn" Command="{Binding GoBackCommand}" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Width="13" Height="13" Foreground="#7a8099"
+                                  Data="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                        <TextBlock Text="Wróć do listy projektów" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- LOADING SPINNER -->
+                <TextBlock Text="Ładowanie profilu projektu..." FontSize="14" Foreground="#b0bde8"
+                           HorizontalAlignment="Center" Margin="0,60"
+                           IsVisible="{Binding IsLoading}"/>
+
+                <StackPanel Spacing="14" IsVisible="{Binding !IsLoading}">
+                    
+                    <!-- HEADER BOARD -->
+                    <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="28,24">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <StackPanel Grid.Column="0" Spacing="8">
+                                <TextBlock Text="{Binding ProjectName}" FontSize="24" FontWeight="Bold" Foreground="#1a1a2e" />
+                                <StackPanel Orientation="Horizontal" Spacing="14">
+                                    <!-- Date Start / Date End -->
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <PathIcon Width="12" Height="12" Data="M11 2H9V1a1 1 0 0 0-2 0v1H5V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m1 11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h10z" Foreground="#7a8099"/>
+                                        <TextBlock Text="{Binding DateStartText}" FontSize="12.5" Foreground="#666" />
+                                        <TextBlock Text="-" FontSize="12.5" Foreground="#666" />
+                                        <TextBlock Text="{Binding DateEndText}" FontSize="12.5" Foreground="#666" />
+                                    </StackPanel>
+                                    <TextBlock Text="•" Foreground="Gray" VerticalAlignment="Center" />
+                                    <!-- Estimated Time -->
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <PathIcon Width="12" Height="12" Data="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16 M8 4a.5.5 0 0 1 .5.5v3.293l2.853 2.854a.5.5 0 0 1-.707.708l-3-3A.5.5 0 0 1 7.5 8V4.5A.5.5 0 0 1 8 4" Foreground="#7a8099" />
+                                        <TextBlock Text="{Binding EstimatedTimeText}" FontSize="12.5" Foreground="#666"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- Actions -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                <Button Classes="ActionBtn" Command="{Binding OpenEditCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <PathIcon Width="12" Height="12" Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                        <TextBlock Text="Edytuj" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Classes="DeleteBtn" Command="{Binding DeleteThisProjectCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <PathIcon Width="12" Height="12" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        <TextBlock Text="Usuń projekt" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- CONTENT ROW: LEFT (DETAILS), RIGHT (LEADER & PARTICIPANTS) -->
+                    <Grid ColumnDefinitions="*, 20, 420" Margin="0">
+                        <!-- Left: Description and Additional Info -->
+                        <StackPanel Grid.Column="0" Spacing="14">
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Opis projektu" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <TextBlock Text="{Binding Description}" FontSize="13" Foreground="#2d2d2d" TextWrapping="Wrap" LineHeight="19"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Dodatkowe informacje" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <TextBlock Text="{Binding AdditionalInformation}" FontSize="13" Foreground="#2d2d2d" TextWrapping="Wrap" LineHeight="19"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Repozytorium GitHub" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <PathIcon Width="14" Height="14" Data="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" Foreground="#2d2d2d" />
+                                        <TextBlock Text="{Binding Github}" FontSize="13" FontWeight="SemiBold" Foreground="#0033A0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        
+                        <!-- Right: Leader & Participants -->
+                        <StackPanel Grid.Column="2" Spacing="14">
+                            <!-- Leader Card -->
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Lider projektu" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,4,0,0">
+                                        <Panel Width="40" Height="40">
+                                            <Ellipse Fill="#E2E6F2" />
+                                            <PathIcon Data="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1c-2.33 0-7 1.17-7 3.5V14h14v-1.5c0-2.33-4.67-3.5-7-3.5" Foreground="#0033A0" Width="16" Height="16"/>
+                                        </Panel>
+                                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding LeaderName}" FontSize="13.5" FontWeight="Bold" Foreground="#1a1a2e" />
+                                            <TextBlock Text="{Binding LeaderEmail}" FontSize="11.5" Foreground="#7a8099" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Participants Card -->
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="16">
+                                    <TextBlock Text="Uczestnicy projektu" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    
+                                    <!-- ComboBox to add a participant -->
+                                    <Grid ColumnDefinitions="*, 8, Auto">
+                                        <ComboBox Grid.Column="0" 
+                                                  Classes="form-select" 
+                                                  ItemsSource="{Binding ClubMembers}" 
+                                                  SelectedItem="{Binding SelectedMemberToAdd}"
+                                                  PlaceholderText="Wybierz członka koła...">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate DataType="mu:Member">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                                        <TextBlock Text="{Binding FirstName}" />
+                                                        <TextBlock Text="{Binding LastName}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <Button Grid.Column="2" Classes="ActionBtn" Content="Dodaj" Command="{Binding AddParticipantCommand}"/>
+                                    </Grid>
+                                    
+                                    <Border Height="1" Background="#f0f2f8" />
+                                    
+                                    <!-- List of participants -->
+                                    <TextBlock Text="Brak uczestników w projekcie." 
+                                               FontSize="12" 
+                                               Foreground="#7a8099" 
+                                               FontStyle="Italic"
+                                               HorizontalAlignment="Center" 
+                                               Margin="0,10" 
+                                               IsVisible="{Binding !Participants.Count}"/>
+                                    
+                                    <ItemsControl ItemsSource="{Binding Participants}" IsVisible="{Binding Participants.Count}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Spacing="8" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type mu:Member}">
+                                                <Border BorderBrush="#f0f2f8" BorderThickness="1" CornerRadius="8" Padding="10,8" Background="#fafbff">
+                                                    <Grid ColumnDefinitions="*, Auto">
+                                                        <StackPanel Grid.Column="0" Spacing="2">
+                                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                                <TextBlock Text="{Binding FirstName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
+                                                                <TextBlock Text="{Binding LastName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
+                                                            </StackPanel>
+                                                            <TextBlock Text="{Binding IndexNumber, StringFormat='Indeks: {0}'}" FontSize="11" Foreground="#7a8099"/>
+                                                        </StackPanel>
+                                                        
+                                                        <Button Grid.Column="1" 
+                                                                Classes="DeleteBtn" 
+                                                                Padding="6,4" 
+                                                                ToolTip.Tip="Usuń z projektu"
+                                                                Command="{Binding $parent[UserControl].DataContext.RemoveParticipantCommand}"
+                                                                CommandParameter="{Binding}">
+                                                            <PathIcon Width="10" Height="10" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4z" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- EDIT DIALOG POPUP -->
+        <Grid IsVisible="{Binding IsProjectEditPopupVisible, FallbackValue=False}">
+            <Border Background="#4000195A" />
+            
+            <Border Width="540" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" 
+                                       Text="Edytuj szczegóły projektu" 
+                                       FontFamily="Georgia" 
+                                       FontStyle="Italic" 
+                                       FontSize="15" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelEditCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelEditCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz zmiany" Command="{Binding SaveEditCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Margin="22,20,22,35" HorizontalAlignment="Stretch">
+                            
+                            <!-- Row 0: Name -->
+                            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Nazwa projektu" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Łazik marsjański UR-1" Text="{Binding EditName}"/>
+                            </StackPanel>
+
+                            <!-- Row 1: Date Start & Date End -->
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Data rozpoczęcia" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 24.05.2026" Text="{Binding EditDateStart}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Data zakończenia" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 31.12.2026" Text="{Binding EditDateEnd}"/>
+                            </StackPanel>
+
+                            <!-- Row 2: Estimated Time & GitHub -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Szacowany czas (godziny)" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 120" Text="{Binding EditEstimatedTime}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Repozytorium GitHub" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. github.com/user/repo" Text="{Binding EditGithub}"/>
+                            </StackPanel>
+
+                            <!-- Row 3: Leader selection -->
+                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Lider projektu" Classes="form-label" />
+                                <ComboBox Classes="form-select" ItemsSource="{Binding ClubMembers}" SelectedItem="{Binding EditLeader}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="mu:Member">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock Text="{Binding FirstName}" />
+                                                <TextBlock Text="{Binding LastName}" />
+                                                <TextBlock Text=" - " Foreground="Gray"/>
+                                                <TextBlock Text="{Binding IndexNumber}" Foreground="Gray" FontSize="11"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Row 4: Description -->
+                            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Opis projektu" Classes="form-label" />
+                                <TextBox Classes="form-textarea" Height="58" Watermark="Krótki opis projektu..." Text="{Binding EditDescription}"/>
+                            </StackPanel>
+
+                            <!-- Row 5: Additional Info -->
+                            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Dodatkowe informacje / Uwagi" Classes="form-label" />
+                                <TextBox Classes="form-textarea" Height="48" Watermark="Dodatkowe uwagi dotyczące projektu..." Text="{Binding EditAdditionalInfo}"/>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Panel>
+</UserControl>

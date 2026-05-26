@@ -109,7 +109,7 @@ namespace Esseti.ViewModels
         [RelayCommand]
         public void ShowAllProjects()
         {
-            CurrentViewModel = new ProjectsViewModel();
+            CurrentViewModel = App.Services.GetRequiredService<ProjectsViewModel>();
             SetActiveMenuItem(1);
             if (!_isViewChanged)
             {

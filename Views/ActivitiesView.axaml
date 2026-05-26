@@ -481,6 +481,14 @@
                                             
                                             <!-- Column 2: Date + Action Buttons in one horizontal line -->
                                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                <!-- Repeatable/Cyclical Badge -->
+                                                <Border Background="#eef1ff" BorderBrush="#0033A0" BorderThickness="1" CornerRadius="6" Padding="10,6" VerticalAlignment="Center" IsVisible="{Binding IsRepeatable}">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                                        <PathIcon Width="10" Height="10" Data="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-7.068 2h-3.932a.25.25 0 0 1-.192-.41l1.966-2.36a.25.25 0 0 1 .384 0l1.966 2.36a.25.25 0 0 1-.192.41z M8 3.5a4.5 4.5 0 0 0-4.5 4.5.5.5 0 0 1-1 0 5.5 5.5 0 1 1 9.387 3.887.5.5 0 1 1-.774-.633A4.5 4.5 0 1 0 8 3.5z" Foreground="#0033A0"/>
+                                                        <TextBlock Text="Cykliczna" FontSize="11" FontWeight="SemiBold" Foreground="#0033A0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+
                                                 <!-- Date Badge -->
                                                 <Border Background="#f0f2f8" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding DateString}" FontSize="11.5" FontWeight="SemiBold" Foreground="#0033A0"/>
@@ -488,6 +496,16 @@
                                                 
                                                 <!-- Action Buttons -->
                                                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                    <Button Classes="ActionBtn" 
+                                                            Command="{ReflectionBinding $parent[UserControl].DataContext.OpenProfileCommand}" 
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,6"
+                                                            FontSize="11">
+                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                            <PathIcon Width="11" Height="11" Data="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0 M10 8a2 2 0 1 0-4 0 2 2 0 0 0 4 0 M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8 M1.173 8a13 13 0 0 0 1.66 2.043C4.12 11.332 5.88 12.5 8 12.5s3.88-1.168 5.168-2.457A13 13 0 0 0 14.828 8q-.086-.13-.195-.288c-.335-.48-.83-1.12-1.465-1.755C11.879 4.668 10.119 3.5 8 3.5s-3.879 1.168-5.168 2.457A13 13 0 0 0 1.172 8"/>
+                                                            <TextBlock Text="Szczegóły" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
                                                     <Button Classes="ActionBtn" 
                                                             Command="{ReflectionBinding $parent[UserControl].DataContext.OpenEditPopupCommand}" 
                                                             CommandParameter="{Binding}"
@@ -559,100 +577,62 @@
                         </StackPanel>
                     </Border>
                     
-                    <ScrollViewer MaxHeight="450" Padding="22,20">
-                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Margin="0" HorizontalAlignment="Stretch">
+                    <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" Margin="22,20,22,35" HorizontalAlignment="Stretch">
                             
+                            <!-- Row 0: Name -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Nazwa aktywności" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Piknik Moc Odkrywców" Text="{Binding NewActivityName}"/>
                             </StackPanel>
 
+                            <!-- Row 1: Date & Time -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
-                                <TextBlock Text="Data i godzina" Classes="form-label" />
-                                <TextBox Classes="form-input" Watermark="np. 26.02.2025 12:00" Text="{Binding NewActivityDate}"/>
+                                <TextBlock Text="Data" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 26.02.2025" Text="{Binding NewActivityDate}"/>
                             </StackPanel>
                             <StackPanel Grid.Row="1" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Godzina" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 12:00" Text="{Binding NewActivityTime}"/>
+                            </StackPanel>
+
+                            <!-- Row 2: City & Street -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Miasto" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Rzeszów" Text="{Binding NewActivityCity}"/>
                             </StackPanel>
-
-                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
-                                <TextBlock Text="Ulica" Classes="form-label" />
-                                <TextBox Classes="form-input" Watermark="np. Al. Tadeusza Rejtana 16C" Text="{Binding NewActivityStreet}"/>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Adres / Ulica" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Rejtana 16C" Text="{Binding NewActivityStreet}"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
-                                <TextBlock Text="Opis" Classes="form-label" />
-                                <TextBox Classes="form-textarea" Height="68" Watermark="Krótki opis aktywności..." Text="{Binding NewActivityDescription}"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
-                                <TextBlock Text="Osoba odpowiedzialna (koło)" Classes="form-label" />
-                                <ComboBox Classes="form-select" ItemsSource="{Binding ClubMembers}" SelectedItem="{Binding NewActivityPersonInChargeClub}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Row="4" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
-                                <TextBlock Text="Osoba odpowiedzialna (wydarzenie)" Classes="form-label" />
+                            <!-- Row 3: Person In Charge Name & Cykliczne Checkbox -->
+                            <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Osoba odpowiedzialna" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Jan Kowalski" Text="{Binding NewActivityPersonInChargeEvent}"/>
                             </StackPanel>
+                            <StackPanel Grid.Row="3" Grid.Column="1" Margin="6,0,0,12" Spacing="5" VerticalAlignment="Center">
+                                <TextBlock Text="Cykliczność" Classes="form-label" />
+                                <CheckBox Content="Aktywność cykliczna" IsChecked="{Binding NewActivityIsRepeatable}" Foreground="#1a1a2e" FontSize="12.5"/>
+                            </StackPanel>
 
-                            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" Spacing="5">
-                                <TextBlock Text="Pozostałe informacje" Classes="form-label" />
-                                <TextBox Classes="form-textarea" Height="68" Watermark="Dodatkowe uwagi..." Text="{Binding NewActivityAdditionalInfo}"/>
+                            <!-- Row 4: Phone & Email -->
+                            <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Telefon kontaktowy" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. +48 123 456 789" Text="{Binding NewActivityPersonInChargePhone}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="4" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Email kontaktowy" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. jan.kowalski@ur.edu.pl" Text="{Binding NewActivityPersonInChargeEmail}"/>
+                            </StackPanel>
+
+                            <!-- Row 5: Description -->
+                            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Dodatkowe uwagi / Opis" Classes="form-label" />
+                                <TextBox Classes="form-textarea" Height="58" Watermark="Dodatkowe uwagi..." Text="{Binding NewActivityDescription}"/>
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>
-                </DockPanel>
-            </Border>
-        </Grid>
-
-        <Grid IsVisible="{Binding IsConfirmDeletePopupVisible, FallbackValue=False}">
-            <Border Background="#4000195A" />
-            
-            <Border Width="380" 
-                    VerticalAlignment="Center" 
-                    HorizontalAlignment="Center"
-                    Background="#FEFEFE"
-                    CornerRadius="14"
-                    BorderBrush="#d0d4e8"
-                    BorderThickness="1"
-                    BoxShadow="0 10 48 0 #2E0033A0"
-                    ClipToBounds="True"
-                    Margin="24">
-                <DockPanel>
-                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
-                        <Grid ColumnDefinitions="*, Auto">
-                            <TextBlock Grid.Column="0" Text="Potwierdź usunięcie" FontFamily="Georgia" FontStyle="Italic" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
-                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelDeleteCommand}">
-                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Button>
-                        </Grid>
-                    </Border>
-                    
-                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="14">
-                            <Button Classes="btn-cancel" Content="Anuluj" Padding="28,8" Command="{Binding CancelDeleteActivityCommand}"/>
-                            <Button Classes="btn-save" Content="Tak, usuń" Background="#c0001a" Padding="28,8" Command="{Binding ConfirmDeleteActivityCommand}">
-                                <Button.Styles>
-                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="#a00014"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                    </Style>
-                                </Button.Styles>
-                            </Button>
-                        </StackPanel>
-                    </Border>
-                    
-                    <StackPanel Margin="24,28,24,20" HorizontalAlignment="Center">
-                        <Panel Width="60" Height="60" HorizontalAlignment="Center" Margin="0,0,0,12">
-                            <Ellipse Fill="#FFF4F4"/>
-                            <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" 
-                                      Foreground="#D32F2F" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Panel>
-                        <TextBlock Text="{Binding DeleteConfirmMessage, FallbackValue='Usunąć 2 aktywności?'}" 
-                                   FontSize="15" FontWeight="Bold" Foreground="#000000" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                        <TextBlock Text="Ta operacja jest nieodwracalna.&#x0a;Zaznaczone rekordy zostaną trwale usunięte z systemu." 
-                                   FontSize="12.5" Foreground="#555555" TextAlignment="Center" HorizontalAlignment="Center"/>
-                    </StackPanel>
                 </DockPanel>
             </Border>
         </Grid>

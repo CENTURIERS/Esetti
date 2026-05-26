@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Models.Activities;
 
 namespace Esseti.ViewModels
 {
@@ -24,6 +25,7 @@ namespace Esseti.ViewModels
         private readonly IMemberRepository _memberRepository;
         private readonly List<ActivityItemViewModel> _allActivities = new();
         private ActivityItemViewModel? _activityToDelete;
+        private ActivityItemViewModel? _editingActivity;
 
         [ObservableProperty]
         private string _newActivityName = string.Empty;
@@ -32,7 +34,10 @@ namespace Esseti.ViewModels
         private string _newActivityDescription = string.Empty;
 
         [ObservableProperty]
-        private string _newActivityDate = DateTime.Now.ToString("dd.MM.yyyy 12:00");
+        private string _newActivityDate = DateTime.Now.ToString("dd.MM.yyyy");
+
+        [ObservableProperty]
+        private string _newActivityTime = DateTime.Now.ToString("HH:mm");
 
         [ObservableProperty]
         private string _newActivityCity = string.Empty;
@@ -41,7 +46,16 @@ namespace Esseti.ViewModels
         private string _newActivityStreet = string.Empty;
 
         [ObservableProperty]
-        private string _newActivityAdditionalInfo = string.Empty;
+        private string _newActivityPersonInChargeEvent = string.Empty;
+
+        [ObservableProperty]
+        private string _newActivityPersonInChargePhone = string.Empty;
+
+        [ObservableProperty]
+        private string _newActivityPersonInChargeEmail = string.Empty;
+
+        [ObservableProperty]
+        private bool _newActivityIsRepeatable;
 
         public ObservableCollection<string> ClubMembers { get; } = new();
         
@@ -51,19 +65,10 @@ namespace Esseti.ViewModels
         public ObservableCollection<string> EventMembers { get; } = new();
 
         [ObservableProperty]
-        private string _newActivityPersonInChargeEvent = string.Empty;
-
-        [ObservableProperty]
         private bool _isAddEditPopupVisible;
 
         [ObservableProperty]
         private string _popupTitle = "Nowa aktywność";
-
-        [ObservableProperty]
-        private bool _isConfirmDeletePopupVisible;
-
-        [ObservableProperty]
-        private string _deleteConfirmMessage = string.Empty;
 
         private readonly INavigationService _navigationService;
 
@@ -88,24 +93,42 @@ namespace Esseti.ViewModels
         [RelayCommand]
         private void OpenAddPopup()
         {
+            _editingActivity = null;
             PopupTitle = "Nowa aktywność";
             NewActivityName = string.Empty;
             NewActivityDescription = string.Empty;
-            NewActivityDate = DateTime.Now.ToString("dd.MM.yyyy 12:00");
+            NewActivityDate = DateTime.Now.ToString("dd.MM.yyyy");
+            NewActivityTime = DateTime.Now.ToString("HH:mm");
             NewActivityCity = string.Empty;
             NewActivityStreet = string.Empty;
-            NewActivityAdditionalInfo = string.Empty;
+            NewActivityPersonInChargeEvent = string.Empty;
+            NewActivityPersonInChargePhone = string.Empty;
+            NewActivityPersonInChargeEmail = string.Empty;
+            NewActivityIsRepeatable = false;
             IsAddEditPopupVisible = true;
         }
 
         [RelayCommand]
-        private void OpenEditPopup(ActivityItemViewModel item)
+        private async Task OpenEditPopup(ActivityItemViewModel item)
         {
             if (item == null) return;
+            _editingActivity = item;
             PopupTitle = "Edycja aktywności";
-            NewActivityName = item.Name;
-            NewActivityDescription = item.Description;
-            NewActivityDate = item.DateString;
+
+            var fullActivity = await _activityRepository.GetActivityByIdAsync(int.Parse(item.ActivityId));
+            if (fullActivity != null)
+            {
+                NewActivityName = fullActivity.Name;
+                NewActivityDescription = fullActivity.AdditionalInformation ?? string.Empty;
+                NewActivityDate = fullActivity.Date.ToString("dd.MM.yyyy");
+                NewActivityTime = fullActivity.Time?.ToString(@"hh\:mm") ?? string.Empty;
+                NewActivityCity = fullActivity.City ?? string.Empty;
+                NewActivityStreet = fullActivity.AddressLine ?? string.Empty;
+                NewActivityPersonInChargeEvent = fullActivity.PersonInChargeName ?? string.Empty;
+                NewActivityPersonInChargePhone = fullActivity.PersonInChargePhone ?? string.Empty;
+                NewActivityPersonInChargeEmail = fullActivity.PersonInChargeEmail ?? string.Empty;
+                NewActivityIsRepeatable = fullActivity.IsRepeatable;
+            }
             IsAddEditPopupVisible = true;
         }
 
@@ -116,8 +139,49 @@ namespace Esseti.ViewModels
         }
 
         [RelayCommand]
-        private void SaveActivity()
+        private async Task SaveActivity()
         {
+            DateTime parsedDate = DateTime.TryParse(NewActivityDate, out var d) ? d : DateTime.Now;
+            TimeSpan? parsedTime = TimeSpan.TryParse(NewActivityTime, out var t) ? t : null;
+
+            if (_editingActivity == null)
+            {
+                Activity activityAdd = new Activity
+                {
+                    Name = NewActivityName,
+                    Date = parsedDate,
+                    Time = parsedTime,
+                    City = NewActivityCity,
+                    AddressLine = NewActivityStreet,
+                    AdditionalInformation = NewActivityDescription,
+                    PersonInChargeName = NewActivityPersonInChargeEvent,
+                    PersonInChargePhone = NewActivityPersonInChargePhone,
+                    PersonInChargeEmail = NewActivityPersonInChargeEmail,
+                    IsRepeatable = NewActivityIsRepeatable
+                };
+                await _activityRepository.AddActivityAsync(activityAdd);
+            }
+
+            if (_editingActivity != null)
+            {
+                var activityUpdate = await _activityRepository.GetActivityByIdAsync(int.Parse(_editingActivity.ActivityId));
+                if (activityUpdate != null) {
+                    activityUpdate.Name = NewActivityName;
+                    activityUpdate.Date = parsedDate;
+                    activityUpdate.Time = parsedTime;
+                    activityUpdate.City = NewActivityCity;
+                    activityUpdate.AddressLine = NewActivityStreet;
+                    activityUpdate.AdditionalInformation = NewActivityDescription;
+                    activityUpdate.PersonInChargeName = NewActivityPersonInChargeEvent;
+                    activityUpdate.PersonInChargePhone = NewActivityPersonInChargePhone;
+                    activityUpdate.PersonInChargeEmail = NewActivityPersonInChargeEmail;
+                    activityUpdate.IsRepeatable = NewActivityIsRepeatable;
+                    
+                    await _activityRepository.UpdateActivityAsync(activityUpdate);
+                }
+            }
+
+            await LoadDataAsync();
             IsAddEditPopupVisible = false;
         }
 
@@ -126,40 +190,38 @@ namespace Esseti.ViewModels
         {
             if (item == null) return;
             _activityToDelete = item;
-            DeleteConfirmMessage = $"Czy na pewno chcesz usunąć aktywność \"{item.Name}\"?";
-            IsConfirmDeletePopupVisible = true;
+            IsPopupVisible = true;
         }
 
-        [RelayCommand]
-        private void CancelDeleteActivity()
+        protected override async Task ExecuteConfirmDeleteAsync()
         {
-            IsConfirmDeletePopupVisible = false;
-            _activityToDelete = null;
-        }
-
-        [RelayCommand]
-        private void ConfirmDeleteActivity()
-        {
-            if (_activityToDelete != null)
+            try
             {
-                Activities.Remove(_activityToDelete);
-                _allActivities.Remove(_activityToDelete);
-                _activityToDelete = null;
+                if (_activityToDelete != null)
+                {
+                    await _activityRepository.DeleteSingleActivityAsync(int.Parse(_activityToDelete.ActivityId));
+                    _activityToDelete = null;
+                }
+                else
+                {
+                    var selectedVMs = Activities.Where(a => a.IsSelected).ToList();
+                    if (!selectedVMs.Any()) return;
+
+                    var idsToDelete = selectedVMs.Select(a => int.Parse(a.ActivityId)).ToList();
+                    await _activityRepository.DeleteActivitesAsync(idsToDelete);
+                }
+                IsAllSelected = false;
+                await LoadDataAsync();
             }
-            IsConfirmDeletePopupVisible = false;
-            UpdateSelectionState();
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd usuwania aktywności: {ex.Message}");
+            }
         }
 
-        [RelayCommand]
-        private void ExportSelected()
+        protected override void OnPopupClosed()
         {
-        }
-
-        [RelayCommand]
-        private void RequestBulkDelete()
-        {
-            DeleteConfirmMessage = $"Czy na pewno chcesz usunąć {SelectedCount} zaznaczone aktywności?";
-            IsConfirmDeletePopupVisible = true;
+            _activityToDelete = null;
         }
 
         protected override void OnIsAllSelectedChangedVirtual(bool value)
@@ -187,6 +249,26 @@ namespace Esseti.ViewModels
             OnPropertyChanged(nameof(SelectedCountText));
         }
 
+                protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
+
+        private void ApplyFilter()
+        {
+            Activities.Clear();
+            var query = SearchQuery?.ToLower() ?? "";
+
+            foreach (var item in _allActivities)
+            {
+                var name = item.Name ?? "";
+                var desc = item.Description ?? "";
+                if (name.ToLower().Contains(query) || desc.ToLower().Contains(query))
+                {
+                    Activities.Add(item);
+                }
+            }
+
+            UpdateSelectionState();
+        }
+
         private async Task LoadDataAsync()
         {
             try 
@@ -205,7 +287,8 @@ namespace Esseti.ViewModels
                                 name: act.Name,
                                 description: act.AdditionalInformation ?? "Brak opisu",
                                 dateString: act.Date.ToString("dd.MM.yyyy"),
-                                isSelected: false
+                                isSelected: false,
+                                isRepeatable: act.IsRepeatable
                             );
 
                             vm.PropertyChanged += (s, e) => {
@@ -226,7 +309,6 @@ namespace Esseti.ViewModels
                             };
 
                             _allActivities.Add(vm);
-                            Activities.Add(vm);
                         }
                     }
 
@@ -237,11 +319,26 @@ namespace Esseti.ViewModels
                         }
                     }
 
-                    UpdateSelectionState();
+                    ApplyFilter();
                 });
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Błąd pobierania aktywności: {ex.Message}");
             }
+        }
+
+        [RelayCommand]
+        private void OpenProfile(ActivityItemViewModel item) 
+        {
+            if (item == null) return;
+
+            var profileVm = new ActivityProfileViewModel (
+                int.Parse(item.ActivityId),
+                _navigationService,
+                _memberRepository,
+                _activityRepository
+            );
+
+            _navigationService.NavigateTo(profileVm);
         }
     }
 }

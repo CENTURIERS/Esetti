@@ -1,0 +1,556 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Esseti.ViewModels"
+             xmlns:mu="using:Models.Users"
+             x:Class="Esseti.Views.ActivityProfileView"
+             x:DataType="vm:ActivityProfileViewModel"
+             Background="Transparent">
+
+    <UserControl.Styles>
+        <Style Selector="Button.BackBtn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#7a8099"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+        <Style Selector="Button.BackBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#eef1ff"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+        <Style Selector="Button.BackBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+        <Style Selector="Button.BackBtn:pointerover TextBlock">
+            <Setter Property="Foreground" Value="#0033A0"/>
+        </Style>
+
+        <Style Selector="Button.ActionBtn">
+            <Setter Property="Background" Value="#f4f6fc"/>
+            <Setter Property="BorderBrush" Value="#d0d8ed"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.ActionBtn:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.ActionBtn PathIcon">
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.DeleteBtn">
+            <Setter Property="Background" Value="#fff5f5"/>
+            <Setter Property="BorderBrush" Value="#fcdada"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#D32F2F"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#D32F2F"/>
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+        <Style Selector="Button.DeleteBtn PathIcon">
+            <Setter Property="Foreground" Value="#D32F2F"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.DeleteBtn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="TextBlock.form-label">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-input">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-input:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-input:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-textarea">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-textarea:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-textarea:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="ComboBox.form-select">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="ComboBox.form-select:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="ComboBox.form-select:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="Button.btn-cancel">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="20,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.btn-cancel:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#f5f7ff"/>
+            <Setter Property="BorderBrush" Value="#ccd3ee"/>
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+
+        <Style Selector="Button.btn-save">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="22,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.btn-save:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#002270"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.modal-close">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.12"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.modal-close:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2EFFFFFF"/>
+            <Setter Property="Opacity" Value="1.0"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Panel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16" Margin="28,20,28,32">
+                
+                <!-- BACK BUTTON -->
+                <Button Classes="BackBtn" Command="{Binding GoBackCommand}" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Width="13" Height="13" Foreground="#7a8099"
+                                  Data="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                        <TextBlock Text="Wróć do listy aktywności" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- LOADING SPINNER -->
+                <TextBlock Text="Ładowanie profilu aktywności..." FontSize="14" Foreground="#b0bde8"
+                           HorizontalAlignment="Center" Margin="0,60"
+                           IsVisible="{Binding IsLoading}"/>
+
+                <StackPanel Spacing="14" IsVisible="{Binding !IsLoading}">
+                    
+                    <!-- HEADER BOARD -->
+                    <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="28,24">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <StackPanel Grid.Column="0" Spacing="8">
+                                <TextBlock Text="{Binding ActivityName}" FontSize="24" FontWeight="Bold" Foreground="#1a1a2e" />
+                                <StackPanel Orientation="Horizontal" Spacing="14">
+                                    <!-- Date -->
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <PathIcon Width="12" Height="12" Data="M11 2H9V1a1 1 0 0 0-2 0v1H5V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m1 11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h10z" Foreground="#7a8099"/>
+                                        <TextBlock Text="{Binding DateText}" FontSize="12.5" Foreground="#666" />
+                                    </StackPanel>
+                                    <TextBlock Text="•" Foreground="Gray" VerticalAlignment="Center" />
+                                    <!-- Time -->
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <PathIcon Width="12" Height="12" Data="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16 M8 4a.5.5 0 0 1 .5.5v3.293l2.853 2.854a.5.5 0 0 1-.707.708l-3-3A.5.5 0 0 1 7.5 8V4.5A.5.5 0 0 1 8 4" Foreground="#7a8099" />
+                                        <TextBlock Text="{Binding TimeText}" FontSize="12.5" Foreground="#666"/>
+                                    </StackPanel>
+                                    <TextBlock Text="•" Foreground="Gray" VerticalAlignment="Center" />
+                                    <!-- Cycle status -->
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <PathIcon Width="12" Height="12" Data="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-7.068 2h-3.932a.25.25 0 0 1-.192-.41l1.966-2.36a.25.25 0 0 1 .384 0l1.966 2.36a.25.25 0 0 1-.192.41z M8 3.5a4.5 4.5 0 0 0-4.5 4.5.5.5 0 0 1-1 0 5.5 5.5 0 1 1 9.387 3.887.5.5 0 1 1-.774-.633A4.5 4.5 0 1 0 8 3.5z" Foreground="#7a8099" />
+                                        <TextBlock Text="{Binding IsRepeatableText, StringFormat='Cykliczna: {0}'}" FontSize="12.5" Foreground="#666"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- Actions -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                <Button Classes="ActionBtn" Command="{Binding OpenEditCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <PathIcon Width="12" Height="12" Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                        <TextBlock Text="Edytuj" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Classes="DeleteBtn" Command="{Binding DeleteThisActivityCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <PathIcon Width="12" Height="12" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        <TextBlock Text="Usuń aktywność" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- CONTENT ROW: LEFT (DETAILS), RIGHT (LEADER & PARTICIPANTS) -->
+                    <Grid ColumnDefinitions="*, 20, 420" Margin="0">
+                        <!-- Left: Description, Location and Person In Charge -->
+                        <StackPanel Grid.Column="0" Spacing="14">
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Uwagi / Szczegóły" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <TextBlock Text="{Binding AdditionalInformation}" FontSize="13" Foreground="#2d2d2d" TextWrapping="Wrap" LineHeight="19"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Lokalizacja wydarzenia" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <StackPanel Spacing="10" Margin="0,4,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <PathIcon Width="13" Height="13" Data="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" Foreground="#7a8099"/>
+                                            <TextBlock Text="{Binding City, StringFormat='Miasto: {0}'}" FontSize="13" Foreground="#2d2d2d" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <PathIcon Width="13" Height="13" Data="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" Foreground="#7a8099"/>
+                                            <TextBlock Text="{Binding AddressLine, StringFormat='Adres: {0}'}" FontSize="13" Foreground="#2d2d2d" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Person In Charge Card -->
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Osoba odpowiedzialna" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    <StackPanel Spacing="8" Margin="0,4,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <Panel Width="36" Height="36">
+                                                <Ellipse Fill="#E2E6F2" />
+                                                <PathIcon Data="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1c-2.33 0-7 1.17-7 3.5V14h14v-1.5c0-2.33-4.67-3.5-7-3.5" Foreground="#0033A0" Width="14" Height="14"/>
+                                            </Panel>
+                                            <TextBlock Text="{Binding PersonInChargeName}" FontSize="13.5" FontWeight="Bold" Foreground="#1a1a2e" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        
+                                        <Border Height="1" Background="#f0f2f8" Margin="0,4"/>
+                                        
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <PathIcon Width="12" Height="12" Data="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.03 1.03c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" Foreground="#7a8099" />
+                                            <TextBlock Text="{Binding PersonInChargePhone}" FontSize="12" Foreground="#444"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <PathIcon Width="12" Height="12" Data="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" Foreground="#7a8099" />
+                                            <TextBlock Text="{Binding PersonInChargeEmail}" FontSize="12" Foreground="#444"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        
+                        <!-- Right: Participants -->
+                        <StackPanel Grid.Column="2" Spacing="14">
+                            <!-- Participants Card -->
+                            <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
+                                <StackPanel Spacing="16">
+                                    <TextBlock Text="Uczestnicy aktywności" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
+                                    
+                                    <!-- ComboBox to add a participant -->
+                                    <Grid ColumnDefinitions="*, 8, Auto">
+                                        <ComboBox Grid.Column="0" 
+                                                  Classes="form-select" 
+                                                  ItemsSource="{Binding ClubMembers}" 
+                                                  SelectedItem="{Binding SelectedMemberToAdd}"
+                                                  PlaceholderText="Wybierz członka koła...">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate DataType="mu:Member">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                                        <TextBlock Text="{Binding FirstName}" />
+                                                        <TextBlock Text="{Binding LastName}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <Button Grid.Column="2" Classes="ActionBtn" Content="Dodaj" Command="{Binding AddParticipantCommand}"/>
+                                    </Grid>
+                                    
+                                    <Border Height="1" Background="#f0f2f8" />
+                                    
+                                    <!-- List of participants -->
+                                    <TextBlock Text="Brak uczestników wydarzenia." 
+                                               FontSize="12" 
+                                               Foreground="#7a8099" 
+                                               FontStyle="Italic"
+                                               HorizontalAlignment="Center" 
+                                               Margin="0,10" 
+                                               IsVisible="{Binding !Participants.Count}"/>
+                                    
+                                    <ItemsControl ItemsSource="{Binding Participants}" IsVisible="{Binding Participants.Count}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Spacing="8" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type mu:Member}">
+                                                <Border BorderBrush="#f0f2f8" BorderThickness="1" CornerRadius="8" Padding="10,8" Background="#fafbff">
+                                                    <Grid ColumnDefinitions="*, Auto">
+                                                        <StackPanel Grid.Column="0" Spacing="2">
+                                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                                <TextBlock Text="{Binding FirstName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
+                                                                <TextBlock Text="{Binding LastName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
+                                                            </StackPanel>
+                                                            <TextBlock Text="{Binding IndexNumber, StringFormat='Indeks: {0}'}" FontSize="11" Foreground="#7a8099"/>
+                                                        </StackPanel>
+                                                        
+                                                        <Button Grid.Column="1" 
+                                                                Classes="DeleteBtn" 
+                                                                Padding="6,4" 
+                                                                ToolTip.Tip="Usuń z wydarzenia"
+                                                                Command="{Binding $parent[UserControl].DataContext.RemoveParticipantCommand}"
+                                                                CommandParameter="{Binding}">
+                                                            <PathIcon Width="10" Height="10" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4z" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- EDIT DIALOG POPUP -->
+        <Grid IsVisible="{Binding IsActivityEditPopupVisible, FallbackValue=False}">
+            <Border Background="#4000195A" />
+            
+            <Border Width="540" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" 
+                                       Text="Edytuj szczegóły aktywności" 
+                                       FontFamily="Georgia" 
+                                       FontStyle="Italic" 
+                                       FontSize="15" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelEditCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelEditCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz zmiany" Command="{Binding SaveEditCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" Margin="22,20,22,35" HorizontalAlignment="Stretch">
+                            
+                            <!-- Row 0: Name -->
+                            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Nazwa aktywności" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Piknik Moc Odkrywców" Text="{Binding EditName}"/>
+                            </StackPanel>
+
+                            <!-- Row 1: Date & Time -->
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Data" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 26.02.2025" Text="{Binding EditDate}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Godzina" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 12:00" Text="{Binding EditTime}"/>
+                            </StackPanel>
+
+                            <!-- Row 2: City & AddressLine -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Miasto" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Rzeszów" Text="{Binding EditCity}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Adres / Ulica" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Rejtana 16C" Text="{Binding EditAddressLine}"/>
+                            </StackPanel>
+
+                            <!-- Row 3: Person In Charge Name & Cykliczne Checkbox -->
+                            <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Osoba odpowiedzialna" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Jan Kowalski" Text="{Binding EditPersonInChargeName}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="3" Grid.Column="1" Margin="6,0,0,12" Spacing="5" VerticalAlignment="Center">
+                                <TextBlock Text="Cykliczność" Classes="form-label" />
+                                <CheckBox Content="Aktywność cykliczna" IsChecked="{Binding EditIsRepeatable}" Foreground="#1a1a2e" FontSize="12.5"/>
+                            </StackPanel>
+
+                            <!-- Row 4: Phone & Email of Person In Charge -->
+                            <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
+                                <TextBlock Text="Telefon kontaktowy" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. +48 123 456 789" Text="{Binding EditPersonInChargePhone}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="4" Grid.Column="1" Margin="6,0,0,12" Spacing="5">
+                                <TextBlock Text="Email kontaktowy" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. jan.kowalski@ur.edu.pl" Text="{Binding EditPersonInChargeEmail}"/>
+                            </StackPanel>
+
+                            <!-- Row 5: Additional Info / Description -->
+                            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
+                                <TextBlock Text="Dodatkowe uwagi / Opis" Classes="form-label" />
+                                <TextBox Classes="form-textarea" Height="58" Watermark="Dodatkowe uwagi..." Text="{Binding EditAdditionalInfo}"/>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Panel>
+</UserControl>

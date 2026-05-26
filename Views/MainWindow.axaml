@@ -249,6 +249,14 @@
         <DataTemplate DataType="{x:Type vm:MemberProfileViewModel}">
             <views:MemberProfileView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ProjectProfileViewModel}">
+            <views:ProjectProfileView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ActivityProfileViewModel}">
+            <views:ActivityProfileView />
+        </DataTemplate>
     </Window.DataTemplates>
 
 
