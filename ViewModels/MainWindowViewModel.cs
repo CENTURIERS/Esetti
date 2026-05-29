@@ -1,4 +1,4 @@
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -88,8 +88,12 @@ namespace Esseti.ViewModels
             };
         }
 
+        [ObservableProperty]
+        private bool _isSettingsActive;
+
         private void SetActiveMenuItem(int index)
         {
+            IsSettingsActive = (index == -1);
             for (int i = 0; i < MenuItems.Count; i++)
                 MenuItems[i].IsActive = (i == index);
         }
@@ -154,6 +158,7 @@ namespace Esseti.ViewModels
         public void ShowSettingsPage()
         {
             CurrentViewModel = App.Services.GetRequiredService<SettingsViewModel>();
+            SetActiveMenuItem(-1);
 
             if (!_isViewChanged)
             {
@@ -188,12 +193,22 @@ namespace Esseti.ViewModels
             try
             {
                 var uri = new Uri("avares://Esseti/Assets/UR/" + path);
-
+                var oldLogo = HeaderLogo;
                 HeaderLogo = new Bitmap(AssetLoader.Open(uri));
+                oldLogo?.Dispose();
             } catch (Exception ex)
             {
-                Console.WriteLine($"Nie udało się załadować logo: {ex.Message}");
+                Console.WriteLine($"Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ logo: {ex.Message}");
             }
+        }
+
+        public override void Dispose()
+        {
+            HeaderLogo?.Dispose();
+            HeaderLogo = null;
+            base.Dispose();
         }
     }
 }
+
+

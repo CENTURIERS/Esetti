@@ -7,3 +7,4 @@ namespace Esseti.Services
         void NavigateTo(ViewModelBase viewModel);
     }
 }
+

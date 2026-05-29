@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -118,9 +118,9 @@
             <DockPanel>
                 <ScrollViewer Padding="24,24,24,30">
                     <StackPanel Spacing="24">
-                        <Grid ColumnDefinitions="*,30,*">
+                        <Grid ColumnDefinitions="*, 32, *">
                             
-                            <StackPanel Grid.Column="0" Spacing="12">
+                            <StackPanel Grid.Column="0" Spacing="12" Margin="0,0,0,16">
                                 <TextBlock Text="Wybierz członków do zaświadczeń" 
                                            FontSize="13" 
                                            FontWeight="Bold" 
@@ -161,7 +161,7 @@
                             </StackPanel>
 
                             
-                            <StackPanel Grid.Column="2" Spacing="16">
+                            <StackPanel Grid.Column="2" Spacing="16" Margin="0,0,0,16">
                                 <TextBlock Text="Parametry generowania zaświadczeń" 
                                            FontSize="13" 
                                            FontWeight="Bold" 

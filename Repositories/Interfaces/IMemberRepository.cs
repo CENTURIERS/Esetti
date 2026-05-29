@@ -1,4 +1,4 @@
-using Models.Users;
+﻿using Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,3 +29,5 @@ namespace Esseti.Repositories.Interfaces
         Task<List<Models.University.CollegeDepartment>> GetCollegeDepartmentsAsync();
     }
 }
+
+

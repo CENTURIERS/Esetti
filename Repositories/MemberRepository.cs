@@ -1,38 +1,42 @@
-using Esseti.Data;
+﻿using Esseti.Data;
 using Esseti.Repositories.Interfaces;
+using Esseti.Services;
 using Microsoft.EntityFrameworkCore;
 using Models.Users;
 using Models.ClubBase;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 namespace Esseti.Repositories
 {
     public class MemberRepository : IMemberRepository
     {
         private readonly EssetiDbContext _context;
+        private readonly ICacheService _cacheService;
 
-        public MemberRepository(EssetiDbContext context)
+        public MemberRepository(EssetiDbContext context, ICacheService cacheService)
         {
             _context = context;
+            _cacheService = cacheService;
         }
 
         public async Task<List<Member>> GetAllMembersAsync()
         {
-            return await _context.Members
+            return await _cacheService.GetOrLoadAsync("members_all", () => _context.Members
                 .Where(m => m.IsActive)
                 .Include(m => m.Account)
                 .Include(m => m.AuthorityRole)
                 .Include(m => m.MemberClubs)
                     .ThenInclude(mc => mc.Club)
                         .ThenInclude(c => c!.Department)
-                .ToListAsync();
+                .ToListAsync());
         }
 
         public async Task<List<AuthorityRole>> GetAuthorityRolesAsync()
         {
-            return await _context.AuthorityRoles.ToListAsync();
+            return await _cacheService.GetOrLoadAsync("authority_roles", () => _context.AuthorityRoles.ToListAsync());
         }
 
         public async Task DeleteSingleMemberAsync(int id)
@@ -41,10 +45,9 @@ namespace Esseti.Repositories
             if (member != null)
             {
                 member.IsActive = false;
-
-                _context.Members.Update(member);
-
                 await _context.SaveChangesAsync();
+                _cacheService.Invalidate("members_all");
+                _cacheService.Invalidate("board_members");
             }
         }
 
@@ -54,44 +57,127 @@ namespace Esseti.Repositories
             foreach (var member in members)
             {
                 member.IsActive = false;
-
-                _context.Members.Update(member);
-
             }
             await _context.SaveChangesAsync();
+            _cacheService.Invalidate("members_all");
+            _cacheService.Invalidate("board_members");
         }
 
         public async Task AddMemberAsync(Member member, int? departmentId)
         {
-            if (departmentId.HasValue)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
-                if (club == null)
+                Member? existingMember = null;
+                if (!string.IsNullOrWhiteSpace(member.IndexNumber))
                 {
-                    var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
-                    if (dept != null)
+                    existingMember = await _context.Members
+                        .Include(m => m.Account)
+                        .Include(m => m.MemberClubs)
+                        .FirstOrDefaultAsync(m => m.IndexNumber == member.IndexNumber);
+                }
+
+                if (existingMember != null)
+                {
+                    existingMember.IsActive = true;
+                    existingMember.FirstName = member.FirstName;
+                    existingMember.LastName = member.LastName;
+                    existingMember.Major = member.Major;
+                    existingMember.Description = member.Description;
+                    existingMember.MemberAvatar = member.MemberAvatar;
+                    existingMember.RoleId = member.RoleId;
+                    existingMember.JoinDate = DateTime.Now;
+
+                    if (member.Account != null)
                     {
-                        club = new ClubInfo
+                        if (existingMember.Account != null)
                         {
-                            Name = $"Koło Naukowe - {dept.Name}",
-                            DepartmentId = dept.CollegeDepartmentId,
-                            ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
-                        };
-                        _context.Clubs.Add(club);
-                        await _context.SaveChangesAsync();
+                            existingMember.Account.Email = member.Account.Email;
+                        }
+                        else
+                        {
+                            existingMember.Account = new UserAccount
+                            {
+                                Email = member.Account.Email,
+                                SystemRole = Models.Enums.SystemRole.User
+                            };
+                        }
+                    }
+
+                    if (departmentId.HasValue)
+                    {
+                        var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
+                        if (club == null)
+                        {
+                            var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
+                            if (dept != null)
+                            {
+                                club = new ClubInfo
+                                {
+                                    Name = $"KoĹ‚o Naukowe - {dept.Name}",
+                                    DepartmentId = dept.CollegeDepartmentId,
+                                    ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
+                                };
+                                _context.Clubs.Add(club);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                        if (club != null)
+                        {
+                            if (existingMember.MemberClubs == null)
+                            {
+                                existingMember.MemberClubs = new List<MemberClub>();
+                            }
+                            if (!existingMember.MemberClubs.Any(mc => mc.ClubId == club.ClubId))
+                            {
+                                existingMember.MemberClubs.Add(new MemberClub { ClubId = club.ClubId, MemberId = existingMember.MemberId });
+                            }
+                        }
                     }
                 }
-                if (club != null)
+                else
                 {
-                    member.MemberClubs = new List<MemberClub>
+                    if (departmentId.HasValue)
                     {
-                        new MemberClub { ClubId = club.ClubId }
-                    };
+                        var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
+                        if (club == null)
+                        {
+                            var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
+                            if (dept != null)
+                            {
+                                club = new ClubInfo
+                                {
+                                    Name = $"KoĹ‚o Naukowe - {dept.Name}",
+                                    DepartmentId = dept.CollegeDepartmentId,
+                                    ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
+                                };
+                                _context.Clubs.Add(club);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                        if (club != null)
+                        {
+                            member.MemberClubs = new List<MemberClub>
+                            {
+                                new MemberClub { ClubId = club.ClubId }
+                            };
+                        }
+                    }
+                    _context.Members.Add(member);
                 }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                _cacheService.Invalidate("members_all");
+                _cacheService.Invalidate("board_members");
             }
-            _context.Members.Add(member);
-            await _context.SaveChangesAsync();
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
+
 
         public async Task<Member?> GetMemberByIdAsync(int id)
         {
@@ -191,91 +277,107 @@ namespace Esseti.Repositories
                 }
 
                 await _context.SaveChangesAsync();
+                _cacheService.Invalidate("members_all");
+                _cacheService.Invalidate("board_members");
             }
         }
 
         public async Task UpdateMemberBasicInfoAsync(Member member, int? departmentId)
         {
-            var dbMember = await _context.Members
-                .Include(m => m.Account)
-                .Include(m => m.AuthorityRole)
-                .Include(m => m.MemberClubs)
-                .FirstOrDefaultAsync(m => m.MemberId == member.MemberId);
-
-            if (dbMember != null)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                dbMember.FirstName = member.FirstName;
-                dbMember.LastName = member.LastName;
-                dbMember.IndexNumber = member.IndexNumber;
-                
-                if (member.MemberAvatar != null)
-                    dbMember.MemberAvatar = member.MemberAvatar;
+                var dbMember = await _context.Members
+                    .Include(m => m.Account)
+                    .Include(m => m.AuthorityRole)
+                    .Include(m => m.MemberClubs)
+                    .FirstOrDefaultAsync(m => m.MemberId == member.MemberId);
 
-                if (member.Account != null)
+                if (dbMember != null)
                 {
-                    if (dbMember.Account != null)
+                    dbMember.FirstName = member.FirstName;
+                    dbMember.LastName = member.LastName;
+                    dbMember.IndexNumber = member.IndexNumber;
+                    dbMember.Major = member.Major;
+                    dbMember.Description = member.Description;
+                    
+                    if (member.MemberAvatar != null)
+                        dbMember.MemberAvatar = member.MemberAvatar;
+
+                    if (member.Account != null)
                     {
-                        dbMember.Account.Email = member.Account.Email;
+                        if (dbMember.Account != null)
+                        {
+                            dbMember.Account.Email = member.Account.Email;
+                        }
+                        else
+                        {
+                            dbMember.Account = new UserAccount
+                            {
+                                Email = member.Account.Email,
+                                SystemRole = Models.Enums.SystemRole.User
+                            };
+                        }
                     }
                     else
                     {
-                        dbMember.Account = new UserAccount
-                        {
-                            Email = member.Account.Email,
-                            SystemRole = Models.Enums.SystemRole.User
-                        };
+                        dbMember.Account = null;
                     }
-                }
-                else
-                {
-                    dbMember.Account = null;
-                }
 
-                if (member.AuthorityRole != null)
-                {
-                    var roleName = member.AuthorityRole.Name;
-                    var dbRole = await _context.AuthorityRoles.FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower());
-                    if (dbRole != null)
+                    if (member.AuthorityRole != null)
                     {
-                        dbMember.RoleId = dbRole.RoleId;
-                        dbMember.AuthorityRole = dbRole;
-                    }
-                }
-
-                if (departmentId.HasValue)
-                {
-                    var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
-                    if (club == null)
-                    {
-                        var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
-                        if (dept != null)
+                        var roleName = member.AuthorityRole.Name;
+                        var dbRole = await _context.AuthorityRoles.FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower());
+                        if (dbRole != null)
                         {
-                            club = new ClubInfo
-                            {
-                                Name = $"Koło Naukowe - {dept.Name}",
-                                DepartmentId = dept.CollegeDepartmentId,
-                                ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
-                            };
-                            _context.Clubs.Add(club);
-                            await _context.SaveChangesAsync();
+                            dbMember.RoleId = dbRole.RoleId;
+                            dbMember.AuthorityRole = dbRole;
                         }
                     }
-                    if (club != null)
+
+                    if (departmentId.HasValue)
                     {
+                        var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
+                        if (club == null)
+                        {
+                            var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
+                            if (dept != null)
+                            {
+                                club = new ClubInfo
+                                {
+                                    Name = $"KoĹ‚o Naukowe - {dept.Name}",
+                                    DepartmentId = dept.CollegeDepartmentId,
+                                    ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
+                                };
+                                _context.Clubs.Add(club);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                        if (club != null)
+                        {
+                            dbMember.MemberClubs ??= new List<MemberClub>();
+                            dbMember.MemberClubs.Clear();
+                            dbMember.MemberClubs.Add(new MemberClub { ClubId = club.ClubId, MemberId = dbMember.MemberId });
+                        }
+                    }
+                    else if (member.MemberClubs != null && member.MemberClubs.Any())
+                    {
+                        var targetClubId = member.MemberClubs.First().ClubId;
                         dbMember.MemberClubs ??= new List<MemberClub>();
                         dbMember.MemberClubs.Clear();
-                        dbMember.MemberClubs.Add(new MemberClub { ClubId = club.ClubId, MemberId = dbMember.MemberId });
+                        dbMember.MemberClubs.Add(new MemberClub { ClubId = targetClubId, MemberId = dbMember.MemberId });
                     }
-                }
-                else if (member.MemberClubs != null && member.MemberClubs.Any())
-                {
-                    var targetClubId = member.MemberClubs.First().ClubId;
-                    dbMember.MemberClubs ??= new List<MemberClub>();
-                    dbMember.MemberClubs.Clear();
-                    dbMember.MemberClubs.Add(new MemberClub { ClubId = targetClubId, MemberId = dbMember.MemberId });
-                }
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
+                }
+                await transaction.CommitAsync();
+                _cacheService.Invalidate("members_all");
+                _cacheService.Invalidate("board_members");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
 
@@ -286,12 +388,15 @@ namespace Esseti.Repositories
             {
                 member.MemberAvatar = avatarData;
                 await _context.SaveChangesAsync();
+                _cacheService.Invalidate("members_all");
+                _cacheService.Invalidate("board_members");
             }
         }
 
         public async Task<List<Models.University.CollegeDepartment>> GetCollegeDepartmentsAsync()
         {
-            return await _context.CollegeDepartments.ToListAsync();
+            return await _cacheService.GetOrLoadAsync("departments", () => _context.CollegeDepartments.ToListAsync());
         }
     }
 }
+

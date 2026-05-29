@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -56,9 +56,50 @@ namespace Esseti.ViewModels
         [ObservableProperty]
         private string _popupTitle = "Nowy projekt";
 
+        [ObservableProperty]
+        private bool _isNameInvalid;
+        [ObservableProperty]
+        private bool _isEstTimeInvalid;
+        [ObservableProperty]
+        private bool _isDateStartInvalid;
+        [ObservableProperty]
+        private bool _isDateEndInvalid;
+        [ObservableProperty]
+        private bool _isFormValid = true;
+        [ObservableProperty]
+        private string _validationError = string.Empty;
+
+        private void ValidateForm()
+        {
+            IsNameInvalid = string.IsNullOrWhiteSpace(NewProjectName);
+            IsEstTimeInvalid = string.IsNullOrWhiteSpace(NewProjectEstimatedTime) || !int.TryParse(NewProjectEstimatedTime, out _);
+            IsDateStartInvalid = string.IsNullOrWhiteSpace(NewProjectDateStart) || !TryParseDate(NewProjectDateStart, out _);
+            IsDateEndInvalid = string.IsNullOrWhiteSpace(NewProjectDateEnd) || !TryParseDate(NewProjectDateEnd, out _);
+
+            IsFormValid = !IsNameInvalid && !IsEstTimeInvalid && !IsDateStartInvalid && !IsDateEndInvalid;
+
+            if (IsNameInvalid) ValidationError = "Nazwa projektu jest wymagana.";
+            else if (IsDateStartInvalid) ValidationError = "Data rozpoczÄ™cia jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
+            else if (IsDateEndInvalid) ValidationError = "Data zakoĹ„czenia jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
+            else if (IsEstTimeInvalid) ValidationError = "Szacowany czas trwania jest wymagany i musi byÄ‡ liczbÄ… caĹ‚kowitÄ….";
+            else ValidationError = string.Empty;
+        }
+
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(NewProjectName) ||
+                e.PropertyName == nameof(NewProjectEstimatedTime) ||
+                e.PropertyName == nameof(NewProjectDateStart) ||
+                e.PropertyName == nameof(NewProjectDateEnd))
+            {
+                ValidateForm();
+            }
+        }
+
         public string SelectAllText =>  IsAllSelected ? "Odznacz wszystko" : "Zaznacz wszystko";
         public bool HasSelectedItems => IsAnySelected;
-        public string SelectedCountText => $"Zaznaczono {SelectedCount} projektów";
+        public string SelectedCountText => $"Zaznaczono {SelectedCount} projektĂłw";
         
         public ProjectsViewModel(IProjectRepository projectRepository, IMemberRepository memberRepository, INavigationService navigationService)
         {
@@ -67,6 +108,36 @@ namespace Esseti.ViewModels
             _navigationService = navigationService;
 
             _ = LoadDataAsync();
+        }
+
+        private void OnProjectItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ProjectItemViewModel.IsSelected))
+            {
+                UpdateSelectionState();
+
+                if (!_isUpdatingSelection)
+                {
+                    _isUpdatingSelection = true;
+                    try
+                    {
+                        if (Projects.Any())
+                            IsAllSelected = Projects.All(p => p.IsSelected);
+                    }
+                    finally
+                    {
+                        _isUpdatingSelection = false;
+                    }
+                }
+            }
+        }
+
+        private void ClearProjectSubscriptions()
+        {
+            foreach (var vm in _allProjects)
+            {
+                vm.PropertyChanged -= OnProjectItemPropertyChanged;
+            }
         }
 
         private async Task LoadDataAsync()
@@ -78,6 +149,7 @@ namespace Esseti.ViewModels
 
                 Dispatcher.UIThread.Post(() =>
                 {
+                    ClearProjectSubscriptions();
                     Projects.Clear();
                     _allProjects.Clear();
 
@@ -98,27 +170,7 @@ namespace Esseti.ViewModels
                                 isSelected: false
                             );
 
-                            vm.PropertyChanged += (s, e) =>
-                            {
-                                if (e.PropertyName == nameof(ProjectItemViewModel.IsSelected))
-                                {
-                                    UpdateSelectionState();
-
-                                    if (!_isUpdatingSelection)
-                                    {
-                                        _isUpdatingSelection = true;
-                                        try
-                                        {
-                                            if (Projects.Any())
-                                                IsAllSelected = Projects.All(p => p.IsSelected);
-                                        }
-                                        finally
-                                        {
-                                            _isUpdatingSelection = false;
-                                        }
-                                    }
-                                }
-                            };
+                            vm.PropertyChanged += OnProjectItemPropertyChanged;
 
                             _allProjects.Add(vm);
                         }
@@ -136,7 +188,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd LoadDataAsync: {e}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d LoadDataAsync: {e}");
             }
         }
 
@@ -189,6 +241,12 @@ namespace Esseti.ViewModels
             NewProjectDateEnd = DateTime.Now.AddMonths(3).ToString("dd.MM.yyyy");
             NewProjectLeader = ClubMembers.FirstOrDefault();
 
+            IsNameInvalid = false;
+            IsEstTimeInvalid = false;
+            IsDateStartInvalid = false;
+            IsDateEndInvalid = false;
+            IsFormValid = false; // Name is empty initially
+
             IsAddEditPopupVisible = true;
         }
 
@@ -199,35 +257,38 @@ namespace Esseti.ViewModels
             _editingProject = item;
             PopupTitle = "Edycja projektu";
 
-            var fullProject = await _projectRepository.GetProjectByIdAsync(int.Parse(item.ProjectId));
-
-            if (fullProject != null)
+            if (int.TryParse(item.ProjectId, out var projectId))
             {
-                NewProjectName = fullProject.Name;
-                NewProjectDescription = fullProject.Description ?? string.Empty;
-                NewProjectAdditionalInfo = fullProject.AdditionalInformation ?? string.Empty;
-                NewProjectGithub = fullProject.Github ?? string.Empty;
-                NewProjectEstimatedTime = fullProject.EstimatedTime?.ToString() ?? string.Empty;
-                NewProjectDateStart = fullProject.DateStart?.ToString("dd.MM.yyyy") ?? string.Empty;
-                NewProjectDateEnd = fullProject.DateEnd?.ToString("dd.MM.yyyy") ?? string.Empty;
-                NewProjectLeader = ClubMembers.FirstOrDefault(m => m.MemberId == fullProject.PersonInChargeId);
-            }
+                var fullProject = await _projectRepository.GetProjectByIdAsync(projectId);
 
+                if (fullProject != null)
+                {
+                    NewProjectName = fullProject.Name;
+                    NewProjectDescription = fullProject.Description ?? string.Empty;
+                    NewProjectAdditionalInfo = fullProject.AdditionalInformation ?? string.Empty;
+                    NewProjectGithub = fullProject.Github ?? string.Empty;
+                    NewProjectEstimatedTime = fullProject.EstimatedTime?.ToString() ?? string.Empty;
+                    NewProjectDateStart = fullProject.DateStart?.ToString("dd.MM.yyyy") ?? string.Empty;
+                    NewProjectDateEnd = fullProject.DateEnd?.ToString("dd.MM.yyyy") ?? string.Empty;
+                    NewProjectLeader = ClubMembers.FirstOrDefault(m => m.MemberId == fullProject.PersonInChargeId);
+                }
+            }
+            ValidateForm();
             IsAddEditPopupVisible = true;
         }
 
         [RelayCommand]
         private void ClosePopup() => IsAddEditPopupVisible = false;
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(IsFormValid))]
         private async Task SaveProject()
         {
             try 
             {
                 if (string.IsNullOrWhiteSpace(NewProjectName)) return;
 
-                DateTime? start = DateTime.TryParse(NewProjectDateStart, out var ds) ? ds : null;
-                DateTime? end = DateTime.TryParse(NewProjectDateEnd, out var de) ? de : null;
+                DateTime? start = TryParseDate(NewProjectDateStart, out var ds) ? ds : null;
+                DateTime? end = TryParseDate(NewProjectDateEnd, out var de) ? de : null;
                 int? estTime = int.TryParse(NewProjectEstimatedTime, out var et) ? et : null;
 
                 if (_editingProject == null)
@@ -247,20 +308,23 @@ namespace Esseti.ViewModels
                     await _projectRepository.AddProjectAsync(projectAdd);
                 } else
                 {
-                    var projectUpdate = await _projectRepository.GetProjectByIdAsync(int.Parse(_editingProject.ProjectId));
-
-                    if (projectUpdate != null)
+                    if (int.TryParse(_editingProject.ProjectId, out var projectId))
                     {
-                        projectUpdate.Name = NewProjectName;
-                        projectUpdate.Description = NewProjectDescription;
-                        projectUpdate.AdditionalInformation = NewProjectAdditionalInfo;
-                        projectUpdate.Github = NewProjectGithub;
-                        projectUpdate.EstimatedTime = estTime;
-                        projectUpdate.DateStart = start;
-                        projectUpdate.DateEnd = end;
-                        projectUpdate.PersonInChargeId = NewProjectLeader?.MemberId;
+                        var projectUpdate = await _projectRepository.GetProjectByIdAsync(projectId);
 
-                        await _projectRepository.UpdateProjectAsync(projectUpdate);
+                        if (projectUpdate != null)
+                        {
+                            projectUpdate.Name = NewProjectName;
+                            projectUpdate.Description = NewProjectDescription;
+                            projectUpdate.AdditionalInformation = NewProjectAdditionalInfo;
+                            projectUpdate.Github = NewProjectGithub;
+                            projectUpdate.EstimatedTime = estTime;
+                            projectUpdate.DateStart = start;
+                            projectUpdate.DateEnd = end;
+                            projectUpdate.PersonInChargeId = NewProjectLeader?.MemberId;
+
+                            await _projectRepository.UpdateProjectAsync(projectUpdate);
+                        }
                     }
                 }
 
@@ -278,14 +342,17 @@ namespace Esseti.ViewModels
         {
             if (item == null) return;
 
-            var profileVM = new ProjectProfileViewModel(
-                int.Parse(item.ProjectId),
-                _navigationService,
-                _projectRepository,
-                _memberRepository
-            );
+            if (int.TryParse(item.ProjectId, out var projectId))
+            {
+                var profileVM = new ProjectProfileViewModel(
+                    projectId,
+                    _navigationService,
+                    _projectRepository,
+                    _memberRepository
+                );
 
-            _navigationService.NavigateTo(profileVM);    
+                _navigationService.NavigateTo(profileVM);    
+            }
         }
 
         [RelayCommand]
@@ -302,14 +369,24 @@ namespace Esseti.ViewModels
             {
                 if (_projectToDelete != null)
                 {
-                    await _projectRepository.DeleteSingleProjectAsync(int.Parse(_projectToDelete.ProjectId));
+                    if (int.TryParse(_projectToDelete.ProjectId, out var projectId))
+                    {
+                        await _projectRepository.DeleteSingleProjectAsync(projectId);
+                    }
                     _projectToDelete = null;
                 } else
                 {
                     var selectedVMs = Projects.Where(p => p.IsSelected).ToList();
                     if(!selectedVMs.Any()) return;
 
-                    var idsToDelete = selectedVMs.Select(p => int.Parse(p.ProjectId)).ToList();
+                    var idsToDelete = new List<int>();
+                    foreach (var p in selectedVMs)
+                    {
+                        if (int.TryParse(p.ProjectId, out var id))
+                        {
+                            idsToDelete.Add(id);
+                        }
+                    }
                     await _projectRepository.DeleteProjectsAsync(idsToDelete);
                 }
 
@@ -317,7 +394,7 @@ namespace Esseti.ViewModels
                 await LoadDataAsync();
             } catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd usuwania projektu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania projektu: {ex.Message}");
             }
         }
 
@@ -347,3 +424,5 @@ namespace Esseti.ViewModels
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
@@ -68,13 +68,61 @@ namespace Esseti.ViewModels
         private bool _isAddEditPopupVisible;
 
         [ObservableProperty]
-        private string _popupTitle = "Nowa aktywność";
+        private string _popupTitle = "Nowa aktywnoĹ›Ä‡";
+
+        [ObservableProperty]
+        private bool _isNameInvalid;
+        [ObservableProperty]
+        private bool _isDateInvalid;
+        [ObservableProperty]
+        private bool _isTimeInvalid;
+        [ObservableProperty]
+        private bool _isEmailInvalid;
+        [ObservableProperty]
+        private bool _isPhoneInvalid;
+        [ObservableProperty]
+        private bool _isFormValid = true;
+        [ObservableProperty]
+        private string _validationError = string.Empty;
+
+        private void ValidateForm()
+        {
+            IsNameInvalid = string.IsNullOrWhiteSpace(NewActivityName);
+            IsDateInvalid = string.IsNullOrWhiteSpace(NewActivityDate) || !TryParseDate(NewActivityDate, out _);
+            IsTimeInvalid = string.IsNullOrWhiteSpace(NewActivityTime) || !TimeSpan.TryParse(NewActivityTime, out _);
+            IsEmailInvalid = !string.IsNullOrWhiteSpace(NewActivityPersonInChargeEmail) && 
+                              !System.Text.RegularExpressions.Regex.IsMatch(NewActivityPersonInChargeEmail, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            IsPhoneInvalid = !string.IsNullOrWhiteSpace(NewActivityPersonInChargePhone) && 
+                             !System.Text.RegularExpressions.Regex.IsMatch(NewActivityPersonInChargePhone, @"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$");
+
+            IsFormValid = !IsNameInvalid && !IsDateInvalid && !IsTimeInvalid && !IsEmailInvalid && !IsPhoneInvalid;
+
+            if (IsNameInvalid) ValidationError = "Nazwa aktywnoĹ›ci jest wymagana.";
+            else if (IsDateInvalid) ValidationError = "Data aktywnoĹ›ci jest wymagana i musi byÄ‡ poprawna.";
+            else if (IsTimeInvalid) ValidationError = "Godzina aktywnoĹ›ci jest wymagana i musi byÄ‡ poprawna (np. hh:mm).";
+            else if (IsEmailInvalid) ValidationError = "Niepoprawny format adresu e-mail osoby odpowiedzialnej.";
+            else if (IsPhoneInvalid) ValidationError = "Niepoprawny format numeru telefonu osoby odpowiedzialnej.";
+            else ValidationError = string.Empty;
+        }
+
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(NewActivityName) ||
+                e.PropertyName == nameof(NewActivityDate) ||
+                e.PropertyName == nameof(NewActivityTime) ||
+                e.PropertyName == nameof(NewActivityPersonInChargeEmail) ||
+                e.PropertyName == nameof(NewActivityPersonInChargePhone))
+            {
+                ValidateForm();
+            }
+        }
 
         private readonly INavigationService _navigationService;
 
         public string SelectAllText => IsAllSelected ? "Odznacz wszystko" : "Zaznacz wszystko"; 
         public bool HasSelectedItems => IsAnySelected;
-        public string SelectedCountText => $"Zaznaczono: {SelectedCount} aktywności";
+        public string SelectedCountText => $"Zaznaczono: {SelectedCount} aktywnoĹ›ci";
 
         public ActivitiesViewModel(IActivityRepository activityRepository, IMemberRepository memberRepository, INavigationService navigationService)
         {
@@ -94,7 +142,7 @@ namespace Esseti.ViewModels
         private void OpenAddPopup()
         {
             _editingActivity = null;
-            PopupTitle = "Nowa aktywność";
+            PopupTitle = "Nowa aktywnoĹ›Ä‡";
             NewActivityName = string.Empty;
             NewActivityDescription = string.Empty;
             NewActivityDate = DateTime.Now.ToString("dd.MM.yyyy");
@@ -105,6 +153,14 @@ namespace Esseti.ViewModels
             NewActivityPersonInChargePhone = string.Empty;
             NewActivityPersonInChargeEmail = string.Empty;
             NewActivityIsRepeatable = false;
+            
+            IsNameInvalid = false;
+            IsDateInvalid = false;
+            IsTimeInvalid = false;
+            IsEmailInvalid = false;
+            IsPhoneInvalid = false;
+            IsFormValid = false; // Name is empty initially
+
             IsAddEditPopupVisible = true;
         }
 
@@ -113,22 +169,26 @@ namespace Esseti.ViewModels
         {
             if (item == null) return;
             _editingActivity = item;
-            PopupTitle = "Edycja aktywności";
+            PopupTitle = "Edycja aktywnoĹ›ci";
 
-            var fullActivity = await _activityRepository.GetActivityByIdAsync(int.Parse(item.ActivityId));
-            if (fullActivity != null)
+            if (int.TryParse(item.ActivityId, out var activityId))
             {
-                NewActivityName = fullActivity.Name;
-                NewActivityDescription = fullActivity.AdditionalInformation ?? string.Empty;
-                NewActivityDate = fullActivity.Date.ToString("dd.MM.yyyy");
-                NewActivityTime = fullActivity.Time?.ToString(@"hh\:mm") ?? string.Empty;
-                NewActivityCity = fullActivity.City ?? string.Empty;
-                NewActivityStreet = fullActivity.AddressLine ?? string.Empty;
-                NewActivityPersonInChargeEvent = fullActivity.PersonInChargeName ?? string.Empty;
-                NewActivityPersonInChargePhone = fullActivity.PersonInChargePhone ?? string.Empty;
-                NewActivityPersonInChargeEmail = fullActivity.PersonInChargeEmail ?? string.Empty;
-                NewActivityIsRepeatable = fullActivity.IsRepeatable;
+                var fullActivity = await _activityRepository.GetActivityByIdAsync(activityId);
+                if (fullActivity != null)
+                {
+                    NewActivityName = fullActivity.Name;
+                    NewActivityDescription = fullActivity.AdditionalInformation ?? string.Empty;
+                    NewActivityDate = fullActivity.Date.ToString("dd.MM.yyyy");
+                    NewActivityTime = fullActivity.Time?.ToString(@"hh\:mm") ?? string.Empty;
+                    NewActivityCity = fullActivity.City ?? string.Empty;
+                    NewActivityStreet = fullActivity.AddressLine ?? string.Empty;
+                    NewActivityPersonInChargeEvent = fullActivity.PersonInChargeName ?? string.Empty;
+                    NewActivityPersonInChargePhone = fullActivity.PersonInChargePhone ?? string.Empty;
+                    NewActivityPersonInChargeEmail = fullActivity.PersonInChargeEmail ?? string.Empty;
+                    NewActivityIsRepeatable = fullActivity.IsRepeatable;
+                }
             }
+            ValidateForm();
             IsAddEditPopupVisible = true;
         }
 
@@ -138,10 +198,10 @@ namespace Esseti.ViewModels
             IsAddEditPopupVisible = false;
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(IsFormValid))]
         private async Task SaveActivity()
         {
-            DateTime parsedDate = DateTime.TryParse(NewActivityDate, out var d) ? d : DateTime.Now;
+            TryParseDate(NewActivityDate, out var parsedDate);
             TimeSpan? parsedTime = TimeSpan.TryParse(NewActivityTime, out var t) ? t : null;
 
             if (_editingActivity == null)
@@ -164,20 +224,23 @@ namespace Esseti.ViewModels
 
             if (_editingActivity != null)
             {
-                var activityUpdate = await _activityRepository.GetActivityByIdAsync(int.Parse(_editingActivity.ActivityId));
-                if (activityUpdate != null) {
-                    activityUpdate.Name = NewActivityName;
-                    activityUpdate.Date = parsedDate;
-                    activityUpdate.Time = parsedTime;
-                    activityUpdate.City = NewActivityCity;
-                    activityUpdate.AddressLine = NewActivityStreet;
-                    activityUpdate.AdditionalInformation = NewActivityDescription;
-                    activityUpdate.PersonInChargeName = NewActivityPersonInChargeEvent;
-                    activityUpdate.PersonInChargePhone = NewActivityPersonInChargePhone;
-                    activityUpdate.PersonInChargeEmail = NewActivityPersonInChargeEmail;
-                    activityUpdate.IsRepeatable = NewActivityIsRepeatable;
-                    
-                    await _activityRepository.UpdateActivityAsync(activityUpdate);
+                if (int.TryParse(_editingActivity.ActivityId, out var activityId))
+                {
+                    var activityUpdate = await _activityRepository.GetActivityByIdAsync(activityId);
+                    if (activityUpdate != null) {
+                        activityUpdate.Name = NewActivityName;
+                        activityUpdate.Date = parsedDate;
+                        activityUpdate.Time = parsedTime;
+                        activityUpdate.City = NewActivityCity;
+                        activityUpdate.AddressLine = NewActivityStreet;
+                        activityUpdate.AdditionalInformation = NewActivityDescription;
+                        activityUpdate.PersonInChargeName = NewActivityPersonInChargeEvent;
+                        activityUpdate.PersonInChargePhone = NewActivityPersonInChargePhone;
+                        activityUpdate.PersonInChargeEmail = NewActivityPersonInChargeEmail;
+                        activityUpdate.IsRepeatable = NewActivityIsRepeatable;
+                        
+                        await _activityRepository.UpdateActivityAsync(activityUpdate);
+                    }
                 }
             }
 
@@ -199,7 +262,10 @@ namespace Esseti.ViewModels
             {
                 if (_activityToDelete != null)
                 {
-                    await _activityRepository.DeleteSingleActivityAsync(int.Parse(_activityToDelete.ActivityId));
+                    if (int.TryParse(_activityToDelete.ActivityId, out var activityId))
+                    {
+                        await _activityRepository.DeleteSingleActivityAsync(activityId);
+                    }
                     _activityToDelete = null;
                 }
                 else
@@ -207,7 +273,14 @@ namespace Esseti.ViewModels
                     var selectedVMs = Activities.Where(a => a.IsSelected).ToList();
                     if (!selectedVMs.Any()) return;
 
-                    var idsToDelete = selectedVMs.Select(a => int.Parse(a.ActivityId)).ToList();
+                    var idsToDelete = new List<int>();
+                    foreach (var a in selectedVMs)
+                    {
+                        if (int.TryParse(a.ActivityId, out var id))
+                        {
+                            idsToDelete.Add(id);
+                        }
+                    }
                     await _activityRepository.DeleteActivitesAsync(idsToDelete);
                 }
                 IsAllSelected = false;
@@ -215,7 +288,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd usuwania aktywności: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania aktywnoĹ›ci: {ex.Message}");
             }
         }
 
@@ -249,7 +322,7 @@ namespace Esseti.ViewModels
             OnPropertyChanged(nameof(SelectedCountText));
         }
 
-                protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
+        protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
 
         private void ApplyFilter()
         {
@@ -269,6 +342,32 @@ namespace Esseti.ViewModels
             UpdateSelectionState();
         }
 
+        private void OnActivityItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ActivityItemViewModel.IsSelected)) {
+                UpdateSelectionState();
+
+                if (!_isUpdatingSelection) {
+                    _isUpdatingSelection = true;
+                    try {
+                        if (Activities.Any()) {
+                            IsAllSelected = Activities.All(a => a.IsSelected);
+                        }
+                    } finally {
+                        _isUpdatingSelection = false;
+                    }
+                }
+            }
+        }
+
+        private void ClearActivitySubscriptions()
+        {
+            foreach (var vm in _allActivities)
+            {
+                vm.PropertyChanged -= OnActivityItemPropertyChanged;
+            }
+        }
+
         private async Task LoadDataAsync()
         {
             try 
@@ -277,6 +376,7 @@ namespace Esseti.ViewModels
                 var membersFromDb = await _memberRepository.GetAllMembersAsync();
 
                 Dispatcher.UIThread.Post(() => {
+                    ClearActivitySubscriptions();
                     Activities.Clear();
                     _allActivities.Clear();
                     
@@ -291,22 +391,7 @@ namespace Esseti.ViewModels
                                 isRepeatable: act.IsRepeatable
                             );
 
-                            vm.PropertyChanged += (s, e) => {
-                                if (e.PropertyName == nameof(ActivityItemViewModel.IsSelected)) {
-                                    UpdateSelectionState();
-
-                                    if (!_isUpdatingSelection) {
-                                        _isUpdatingSelection = true;
-                                        try {
-                                            if (Activities.Any()) {
-                                                IsAllSelected = Activities.All(a => a.IsSelected);
-                                            }
-                                        } finally {
-                                            _isUpdatingSelection = false;
-                                        }
-                                    }
-                                }
-                            };
+                            vm.PropertyChanged += OnActivityItemPropertyChanged;
 
                             _allActivities.Add(vm);
                         }
@@ -322,7 +407,7 @@ namespace Esseti.ViewModels
                     ApplyFilter();
                 });
             } catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine($"Błąd pobierania aktywności: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d pobierania aktywnoĹ›ci: {ex.Message}");
             }
         }
 
@@ -331,14 +416,19 @@ namespace Esseti.ViewModels
         {
             if (item == null) return;
 
-            var profileVm = new ActivityProfileViewModel (
-                int.Parse(item.ActivityId),
-                _navigationService,
-                _memberRepository,
-                _activityRepository
-            );
+            if (int.TryParse(item.ActivityId, out var activityId))
+            {
+                var profileVm = new ActivityProfileViewModel (
+                    activityId,
+                    _navigationService,
+                    _memberRepository,
+                    _activityRepository
+                );
 
-            _navigationService.NavigateTo(profileVm);
+                _navigationService.NavigateTo(profileVm);
+            }
         }
     }
 }
+
+

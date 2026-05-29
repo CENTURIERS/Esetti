@@ -1,11 +1,16 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Threading.Tasks;
 
 namespace Esseti.ViewModels
 {
-    public partial class ViewModelBase : ObservableObject
+    public partial class ViewModelBase : ObservableObject, IDisposable
     {
+        public virtual void Dispose()
+        {
+        }
+
         public virtual string PageTitle => "Aplikacja Esseti";
 
         public virtual bool ShowActionHeader => false;
@@ -88,5 +93,22 @@ namespace Esseti.ViewModels
         {
             await Task.CompletedTask; 
         }
+
+        protected bool TryParseDate(string dateStr, out DateTime date)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr))
+            {
+                date = default;
+                return false;
+            }
+            return DateTime.TryParseExact(dateStr.Trim(), 
+                new[] { "dd.MM.yyyy", "yyyy-MM-dd", "d.M.yyyy", "dd/MM/yyyy", "d/M/yyyy" }, 
+                System.Globalization.CultureInfo.InvariantCulture, 
+                System.Globalization.DateTimeStyles.None, 
+                out date) 
+                || DateTime.TryParse(dateStr.Trim(), out date);
+        }
     }
 }
+
+

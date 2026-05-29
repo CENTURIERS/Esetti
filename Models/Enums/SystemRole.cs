@@ -1,8 +1,11 @@
-namespace Models.Enums {
-	public enum SystemRole
-	{
-		SuperAdmin,
-		CollegeAdmin,
-		User
-	}
+﻿namespace Models.Enums
+{
+    public enum SystemRole
+    {
+        SuperAdmin = 0,
+        CollegeAdmin = 1,
+        User = 2
+    }
 }
+
+

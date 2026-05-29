@@ -1,4 +1,4 @@
-using Esseti.Data;
+﻿using Esseti.Data;
 using Esseti.Repositories;
 using Esseti.Repositories.Interfaces;
 using Esseti.Services;
@@ -13,11 +13,13 @@ namespace Esseti
         {
             services.AddDbContext<EssetiDbContext>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<ICacheService, MemoryCacheService>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<IClubRepository, ClubRepository>();
             services.AddScoped<ITripRepository, TripRepository>();
+            services.AddTransient<IPdfGeneratorService, PdfGeneratorService>();
             return services;
         }
 
@@ -34,3 +36,4 @@ namespace Esseti
         }
     }
 }
+

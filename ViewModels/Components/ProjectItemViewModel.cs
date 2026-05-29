@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Esseti.ViewModels.Components
 {
@@ -33,3 +33,4 @@ namespace Esseti.ViewModels.Components
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using Models.Enums;
+﻿using Models.Enums;
 using Models.Users;
 
 namespace Models.Activities
@@ -14,3 +14,4 @@ namespace Models.Activities
         public SectionRole Role { get; set; } = SectionRole.Member;
     }
 }
+

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -104,9 +104,9 @@ namespace Esseti.ViewModels
                     AdditionalInformation = proj.AdditionalInformation ?? "Brak dodatkowych informacji";
                     Github = proj.Github ?? "Brak linku do github";
 
-                    EstimatedTimeText = proj.EstimatedTime != null ? $"{proj.EstimatedTime} godzin" : "Nie określono";
-                    DateStartText = proj.DateStart?.ToString("dd.MM.yyyy") ?? "Nie określono";
-                    DateEndText = proj.DateEnd?.ToString("dd.MM.yyyy") ?? "Nie określono";
+                    EstimatedTimeText = proj.EstimatedTime != null ? $"{proj.EstimatedTime} godzin" : "Nie okreĹ›lono";
+                    DateStartText = proj.DateStart?.ToString("dd.MM.yyyy") ?? "Nie okreĹ›lono";
+                    DateEndText = proj.DateEnd?.ToString("dd.MM.yyyy") ?? "Nie okreĹ›lono";
 
                     if (proj.PersonInCharge != null)
                     {
@@ -143,7 +143,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd ładowania profilu projektu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d Ĺ‚adowania profilu projektu: {ex.Message}");
                 IsLoading = false;
             }
         }
@@ -163,9 +163,9 @@ namespace Esseti.ViewModels
             EditAdditionalInfo = AdditionalInformation == "Brak dodatkowych informacji" ? "" : AdditionalInformation;
             EditGithub = Github == "Brak linku do github" ? "" : Github;
 
-            EditEstimatedTime = EstimatedTimeText.Replace(" godzin", "").Replace("Nie określono", "");
-            EditDateStart = DateStartText == "Nie określono" ? "" : DateStartText;
-            EditDateEnd = DateEndText == "Nie określono" ? "" : DateEndText;
+            EditEstimatedTime = EstimatedTimeText.Replace(" godzin", "").Replace("Nie okreĹ›lono", "");
+            EditDateStart = DateStartText == "Nie okreĹ›lono" ? "" : DateStartText;
+            EditDateEnd = DateEndText == "Nie okreĹ›lono" ? "" : DateEndText;
 
             EditLeader = ClubMembers.FirstOrDefault(m => $"{m.FirstName} {m.LastName}" == LeaderName);
 
@@ -180,8 +180,8 @@ namespace Esseti.ViewModels
         {
             if (string.IsNullOrWhiteSpace(EditName)) return;
 
-            DateTime? start = DateTime.TryParse(EditDateStart, out var ds) ? ds : null;
-            DateTime? end = DateTime.TryParse(EditDateEnd, out var de) ? de : null;
+            DateTime? start = TryParseDate(EditDateStart, out var ds) ? ds : null;
+            DateTime? end = TryParseDate(EditDateEnd, out var de) ? de : null;
             int? estTime = int.TryParse(EditEstimatedTime, out var et) ? et : null;
 
             var updateProject = new Models.Activities.Project
@@ -246,3 +246,4 @@ namespace Esseti.ViewModels
         }
     }
 }
+

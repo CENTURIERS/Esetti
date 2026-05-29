@@ -136,39 +136,40 @@
                     <Grid ColumnDefinitions="*, 24, *">
                         <StackPanel Grid.Column="0" Spacing="8">
                             <TextBlock Text="Imię" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                            <TextBox Text="{Binding EditFirstName}" Watermark="np. Jan"/>
+                            <TextBox Classes="form-input" Classes.invalid="{Binding IsEditFirstNameInvalid}" Text="{Binding EditFirstName}" Watermark="np. Jan"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Spacing="8">
                             <TextBlock Text="Nazwisko" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                            <TextBox Text="{Binding EditLastName}" Watermark="np. Kowalski"/>
+                            <TextBox Classes="form-input" Classes.invalid="{Binding IsEditLastNameInvalid}" Text="{Binding EditLastName}" Watermark="np. Kowalski"/>
                         </StackPanel>
                     </Grid>
 
                     <Grid ColumnDefinitions="*, 24, *">
                         <StackPanel Grid.Column="0" Spacing="8">
                             <TextBlock Text="Adres e-mail" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                            <TextBox Text="{Binding EditEmail}" Watermark="jan.kowalski@ur.edu.pl"/>
+                            <TextBox Classes="form-input" Classes.invalid="{Binding IsEditEmailInvalid}" Text="{Binding EditEmail}" Watermark="jan.kowalski@ur.edu.pl"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Spacing="8">
                             <TextBlock Text="Numer telefonu" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                            <TextBox Text="{Binding EditPhoneNumber}" Watermark="+48 000 000 000"/>
+                            <TextBox Classes="form-input" Classes.invalid="{Binding IsEditPhoneNumberInvalid}" Text="{Binding EditPhoneNumber}" Watermark="+48 000 000 000"/>
                         </StackPanel>
                     </Grid>
 
                     <Grid ColumnDefinitions="*, 24, *">
                         <StackPanel Grid.Column="0" Spacing="8">
                             <TextBlock Text="Numer indeksu" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                            <TextBox Text="{Binding EditIndexNumber}" Watermark="123456"/>
+                            <TextBox Classes="form-input" Classes.invalid="{Binding IsEditIndexNumberInvalid}" Text="{Binding EditIndexNumber}" Watermark="123456"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Spacing="8">
                             <TextBlock Text="Kierunek studiów" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                            <TextBox Text="{Binding EditMajor}" Watermark="Informatyka"/>
+                            <TextBox Classes="form-input" Classes.invalid="{Binding IsEditMajorInvalid}" Text="{Binding EditMajor}" Watermark="Informatyka"/>
                         </StackPanel>
                     </Grid>
 
                     <StackPanel Spacing="8">
                         <TextBlock Text="Opis profilu" FontSize="12" FontWeight="Bold" Foreground="#7a8099" Margin="4,0"/>
-                        <TextBox Text="{Binding EditDescription}" 
+                        <TextBox Classes="form-textarea"
+                                 Text="{Binding EditDescription}" 
                                  Watermark="Napisz kilka słów o sobie..." 
                                  AcceptsReturn="True" 
                                  Height="120" 

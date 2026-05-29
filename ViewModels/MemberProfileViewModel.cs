@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -72,6 +72,41 @@ namespace Esseti.ViewModels
         [ObservableProperty] private string _editMajor = "";
         [ObservableProperty] private string _editDescription = "";
         [ObservableProperty] private string _editRole = "";
+        [ObservableProperty] private string _editValidationError = "";
+
+        [ObservableProperty] private bool _isEditFirstNameInvalid;
+        [ObservableProperty] private bool _isEditLastNameInvalid;
+        [ObservableProperty] private bool _isEditEmailInvalid;
+        [ObservableProperty] private bool _isEditIndexNumberInvalid;
+        [ObservableProperty] private bool _isEditPhoneNumberInvalid;
+        [ObservableProperty] private bool _isEditMajorInvalid;
+        [ObservableProperty] private bool _isEditFormValid = true;
+
+        private void ValidateEditForm()
+        {
+            IsEditFirstNameInvalid = string.IsNullOrWhiteSpace(EditFirstName);
+            IsEditLastNameInvalid = string.IsNullOrWhiteSpace(EditLastName);
+            IsEditEmailInvalid = !string.IsNullOrWhiteSpace(EditEmail) && !IsValidEmail(EditEmail);
+            IsEditIndexNumberInvalid = !string.IsNullOrWhiteSpace(EditIndexNumber) && !EditIndexNumber.All(char.IsDigit);
+            IsEditPhoneNumberInvalid = !string.IsNullOrWhiteSpace(EditPhoneNumber) && !System.Text.RegularExpressions.Regex.IsMatch(EditPhoneNumber, @"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$");
+            IsEditMajorInvalid = string.IsNullOrWhiteSpace(EditMajor);
+
+            IsEditFormValid = !IsEditFirstNameInvalid && !IsEditLastNameInvalid && !IsEditEmailInvalid && !IsEditIndexNumberInvalid && !IsEditPhoneNumberInvalid && !IsEditMajorInvalid;
+        }
+
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(EditFirstName) ||
+                e.PropertyName == nameof(EditLastName) ||
+                e.PropertyName == nameof(EditEmail) ||
+                e.PropertyName == nameof(EditIndexNumber) ||
+                e.PropertyName == nameof(EditPhoneNumber) ||
+                e.PropertyName == nameof(EditMajor))
+            {
+                ValidateEditForm();
+            }
+        }
 
         public ObservableCollection<ActivityProfileItem> Activities { get; } = new();
         public ObservableCollection<ProjectCardItem> Projects { get; } = new();
@@ -105,7 +140,7 @@ namespace Esseti.ViewModels
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
                 var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
-                    Title = "Wybierz nowe zdjęcie profilowe",
+                    Title = "Wybierz nowe zdjÄ™cie profilowe",
                     AllowMultiple = false,
                     FileTypeFilter = new[] { FilePickerFileTypes.ImageAll } 
                 });
@@ -135,7 +170,7 @@ namespace Esseti.ViewModels
                 var member = await _memberRepository.GetMemberByIdAsync(_memberId);
                 if (member == null)
                 {
-                    Dispatcher.UIThread.Post(() => { IsLoading = false; Description = "Nie znaleziono użytkownika w bazie."; });
+                    Dispatcher.UIThread.Post(() => { IsLoading = false; Description = "Nie znaleziono uĹĽytkownika w bazie."; });
                     return;
                 }
 
@@ -162,7 +197,7 @@ namespace Esseti.ViewModels
                     var college = dept?.College;
 
                     CollegeName = college?.Name ?? "Brak uczelni";
-                    DepartmentName = dept?.Name ?? "Brak wydziału";
+                    DepartmentName = dept?.Name ?? "Brak wydziaĹ‚u";
                     DepartmentAddress = dept != null
                         ? $"{dept.AddressLine}, {dept.PostalCode} {dept.City}".Trim(' ', ',')
                         : "";
@@ -208,7 +243,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Błąd ładowania profilu: {ex}");
+                Debug.WriteLine($"BĹ‚Ä…d Ĺ‚adowania profilu: {ex}");
                 IsLoading = false;
             }
         }
@@ -231,6 +266,7 @@ namespace Esseti.ViewModels
             EditDescription = Description;
             EditRole = Role;
 
+            ValidateEditForm();
             IsEditPopupVisible = true;
         }
 
@@ -240,9 +276,41 @@ namespace Esseti.ViewModels
             IsEditPopupVisible = false;
         }
 
+        private static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return true;
+            return System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+
         [RelayCommand]
         private async Task SaveEditAsync()
         {
+            EditValidationError = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(EditFirstName))
+            {
+                EditValidationError = "ImiÄ™ jest wymagane.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(EditLastName))
+            {
+                EditValidationError = "Nazwisko jest wymagane.";
+                return;
+            }
+
+            if (!IsValidEmail(EditEmail))
+            {
+                EditValidationError = "Niepoprawny format adresu e-mail.";
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(EditIndexNumber) && !EditIndexNumber.All(char.IsDigit))
+            {
+                EditValidationError = "Numer indeksu musi skĹ‚adaÄ‡ siÄ™ wyĹ‚Ä…cznie z cyfr.";
+                return;
+            }
+
             var updatedMember = new Models.Users.Member 
             {
                 MemberId = _memberId,
@@ -262,9 +330,10 @@ namespace Esseti.ViewModels
 
             await _memberRepository.UpdateMemberAsync(updatedMember, remainingProjectIds, remainingActivityIds);
 
-            IsEditPopupVisible = false;
-
+            // PrzeĹ‚aduj profil po zapisaniu
             await LoadAsync();
+
+            IsEditPopupVisible = false;
         }
 
         [RelayCommand]
@@ -301,3 +370,4 @@ namespace Esseti.ViewModels
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models.Other;
 
@@ -12,3 +12,5 @@ namespace Esseti.Repositories.Interfaces
         Task DeleteTripAsync(int tripId);
     }
 }
+
+

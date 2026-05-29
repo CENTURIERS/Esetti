@@ -1,4 +1,4 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 
 namespace Esseti.Views
 {
@@ -10,3 +10,4 @@ namespace Esseti.Views
         }
     }
 }
+

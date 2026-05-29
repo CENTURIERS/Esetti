@@ -1,4 +1,4 @@
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
@@ -45,8 +45,14 @@ namespace Esseti.ViewModels
         [ObservableProperty] 
         private string _newIndexNumber = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty] 
         private byte[]? _newAvatar;
+
+        [ObservableProperty]
+        private string _newDescription = string.Empty;
+
+        [ObservableProperty]
+        private string _newMajor = string.Empty;
 
         public ObservableCollection<AuthorityRole> AvailableRoles { get; } = new();
 
@@ -60,6 +66,57 @@ namespace Esseti.ViewModels
 
         [ObservableProperty]
         private AuthorityRole? _selectedRole;
+
+        [ObservableProperty] private bool _isAddFirstNameInvalid;
+        [ObservableProperty] private bool _isAddLastNameInvalid;
+        [ObservableProperty] private bool _isAddEmailInvalid;
+        [ObservableProperty] private bool _isAddIndexNumberInvalid;
+        [ObservableProperty] private bool _isAddFormValid = true;
+
+        [ObservableProperty] private bool _isEditFirstNameInvalid;
+        [ObservableProperty] private bool _isEditLastNameInvalid;
+        [ObservableProperty] private bool _isEditEmailInvalid;
+        [ObservableProperty] private bool _isEditIndexNumberInvalid;
+        [ObservableProperty] private bool _isEditFormValid = true;
+
+        private void ValidateAddForm()
+        {
+            IsAddFirstNameInvalid = string.IsNullOrWhiteSpace(NewFirstName);
+            IsAddLastNameInvalid = string.IsNullOrWhiteSpace(NewLastName);
+            IsAddEmailInvalid = string.IsNullOrWhiteSpace(NewEmail) || !IsValidEmail(NewEmail);
+            IsAddIndexNumberInvalid = string.IsNullOrWhiteSpace(NewIndexNumber) || !NewIndexNumber.All(char.IsDigit) || NewIndexNumber.Length < 4;
+
+            IsAddFormValid = !IsAddFirstNameInvalid && !IsAddLastNameInvalid && !IsAddEmailInvalid && !IsAddIndexNumberInvalid;
+        }
+
+        private void ValidateEditForm()
+        {
+            IsEditFirstNameInvalid = string.IsNullOrWhiteSpace(EditFirstName);
+            IsEditLastNameInvalid = string.IsNullOrWhiteSpace(EditLastName);
+            IsEditEmailInvalid = string.IsNullOrWhiteSpace(EditEmail) || !IsValidEmail(EditEmail);
+            IsEditIndexNumberInvalid = string.IsNullOrWhiteSpace(EditIndexNumber) || !EditIndexNumber.All(char.IsDigit) || EditIndexNumber.Length < 4;
+
+            IsEditFormValid = !IsEditFirstNameInvalid && !IsEditLastNameInvalid && !IsEditEmailInvalid && !IsEditIndexNumberInvalid;
+        }
+
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(NewFirstName) ||
+                e.PropertyName == nameof(NewLastName) ||
+                e.PropertyName == nameof(NewEmail) ||
+                e.PropertyName == nameof(NewIndexNumber))
+            {
+                ValidateAddForm();
+            }
+            if (e.PropertyName == nameof(EditFirstName) ||
+                e.PropertyName == nameof(EditLastName) ||
+                e.PropertyName == nameof(EditEmail) ||
+                e.PropertyName == nameof(EditIndexNumber))
+            {
+                ValidateEditForm();
+            }
+        }
 
         [ObservableProperty]
         private bool _isListEditPopupVisible;
@@ -80,7 +137,19 @@ namespace Esseti.ViewModels
         private byte[]? _editAvatar;
 
         [ObservableProperty]
+        private string _editDescription = string.Empty;
+
+        [ObservableProperty]
+        private string _editMajor = string.Empty;
+
+        [ObservableProperty]
         private AuthorityRole? _editSelectedRole;
+
+        [ObservableProperty]
+        private string _addValidationError = string.Empty;
+
+        [ObservableProperty]
+        private string _editValidationError = string.Empty;
 
         private MemberItemViewModel? _memberBeingEdited;
 
@@ -156,7 +225,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd bazy: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d bazy: {ex.Message}");
             }
         }
 
@@ -192,10 +261,13 @@ namespace Esseti.ViewModels
             EditLastName = member.LastName;
             EditEmail = member.Email;
             EditIndexNumber = member.IndexNumber;
+            EditDescription = member.Description;
+            EditMajor = member.Major;
             EditAvatar = null;
-            EditSelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == member.Role) ?? AvailableRoles.FirstOrDefault(r => r.Name == "Członek");
+            EditSelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == member.Role) ?? AvailableRoles.FirstOrDefault(r => r.Name == "CzĹ‚onek");
             EditSelectedDepartment = AvailableDepartments.FirstOrDefault(d => d.Name == member.CollegeDepartment);
 
+            ValidateEditForm();
             IsListEditPopupVisible = true;
         }
 
@@ -215,7 +287,7 @@ namespace Esseti.ViewModels
                 {
                     var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
-                        Title = "Wybierz zdjęcie",
+                        Title = "Wybierz zdjÄ™cie",
                         AllowMultiple = false,
                         FileTypeFilter = new[] { FilePickerFileTypes.ImageAll }
                     });
@@ -234,8 +306,34 @@ namespace Esseti.ViewModels
         [RelayCommand]
         private async Task ConfirmEditAsync()
         {
-            if (_memberBeingEdited == null || string.IsNullOrWhiteSpace(EditFirstName) || string.IsNullOrWhiteSpace(EditLastName))
+            EditValidationError = string.Empty;
+
+            if (_memberBeingEdited == null)
                 return;
+
+            if (string.IsNullOrWhiteSpace(EditFirstName))
+            {
+                EditValidationError = "ImiÄ™ jest wymagane.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(EditLastName))
+            {
+                EditValidationError = "Nazwisko jest wymagane.";
+                return;
+            }
+
+            if (!IsValidEmail(EditEmail))
+            {
+                EditValidationError = "Niepoprawny format adresu e-mail.";
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(EditIndexNumber) && !EditIndexNumber.All(char.IsDigit))
+            {
+                EditValidationError = "Numer indeksu musi skĹ‚adaÄ‡ siÄ™ wyĹ‚Ä…cznie z cyfr.";
+                return;
+            }
 
             int clubId = 1;
 
@@ -245,6 +343,8 @@ namespace Esseti.ViewModels
                 FirstName = EditFirstName,
                 LastName = EditLastName,
                 IndexNumber = EditIndexNumber,
+                Major = EditMajor,
+                Description = EditDescription,
                 MemberAvatar = EditAvatar,
                 AuthorityRole = EditSelectedRole,
                 RoleId = EditSelectedRole?.RoleId ?? 0,
@@ -273,9 +373,17 @@ namespace Esseti.ViewModels
             NewLastName = string.Empty;
             NewEmail = string.Empty;
             NewIndexNumber = string.Empty;
+            NewDescription = string.Empty;
+            NewMajor = string.Empty;
             NewAvatar = null;
-            SelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == "Członek");
+            SelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == "CzĹ‚onek");
             SelectedDepartment = AvailableDepartments.FirstOrDefault();
+
+            IsAddFirstNameInvalid = false;
+            IsAddLastNameInvalid = false;
+            IsAddEmailInvalid = false;
+            IsAddIndexNumberInvalid = false;
+            IsAddFormValid = false; // Empty fields mean form is invalid initially
 
             IsAddPopupVisible = true;
         }
@@ -296,7 +404,7 @@ namespace Esseti.ViewModels
                 {
                     var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
-                        Title = "Wybierz zdjęcie",
+                        Title = "Wybierz zdjÄ™cie",
                         AllowMultiple = false,
                         FileTypeFilter = new[] { FilePickerFileTypes.ImageAll }
                     });
@@ -312,17 +420,48 @@ namespace Esseti.ViewModels
             }
         }
 
+        private static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return true; // email is optional
+            return System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+
         [RelayCommand]
         private async Task ConfirmAddAsync()
         {
-            if (string.IsNullOrWhiteSpace(NewFirstName) || string.IsNullOrWhiteSpace(NewLastName))
+            AddValidationError = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(NewFirstName))
+            {
+                AddValidationError = "ImiÄ™ jest wymagane.";
                 return;
+            }
+
+            if (string.IsNullOrWhiteSpace(NewLastName))
+            {
+                AddValidationError = "Nazwisko jest wymagane.";
+                return;
+            }
+
+            if (!IsValidEmail(NewEmail))
+            {
+                AddValidationError = "Niepoprawny format adresu e-mail.";
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(NewIndexNumber) && !NewIndexNumber.All(char.IsDigit))
+            {
+                AddValidationError = "Numer indeksu musi skĹ‚adaÄ‡ siÄ™ wyĹ‚Ä…cznie z cyfr.";
+                return;
+            }
 
             var newMemberDb = new Models.Users.Member
             {
                 FirstName = NewFirstName,
                 LastName = NewLastName,
                 IndexNumber = NewIndexNumber,
+                Major = NewMajor,
+                Description = NewDescription,
                 MemberAvatar = NewAvatar,
                 IsActive = true,
                 JoinDate = System.DateTime.Now,
@@ -350,6 +489,39 @@ namespace Esseti.ViewModels
 
         protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
 
+        private void OnMemberItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
+            {
+                UpdateSelectionState();
+
+                if (!_isUpdatingSelection)
+                {
+                    _isUpdatingSelection = true;
+                    try
+                    {
+                        var selectableMembers = Members.Where(m => !m.IsSystemAddTile).ToList();
+                        if (selectableMembers.Any())
+                        {
+                            IsAllSelected = selectableMembers.All(m => m.IsSelected);
+                        }
+                    }
+                    finally
+                    {
+                        _isUpdatingSelection = false;
+                    }
+                }
+            }
+        }
+
+        private void ClearMemberSubscriptions()
+        {
+            foreach (var vm in _allMembers)
+            {
+                vm.PropertyChanged -= OnMemberItemPropertyChanged;
+            }
+        }
+
         private async Task LoadDataAsync()
         {
             try
@@ -368,14 +540,15 @@ namespace Esseti.ViewModels
                 var membersFromDb = await _memberRepository.GetAllMembersAsync();
                 Dispatcher.UIThread.Post(() =>
                 {
+                    ClearMemberSubscriptions();
                     _allMembers.Clear();
-                    _allMembers.Add(new MemberItemViewModel(0, Array.Empty<byte>(), "", "", "", "", "", "", "", "", true, true));
+                    _allMembers.Add(new MemberItemViewModel(0, Array.Empty<byte>(), "", "", "", "", "", "", "", "", true, "", true));
 
                     if (membersFromDb != null)
                     {
                         foreach (var m in membersFromDb)
                         {
-                            var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziału";
+                            var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziaĹ‚u";
                             var vm = new MemberItemViewModel(
                                 memberId: m.MemberId,
                                 avatar: m.MemberAvatar ?? Array.Empty<byte>(),
@@ -388,32 +561,10 @@ namespace Esseti.ViewModels
                                 major: m.Major ?? string.Empty,
                                 joinDate: m.JoinDate.ToString("dd.MM.yyyy"),
                                 isActive: m.IsActive,
+                                description: m.Description ?? string.Empty,
                                 isSystemAddTile: false
                             );
-                            vm.PropertyChanged += (s, e) =>
-                            {
-                                if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
-                                {
-                                    UpdateSelectionState();
-
-                                    if (!_isUpdatingSelection)
-                                    {
-                                        _isUpdatingSelection = true;
-                                        try
-                                        {
-                                            var selectableMembers = Members.Where(m => !m.IsSystemAddTile).ToList();
-                                            if (selectableMembers.Any())
-                                            {
-                                                IsAllSelected = selectableMembers.All(m => m.IsSelected);
-                                            }
-                                        }
-                                        finally
-                                        {
-                                            _isUpdatingSelection = false;
-                                        }
-                                    }
-                                }
-                            };
+                            vm.PropertyChanged += OnMemberItemPropertyChanged;
                             _allMembers.Add(vm);
                         }
                     }
@@ -429,10 +580,19 @@ namespace Esseti.ViewModels
             var query = SearchQuery?.ToLower() ?? "";
             foreach (var item in _allMembers)
             {
-                if (item.IsSystemAddTile || item.FullName.ToLower().Contains(query) || item.Role.ToLower().Contains(query))
+                if (item.IsSystemAddTile || 
+                    item.FullName.ToLower().Contains(query) || 
+                    item.Role.ToLower().Contains(query) ||
+                    item.IndexNumber.ToLower().Contains(query) ||
+                    item.Email.ToLower().Contains(query) ||
+                    item.CollegeDepartment.ToLower().Contains(query) ||
+                    item.Major.ToLower().Contains(query))
+                {
                     Members.Add(item);
+                }
             }
             UpdateSelectionState();
         }
     }
 }
+

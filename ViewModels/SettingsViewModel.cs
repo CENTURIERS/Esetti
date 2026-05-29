@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,10 +10,7 @@ namespace Esseti.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
-        private readonly IMemberRepository _memberRepository;
-        private readonly IProjectRepository _projectRepository;
-        private readonly IActivityRepository _activityRepository;
-        private readonly ITripRepository _tripRepository;
+        private readonly IClubRepository _clubRepository;
 
         [ObservableProperty]
         private int _totalActiveMembers;
@@ -29,16 +26,9 @@ namespace Esseti.ViewModels
 
         public override string PageTitle => "Ustawienia";
 
-        public SettingsViewModel(
-            IMemberRepository memberRepository,
-            IProjectRepository projectRepository,
-            IActivityRepository activityRepository,
-            ITripRepository tripRepository)
+        public SettingsViewModel(IClubRepository clubRepository)
         {
-            _memberRepository = memberRepository;
-            _projectRepository = projectRepository;
-            _activityRepository = activityRepository;
-            _tripRepository = tripRepository;
+            _clubRepository = clubRepository;
 
             _ = LoadStatsAsync();
         }
@@ -47,16 +37,11 @@ namespace Esseti.ViewModels
         {
             try
             {
-                var members = await _memberRepository.GetAllMembersAsync();
-                TotalActiveMembers = members.Count(m => m.IsActive);
-
-                var projects = await _projectRepository.GetAllProjectsAsync();
-                TotalProjects = projects.Count;
-
-                var activities = await _activityRepository.GetAllActivitiesAsync();
-                TotalActivities = activities.Count;
-
-                var trips = await _tripRepository.GetTripsAsync();
+                TotalActiveMembers = await _clubRepository.GetMembersCountAsync();
+                TotalProjects = await _clubRepository.GetProjectsCountAsync();
+                TotalActivities = await _clubRepository.GetActivitiesCountAsync();
+                
+                var trips = await _clubRepository.GetTripsAsync();
                 TotalTrips = trips.Count;
             }
             catch (Exception ex)
@@ -75,7 +60,7 @@ namespace Esseti.ViewModels
                 {
                     var file = await window.StorageProvider.SaveFilePickerAsync(new Avalonia.Platform.Storage.FilePickerSaveOptions
                     {
-                        Title = "Zapisz kopię zapasową bazy danych",
+                        Title = "Zapisz kopiÄ™ zapasowÄ… bazy danych",
                         DefaultExtension = "db",
                         SuggestedFileName = $"esseti_backup_{DateTime.Now:yyyyMMdd_HHmmss}.db",
                         FileTypeChoices = new[]
@@ -109,5 +94,51 @@ namespace Esseti.ViewModels
                 }
             }
         }
+
+        [RelayCommand]
+        private async Task ImportDatabaseAsync()
+        {
+            if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var window = desktop.MainWindow;
+                if (window != null)
+                {
+                    var file = await window.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+                    {
+                        Title = "Importuj bazÄ™ danych",
+                        AllowMultiple = false,
+                        FileTypeFilter = new[]
+                        {
+                            new Avalonia.Platform.Storage.FilePickerFileType("Baza danych SQLite (*.db)")
+                            {
+                                Patterns = new[] { "*.db" }
+                            }
+                        }
+                    });
+
+                    var selected = file?.FirstOrDefault();
+                    if (selected != null)
+                    {
+                        try
+                        {
+                            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
+                            // Overwrite existing DB with imported file
+                            await using (var source = await selected.OpenReadAsync())
+                            await using (var destination = File.Open(dbPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                            {
+                                await source.CopyToAsync(destination);
+                            }
+                            // Reload stats after import
+                            await LoadStatsAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Failed to import database: {ex.Message}");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+

@@ -1,5 +1,6 @@
-using Esseti.Data;
+﻿using Esseti.Data;
 using Esseti.Repositories.Interfaces;
+using Esseti.Services;
 using Microsoft.EntityFrameworkCore;
 using Models.Activities;
 using System.Collections.Generic;
@@ -11,18 +12,20 @@ namespace Esseti.Repositories
     public class ProjectRepository : IProjectRepository
     {
         private readonly EssetiDbContext _context;
+        private readonly ICacheService _cacheService;
 
-        public ProjectRepository(EssetiDbContext context)
+        public ProjectRepository(EssetiDbContext context, ICacheService cacheService)
         {
             _context = context;
+            _cacheService = cacheService;
         }
 
         public async Task<List<Project>> GetAllProjectsAsync()
         {
-            return await _context.Projects
+            return await _cacheService.GetOrLoadAsync("projects_all", () => _context.Projects
                 .Include(p => p.PersonInCharge)
                 .Where(p => p.IsActive)
-                .ToListAsync();
+                .ToListAsync());
         }
 
         public async Task<Project?> GetProjectByIdAsync(int id)
@@ -40,6 +43,7 @@ namespace Esseti.Repositories
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
             _context.ChangeTracker.Clear();
+            _cacheService.Invalidate("projects_all");
         }
 
         public async Task UpdateProjectAsync(Project project, IEnumerable<int>? participantIds = null)
@@ -73,6 +77,7 @@ namespace Esseti.Repositories
 
             await _context.SaveChangesAsync();
             _context.ChangeTracker.Clear();
+            _cacheService.Invalidate("projects_all");
         }
 
         public async Task UpdateProjectParticipantsAsync(int projectId, IEnumerable<int> participantIds)
@@ -94,6 +99,7 @@ namespace Esseti.Repositories
 
             await _context.SaveChangesAsync();
             _context.ChangeTracker.Clear();
+            _cacheService.Invalidate("projects_all");
         }
 
         public async Task DeleteSingleProjectAsync(int id)
@@ -105,6 +111,7 @@ namespace Esseti.Repositories
                 project.IsActive = false;
                 await _context.SaveChangesAsync();
                 _context.ChangeTracker.Clear();
+                _cacheService.Invalidate("projects_all");
             }
         }
 
@@ -121,6 +128,8 @@ namespace Esseti.Repositories
 
             await _context.SaveChangesAsync();
             _context.ChangeTracker.Clear();
+            _cacheService.Invalidate("projects_all");
         }
     }
 }
+

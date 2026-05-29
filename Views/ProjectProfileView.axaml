@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Esseti.ViewModels"
              xmlns:mu="using:Models.Users"
@@ -320,7 +320,6 @@
                         </Grid>
                     </Border>
                     
-                    
                     <Grid ColumnDefinitions="*, 20, 420" Margin="0">
                         
                         <StackPanel Grid.Column="0" Spacing="14">
@@ -379,7 +378,7 @@
                                                   Classes="form-select" 
                                                   ItemsSource="{Binding ClubMembers}" 
                                                   SelectedItem="{Binding SelectedMemberToAdd}"
-                                                  PlaceholderText="Wybierz członka koła...">
+                                                  PlaceholderText="Wybierz członka...">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate DataType="mu:Member">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -415,8 +414,8 @@
                                                     <Grid ColumnDefinitions="*, Auto">
                                                         <StackPanel Grid.Column="0" Spacing="2">
                                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                                <TextBlock Text="{Binding FirstName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
-                                                                <TextBlock Text="{Binding LastName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
+                                                                 <TextBlock Text="{Binding FirstName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
+                                                                 <TextBlock Text="{Binding LastName}" FontWeight="SemiBold" FontSize="12.5" Foreground="#1a1a2e"/>
                                                             </StackPanel>
                                                             <TextBlock Text="{Binding IndexNumber, StringFormat='Indeks: {0}'}" FontSize="11" Foreground="#7a8099"/>
                                                         </StackPanel>

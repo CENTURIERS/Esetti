@@ -1,4 +1,4 @@
-using Models.Activities;
+﻿using Models.Activities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,3 +17,5 @@ namespace Esseti.Repositories.Interfaces
         Task DeleteActivitesAsync(IEnumerable<int> activitiesIds);
     }
 }
+
+

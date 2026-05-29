@@ -1,5 +1,6 @@
-using Esseti.Data;
+﻿using Esseti.Data;
 using Esseti.Repositories.Interfaces;
+using Esseti.Services;
 using Microsoft.EntityFrameworkCore;
 using Models.Activities;
 using System.Collections.Generic;
@@ -11,18 +12,20 @@ namespace Esseti.Repositories
     public class ActivityRepository : IActivityRepository
     {
         private readonly EssetiDbContext _context;
+        private readonly ICacheService _cacheService;
 
-        public ActivityRepository(EssetiDbContext context)
+        public ActivityRepository(EssetiDbContext context, ICacheService cacheService)
         {
             _context = context;
+            _cacheService = cacheService;
         }
 
         public async Task<List<Activity>> GetAllActivitiesAsync()
         {
-            return await _context.Activities
+            return await _cacheService.GetOrLoadAsync("activities_all", () => _context.Activities
                 .Where(a => a.IsActive)
                 .Include(a => a.Participants)
-                .ToListAsync();
+                .ToListAsync());
         }
 
         public async Task<Activity?> GetActivityByIdAsync(int id)
@@ -36,6 +39,7 @@ namespace Esseti.Repositories
         {
             _context.Activities.Add(activity);
             await _context.SaveChangesAsync();
+            _cacheService.Invalidate("activities_all");
         }
 
         public async Task UpdateActivityAsync(Activity activity, IEnumerable<int>? participantIds = null)
@@ -44,6 +48,7 @@ namespace Esseti.Repositories
             {
                 _context.Activities.Update(activity);
                 await _context.SaveChangesAsync();
+                _cacheService.Invalidate("activities_all");
                 return;
             }
 
@@ -77,6 +82,7 @@ namespace Esseti.Repositories
                 }
 
                 await _context.SaveChangesAsync();
+                _cacheService.Invalidate("activities_all");
             }
         }
 
@@ -100,6 +106,7 @@ namespace Esseti.Repositories
 
                 await _context.SaveChangesAsync();
                 _context.ChangeTracker.Clear();
+                _cacheService.Invalidate("activities_all");
             }
         }
 
@@ -111,6 +118,7 @@ namespace Esseti.Repositories
             {
                 activity.IsActive = false;
                 await _context.SaveChangesAsync();
+                _cacheService.Invalidate("activities_all");
             }
         }
 
@@ -124,6 +132,8 @@ namespace Esseti.Repositories
             }
 
             await _context.SaveChangesAsync();
+            _cacheService.Invalidate("activities_all");
         }
     }
 }
+

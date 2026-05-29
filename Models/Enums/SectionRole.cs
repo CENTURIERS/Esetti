@@ -1,9 +1,10 @@
-namespace Models.Enums
+﻿namespace Models.Enums
 {
-	public enum SectionRole
-	{
-		Member,
-		Deputy,
-		Chairman
-	}
+    public enum SectionRole
+    {
+        Member = 0,
+        Deputy = 1,
+        Chairman = 2
+    }
 }
+

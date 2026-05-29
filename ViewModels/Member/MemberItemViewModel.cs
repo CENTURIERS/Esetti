@@ -44,6 +44,9 @@ namespace Esseti.ViewModels.Member
         private bool _isActive = true;
 
         [ObservableProperty]
+        private string _description = string.Empty;
+
+        [ObservableProperty]
         private bool _isSystemAddTile;
 
         public string FullName => $"{FirstName} {LastName}".Trim();
@@ -61,7 +64,7 @@ namespace Esseti.ViewModels.Member
             }
         }
 
-        public MemberItemViewModel(int memberId, byte[] avatar, string firstName, string lastName, string role, string indexNumber, string email, string collegeDepartment, string major, string joinDate, bool isActive, bool isSystemAddTile = false)
+        public MemberItemViewModel(int memberId, byte[] avatar, string firstName, string lastName, string role, string indexNumber, string email, string collegeDepartment, string major, string joinDate, bool isActive, string description = "", bool isSystemAddTile = false)
         {
             MemberId = memberId;
             FirstName = firstName;
@@ -73,6 +76,7 @@ namespace Esseti.ViewModels.Member
             Major = major;
             JoinDate = joinDate;
             IsActive = isActive;
+            Description = description;
             IsSystemAddTile = isSystemAddTile;
 
             if (avatar != null && avatar.Length > 0)
@@ -82,5 +86,16 @@ namespace Esseti.ViewModels.Member
             }
             else Avatar = SafeDefaultAvatar;
         }
+
+        public override void Dispose()
+        {
+            if (Avatar != null && Avatar != _defaultAvatar)
+            {
+                Avatar.Dispose();
+                Avatar = null;
+            }
+            base.Dispose();
+        }
     }
 }
+

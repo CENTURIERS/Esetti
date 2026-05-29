@@ -1,4 +1,4 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace Esseti.Views
@@ -16,3 +16,5 @@ namespace Esseti.Views
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Esseti.ViewModels"
              x:Class="Esseti.Views.MemberProfileView"
@@ -129,25 +129,15 @@
             <StackPanel Spacing="14" IsVisible="{Binding !IsLoading}">
 
                 <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000">
-                    <Grid ColumnDefinitions="*, Auto, 280">
+                    <Grid ColumnDefinitions="*, Auto" HorizontalAlignment="Stretch">
 
                         <StackPanel Grid.Column="0" Orientation="Horizontal"
                                     Spacing="24" Margin="28,24">
-                            <Grid>
+                            <Grid VerticalAlignment="Top">
                                 <Border Width="90" Height="90" CornerRadius="45"
                                         ClipToBounds="True" BorderBrush="#dde2f0" BorderThickness="2">
                                     <Image Source="{Binding Avatar}" Stretch="UniformToFill"/>
                                 </Border>
-                                
-                                <Button Command="{Binding ChangeAvatarCommand}"
-                                        Width="28" Height="28" CornerRadius="14"
-                                        Background="#0033A0" BorderBrush="White" BorderThickness="1.5"
-                                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                        Margin="0,0,2,2" Padding="0" Cursor="Hand"
-                                        ToolTip.Tip="Zmień zdjęcie profilowe">
-                                    <PathIcon Width="12" Height="12" Foreground="White"
-                                              Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168z"/>
-                                </Button>
                             </Grid>
 
                             <StackPanel VerticalAlignment="Center" Spacing="7">
@@ -224,9 +214,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Border Grid.Column="1" Width="1" Background="#e4e7f0" Margin="0,20"/>
-
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center"
+                        <StackPanel Grid.Column="1" Width="280" VerticalAlignment="Center"
                                     Spacing="6" Margin="28,24">
                             <TextBlock Text="{Binding CollegeName}" FontSize="15" FontWeight="Bold"
                                        Foreground="#1a1a2e" TextWrapping="Wrap"/>

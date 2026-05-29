@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models.ClubBase;
 using Models.Users;
@@ -22,3 +22,5 @@ namespace Esseti.Repositories.Interfaces
         Task DeleteSectionAsync(int sectionId);
     }
 }
+
+

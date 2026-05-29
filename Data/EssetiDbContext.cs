@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Models.Activities;
 using Models.ClubBase;
+using Models.Enums;
 using Models.Other;
 using Models.University;
 using Models.Users;
@@ -27,119 +28,25 @@ namespace Esseti.Data
         public DbSet<SectionMember> SectionMembers => Set<SectionMember>();
         public DbSet<Trip> Trips => Set<Trip>();
 
-        public EssetiDbContext()
-        {
-            Database.EnsureCreated();
-            EnsureSchemaUpToDate();
-        }
-
-        private void EnsureSchemaUpToDate()
-        {
-            try
-            {
-                using (var command = Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = "PRAGMA table_info(club_info);";
-                    var connection = command.Connection;
-                    if (connection != null)
-                    {
-                        if (connection.State != System.Data.ConnectionState.Open)
-                        {
-                            connection.Open();
-                        }
-                        var columns = new List<string>();
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                columns.Add(reader["name"].ToString() ?? "");
-                            }
-                        }
-                        if (!columns.Contains("supervisor_name"))
-                        {
-                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN supervisor_name TEXT;");
-                        }
-                        if (!columns.Contains("meetings_schedule"))
-                        {
-                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN meetings_schedule TEXT;");
-                        }
-                        if (!columns.Contains("short_name"))
-                        {
-                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN short_name TEXT;");
-                        }
-                        if (!columns.Contains("club_photo"))
-                        {
-                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN club_photo BLOB;");
-                        }
-                    }
-                }
-                using (var command = Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = "PRAGMA table_info(trip);";
-                    var connection = command.Connection;
-                    if (connection != null)
-                    {
-                        if (connection.State != System.Data.ConnectionState.Open)
-                        {
-                            connection.Open();
-                        }
-                        var columns = new List<string>();
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                columns.Add(reader["name"].ToString() ?? "");
-                            }
-                        }
-                        if (!columns.Contains("name"))
-                        {
-                            Database.ExecuteSqlRaw("ALTER TABLE trip ADD COLUMN name TEXT;");
-                        }
-                    }
-                }
-                using (var command = Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = "PRAGMA table_info(activity);";
-                    var connection = command.Connection;
-                    if (connection != null)
-                    {
-                        if (connection.State != System.Data.ConnectionState.Open)
-                        {
-                            connection.Open();
-                        }
-                        var columns = new List<string>();
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                columns.Add(reader["name"].ToString() ?? "");
-                            }
-                        }
-                        if (!columns.Contains("is_active"))
-                        {
-                            Database.ExecuteSqlRaw("ALTER TABLE activity ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1;");
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
+            if (!optionsBuilder.IsConfigured)
+            {
+                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
 
-            var directory = Path.GetDirectoryName(dbPath);
-            if (directory != null && !Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
+                var directory = Path.GetDirectoryName(dbPath);
+                if (directory != null && !Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
 
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+                optionsBuilder.UseSqlite($"Data Source={dbPath}");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Primary Keys
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             modelBuilder.Entity<AuthorityRole>().HasKey(e => e.RoleId);
             modelBuilder.Entity<Trip>().HasKey(e => e.TripId);
             modelBuilder.Entity<College>().HasKey(e => e.CollegeId);
@@ -151,9 +58,75 @@ namespace Esseti.Data
             modelBuilder.Entity<Activity>().HasKey(e => e.ActivityId);
             modelBuilder.Entity<Project>().HasKey(e => e.ProjectId);
 
+            // Composite keys for join entities
             modelBuilder.Entity<MemberClub>().HasKey(mc => new { mc.ClubId, mc.MemberId });
             modelBuilder.Entity<SectionMember>().HasKey(sm => new { sm.SectionId, sm.MemberId });
 
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // One-to-Many Relationships
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+            // CollegeDepartment â†’ College
+            modelBuilder.Entity<CollegeDepartment>()
+                .HasOne(cd => cd.College)
+                .WithMany(c => c.Departments)
+                .HasForeignKey(cd => cd.CollegeId);
+
+            // ClubInfo â†’ CollegeDepartment
+            modelBuilder.Entity<ClubInfo>()
+                .HasOne(ci => ci.Department)
+                .WithMany()
+                .HasForeignKey(ci => ci.DepartmentId);
+
+            // Member â†’ UserAccount (one-to-one via FK)
+            modelBuilder.Entity<Member>()
+                .HasOne(m => m.Account)
+                .WithMany()
+                .HasForeignKey(m => m.AccountId);
+
+            // Member â†’ AuthorityRole
+            modelBuilder.Entity<Member>()
+                .HasOne(m => m.AuthorityRole)
+                .WithMany()
+                .HasForeignKey(m => m.RoleId);
+
+            // Project â†’ Member (PersonInCharge)
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.PersonInCharge)
+                .WithMany()
+                .HasForeignKey("PersonInChargeId");
+
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Join Entity Relationships (explicit)
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+            // MemberClub â†’ ClubInfo & Member
+            modelBuilder.Entity<MemberClub>()
+                .HasOne(mc => mc.Club)
+                .WithMany(c => c.MemberClubs)
+                .HasForeignKey(mc => mc.ClubId);
+
+            modelBuilder.Entity<MemberClub>()
+                .HasOne(mc => mc.Member)
+                .WithMany(m => m.MemberClubs)
+                .HasForeignKey(mc => mc.MemberId);
+
+            // SectionMember â†’ Section & Member
+            modelBuilder.Entity<SectionMember>()
+                .HasOne(sm => sm.Section)
+                .WithMany(s => s.SectionMembers)
+                .HasForeignKey(sm => sm.SectionId);
+
+            modelBuilder.Entity<SectionMember>()
+                .HasOne(sm => sm.Member)
+                .WithMany(m => m.SectionMembers)
+                .HasForeignKey(sm => sm.MemberId);
+
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Many-to-Many (implicit join tables)
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+            // Project â†” Section (project_sections)
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.Sections)
                 .WithMany(s => s.Projects)
@@ -163,6 +136,7 @@ namespace Esseti.Data
                     j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
                 );
 
+            // Project â†” Member (project_member)
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.Participants)
                 .WithMany(m => m.Projects)
@@ -172,6 +146,7 @@ namespace Esseti.Data
                     j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
                 );
 
+            // Activity â†” Member (activity_member)
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Participants)
                 .WithMany(m => m.Activities)
@@ -181,37 +156,101 @@ namespace Esseti.Data
                     j => j.HasOne<Activity>().WithMany().HasForeignKey("activity_id")
                 );
 
+            // Project â†” ClubInfo (project_club)
             modelBuilder.Entity<Project>()
-                .HasOne(p => p.PersonInCharge)
-                .WithMany()
-                .HasForeignKey("PersonInChargeId");
+                .HasMany(p => p.Clubs)
+                .WithMany(c => c.Projects)
+                .UsingEntity<Dictionary<string, object>>(
+                    "project_club",
+                    j => j.HasOne<ClubInfo>().WithMany().HasForeignKey("club_id"),
+                    j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
+                );
 
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.Account)
-                .WithMany()
-                .HasForeignKey(m => m.AccountId);
+            // Trip â†” ClubInfo (club_trip)
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.Clubs)
+                .WithMany(c => c.Trips)
+                .UsingEntity<Dictionary<string, object>>(
+                    "club_trip",
+                    j => j.HasOne<ClubInfo>().WithMany().HasForeignKey("club_id"),
+                    j => j.HasOne<Trip>().WithMany().HasForeignKey("trip_id")
+                );
 
-            modelBuilder.Entity<Member>()
-                .HasOne(m => m.AuthorityRole)
-                .WithMany()
-                .HasForeignKey(m => m.RoleId);
+            // UserAccount â†” College (account_college)
+            modelBuilder.Entity<UserAccount>()
+                .HasMany(ua => ua.Colleges)
+                .WithMany(c => c.UserAccounts)
+                .UsingEntity<Dictionary<string, object>>(
+                    "account_college",
+                    j => j.HasOne<College>().WithMany().HasForeignKey("college_id"),
+                    j => j.HasOne<UserAccount>().WithMany().HasForeignKey("account_id")
+                );
 
-            var systemRoleConverter = new ValueConverter<Models.Enums.SystemRole, string>(
-                v => v == Models.Enums.SystemRole.SuperAdmin ? "superadmin" :
-                     v == Models.Enums.SystemRole.CollegeAdmin ? "college_admin" : "user",
-                v => v == "superadmin" ? Models.Enums.SystemRole.SuperAdmin :
-                     v == "college_admin" ? Models.Enums.SystemRole.CollegeAdmin :
-                     Models.Enums.SystemRole.User
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Value Converters (enum â†’ TEXT in SQLite)
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+            var systemRoleConverter = new ValueConverter<SystemRole, string>(
+                v => v == SystemRole.SuperAdmin ? "superadmin" :
+                     v == SystemRole.CollegeAdmin ? "college_admin" : "user",
+                v => v == "superadmin" ? SystemRole.SuperAdmin :
+                     v == "college_admin" ? SystemRole.CollegeAdmin :
+                     SystemRole.User
+            );
+
+            var clubRoleConverter = new ValueConverter<ClubRole, string>(
+                v => v == ClubRole.President ? "president" :
+                     v == ClubRole.VicePresident ? "vice_president" :
+                     v == ClubRole.BoardMember ? "board_member" :
+                     v == ClubRole.Supervisor ? "supervisor" : "member",
+                v => v == "president" ? ClubRole.President :
+                     v == "vice_president" ? ClubRole.VicePresident :
+                     v == "board_member" ? ClubRole.BoardMember :
+                     v == "supervisor" ? ClubRole.Supervisor :
+                     ClubRole.Member
+            );
+
+            var sectionRoleConverter = new ValueConverter<SectionRole, string>(
+                v => v == SectionRole.Chairman ? "chairman" :
+                     v == SectionRole.Deputy ? "deputy" : "member",
+                v => v == "chairman" ? SectionRole.Chairman :
+                     v == "deputy" ? SectionRole.Deputy :
+                     SectionRole.Member
             );
 
             modelBuilder.Entity<UserAccount>()
                 .Property(u => u.SystemRole)
                 .HasConversion(systemRoleConverter);
 
+            modelBuilder.Entity<MemberClub>()
+                .Property(mc => mc.ClubRole)
+                .HasConversion(clubRoleConverter);
+
+            modelBuilder.Entity<SectionMember>()
+                .Property(sm => sm.Role)
+                .HasConversion(sectionRoleConverter);
+
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Column Name Overrides
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             modelBuilder.Entity<College>()
                 .Property(c => c.NIP)
                 .HasColumnName("NIP");
 
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Indexes
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            modelBuilder.Entity<UserAccount>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<AuthorityRole>()
+                .HasIndex(r => r.Name)
+                .IsUnique();
+
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Snake_case naming convention
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 if (entity.IsPropertyBag || entity.ClrType == null ||
@@ -247,3 +286,4 @@ namespace Esseti.Data
         }
     }
 }
+

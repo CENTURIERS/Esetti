@@ -58,17 +58,6 @@
             <Setter Property="Stroke" Value="#0033A0"/>
         </Style>
 
-        <Style Selector="CheckBox.MemberCheckBox">
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-        <Style Selector="CheckBox.MemberCheckBox /template/ Border#NormalRectangle">
-            <Setter Property="BorderBrush" Value="#b0bde8"/>
-            <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="CornerRadius" Value="4"/>
-        </Style>
-        <Style Selector="CheckBox.MemberCheckBox:pointerover /template/ Border#NormalRectangle">
-            <Setter Property="BorderBrush" Value="#0033A0"/>
-        </Style>
     </UserControl.Styles>
 
     <Grid RowDefinitions="*">

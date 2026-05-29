@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -72,10 +72,10 @@
                 <Border Classes="card">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Podsumowanie statystyk w bazie danych" Classes="card-title"/>
-                        <Grid ColumnDefinitions="*,12,*,12,*,12,*">
+                        <WrapPanel Orientation="Horizontal" Margin="-6">
                             
                             
-                            <Border Grid.Column="0" Classes="stat-badge">
+                            <Border Classes="stat-badge" Width="140" Margin="6">
                                 <StackPanel HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="{Binding TotalActiveMembers}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
                                     <TextBlock Text="Aktywni Członkowie" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
@@ -83,7 +83,7 @@
                             </Border>
 
                             
-                            <Border Grid.Column="2" Classes="stat-badge">
+                            <Border Classes="stat-badge" Width="140" Margin="6">
                                 <StackPanel HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="{Binding TotalProjects}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
                                     <TextBlock Text="Projekty" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
@@ -91,7 +91,7 @@
                             </Border>
 
                             
-                            <Border Grid.Column="4" Classes="stat-badge">
+                            <Border Classes="stat-badge" Width="140" Margin="6">
                                 <StackPanel HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="{Binding TotalActivities}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
                                     <TextBlock Text="Aktywności" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
@@ -99,14 +99,14 @@
                             </Border>
 
                             
-                            <Border Grid.Column="6" Classes="stat-badge">
+                            <Border Classes="stat-badge" Width="140" Margin="6">
                                 <StackPanel HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="{Binding TotalTrips}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
                                     <TextBlock Text="Wyjazdy koła" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
 
-                        </Grid>
+                        </WrapPanel>
                     </StackPanel>
                 </Border>
 
@@ -119,6 +119,23 @@
                         
                         <Button Content="Utwórz kopię zapasową bazy danych (esseti.db)"
                                 Command="{Binding BackupDatabaseCommand}"
+                                Background="#0033A0"
+                                Foreground="White"
+                                Padding="16,12"
+                                FontSize="13"
+                                FontWeight="Bold"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                HorizontalAlignment="Left">
+                            <Button.Transitions>
+                                <Transitions>
+                                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                                </Transitions>
+                            </Button.Transitions>
+                        </Button>
+
+                        <Button Content="Importuj bazę danych (esseti.db)"
+                                Command="{Binding ImportDatabaseCommand}"
                                 Background="#0033A0"
                                 Foreground="White"
                                 Padding="16,12"

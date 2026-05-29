@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -154,8 +154,8 @@
                     </Grid>
                 </Border>
 
-                <Grid ColumnDefinitions="*, 20, *">
-                    <Border Grid.Column="0" Classes="section-card" ClipToBounds="True">
+                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="-10">
+                    <Border Classes="section-card" ClipToBounds="True" Width="340" Margin="10">
                         <StackPanel>
                             <Border Background="#0033A0" Padding="16,10">
                                 <TextBlock Text="Spotkania" FontSize="14" FontWeight="Bold" Foreground="White"/>
@@ -166,7 +166,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="2" Classes="section-card" ClipToBounds="True">
+                    <Border Classes="section-card" ClipToBounds="True" Width="340" Margin="10">
                         <StackPanel>
                             <Border Background="#0033A0" Padding="16,10">
                                 <TextBlock Text="Pokój koła" FontSize="14" FontWeight="Bold" Foreground="White"/>
@@ -176,7 +176,7 @@
                             </Border>
                         </StackPanel>
                     </Border>
-                </Grid>
+                </WrapPanel>
 
                 <Border Classes="section-card" Padding="20">
                     <StackPanel Spacing="12">
@@ -377,125 +377,131 @@
                             </StackPanel>
                             <StackPanel Spacing="5">
                                 <TextBlock Text="Terminy spotkań" Classes="form-label" />
-                                <TextBox Classes="form-input" Text="{Binding EditMeetingsSchedule}" TextWrapping="Wrap" AcceptsReturn="True" Height="60"/>
+                                <TextBox Classes="form-textarea" Text="{Binding EditMeetingsSchedule}" TextWrapping="Wrap" AcceptsReturn="True" Height="60"/>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
                 </DockPanel>
             </Border>
         </Grid>
-        
-        
-        <Grid Background="#4000195A" IsVisible="{Binding IsAddTripPopupVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Border Width="450" 
+        <!-- Popup: Dodaj wyjazd -->
+        <Grid Background="#99000000" IsVisible="{Binding IsAddTripPopupVisible}">
+            <Border Width="420" 
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Center"
                     Background="#FEFEFE"
                     CornerRadius="14"
-                    BorderBrush="#d0d4e8"
-                    BorderThickness="1"
-                    BoxShadow="0 10 48 0 #2E0033A0"
-                    ClipToBounds="True"
-                    Margin="24">
-                <DockPanel>
-                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
-                        <Grid ColumnDefinitions="*, Auto">
-                            <TextBlock Grid.Column="0" 
-                                       Text="Dodaj wyjazd / delegację" 
-                                       FontFamily="Georgia" 
-                                       FontStyle="Italic" 
-                                       FontSize="15" 
-                                       FontWeight="Bold" 
-                                       Foreground="White" 
-                                       VerticalAlignment="Center"/>
-                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelAddTripCommand}">
-                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Button>
-                        </Grid>
-                    </Border>
-                    
-                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelAddTripCommand}"/>
-                            <Button Classes="btn-save" Content="Zapisz" Command="{Binding SaveAddTripCommand}"/>
-                        </StackPanel>
-                    </Border>
-                    
-                    <ScrollViewer MaxHeight="550" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="22" Spacing="12">
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Nazwa wyjazdu" Classes="form-label" />
-                                <TextBox Classes="form-input" Watermark="np. Wyjazd szkoleniowy Google" Text="{Binding NewTripName}"/>
-                            </StackPanel>
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Data wyjazdu" Classes="form-label" />
-                                <TextBox Classes="form-input" Watermark="np. 28.05.2026" Text="{Binding NewTripDate}"/>
-                            </StackPanel>
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Opis wyjazdu" Classes="form-label" />
-                                <TextBox Classes="form-input" Text="{Binding NewTripDescription}" TextWrapping="Wrap" AcceptsReturn="True" Height="80"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </DockPanel>
+                    Padding="32,28"
+                    BoxShadow="0 10 40 0 #40000000">
+                <StackPanel Spacing="12">
+                    <StackPanel Spacing="4" Margin="0,0,0,8">
+                        <TextBlock Text="Dodaj wyjazd / delegację"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#1a1a2e"/>
+                        <TextBlock Text="Wprowadź szczegóły nowego wyjazdu lub delegacji."
+                                   FontSize="12"
+                                   Foreground="#7a8099"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Nazwa wyjazdu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-input" Classes.invalid="{Binding IsAddTripNameInvalid}" Watermark="np. Wyjazd szkoleniowy Google" Text="{Binding NewTripName}"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Data wyjazdu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-input" Classes.invalid="{Binding IsAddTripDateInvalid}" Watermark="np. 28.05.2026" Text="{Binding NewTripDate}"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Opis wyjazdu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-textarea" Watermark="Krótki opis celu wyjazdu..." Height="80" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="12,8" Text="{Binding NewTripDescription}"/>
+                    </StackPanel>
+
+                    <Border Height="1" Background="#f0f2f8" Margin="0,4,0,4"/>
+
+                    <!-- Komunikat błędu -->
+                    <TextBlock Text="{Binding AddTripValidationError}"
+                               Foreground="#D32F2F" FontSize="12" FontWeight="SemiBold"
+                               HorizontalAlignment="Center" Margin="0,0,0,8"
+                               IsVisible="{Binding AddTripValidationError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                    <Grid ColumnDefinitions="*, 12, *">
+                        <Button Grid.Column="0"
+                                Content="Anuluj"
+                                Classes="popup-btn popup-cancel"
+                                Command="{Binding CancelAddTripCommand}"/>
+
+                        <Button Grid.Column="2"
+                                Content="Zapisz"
+                                Classes="popup-btn popup-primary"
+                                IsEnabled="{Binding IsAddTripFormValid}"
+                                Command="{Binding SaveAddTripCommand}"/>
+                    </Grid>
+                </StackPanel>
             </Border>
         </Grid>
 
-        
-        <Grid Background="#4000195A" IsVisible="{Binding IsEditTripPopupVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Border Width="450" 
+        <!-- Popup: Edytuj wyjazd -->
+        <Grid Background="#99000000" IsVisible="{Binding IsEditTripPopupVisible}">
+            <Border Width="420" 
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Center"
                     Background="#FEFEFE"
                     CornerRadius="14"
-                    BorderBrush="#d0d4e8"
-                    BorderThickness="1"
-                    BoxShadow="0 10 48 0 #2E0033A0"
-                    ClipToBounds="True"
-                    Margin="24">
-                <DockPanel>
-                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
-                        <Grid ColumnDefinitions="*, Auto">
-                            <TextBlock Grid.Column="0" 
-                                       Text="Edytuj wyjazd / delegację" 
-                                       FontFamily="Georgia" 
-                                       FontStyle="Italic" 
-                                       FontSize="15" 
-                                       FontWeight="Bold" 
-                                       Foreground="White" 
-                                       VerticalAlignment="Center"/>
-                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelEditTripCommand}">
-                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Button>
-                        </Grid>
-                    </Border>
-                    
-                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelEditTripCommand}"/>
-                            <Button Classes="btn-save" Content="Zapisz" Command="{Binding SaveEditTripCommand}"/>
-                        </StackPanel>
-                    </Border>
-                    
-                    <ScrollViewer MaxHeight="550" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="22" Spacing="12">
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Nazwa wyjazdu" Classes="form-label" />
-                                <TextBox Classes="form-input" Text="{Binding EditTripName}"/>
-                            </StackPanel>
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Data wyjazdu" Classes="form-label" />
-                                <TextBox Classes="form-input" Text="{Binding EditTripDate}"/>
-                            </StackPanel>
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Opis wyjazdu" Classes="form-label" />
-                                <TextBox Classes="form-input" Text="{Binding EditTripDescription}" TextWrapping="Wrap" AcceptsReturn="True" Height="80"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </DockPanel>
+                    Padding="32,28"
+                    BoxShadow="0 10 40 0 #40000000">
+                <StackPanel Spacing="12">
+                    <StackPanel Spacing="4" Margin="0,0,0,8">
+                        <TextBlock Text="Edytuj wyjazd / delegację"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#1a1a2e"/>
+                        <TextBlock Text="Zmień szczegóły wyjazdu lub delegacji."
+                                   FontSize="12"
+                                   Foreground="#7a8099"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Nazwa wyjazdu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-input" Classes.invalid="{Binding IsEditTripNameInvalid}" Text="{Binding EditTripName}"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Data wyjazdu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-input" Classes.invalid="{Binding IsEditTripDateInvalid}" Text="{Binding EditTripDate}"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Opis wyjazdu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-textarea" Height="80" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="12,8" Text="{Binding EditTripDescription}"/>
+                    </StackPanel>
+
+                    <Border Height="1" Background="#f0f2f8" Margin="0,4,0,4"/>
+
+                    <!-- Komunikat błędu -->
+                    <TextBlock Text="{Binding EditTripValidationError}"
+                               Foreground="#D32F2F" FontSize="12" FontWeight="SemiBold"
+                               HorizontalAlignment="Center" Margin="0,0,0,8"
+                               IsVisible="{Binding EditTripValidationError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                    <Grid ColumnDefinitions="*, 12, *">
+                        <Button Grid.Column="0"
+                                Content="Anuluj"
+                                Classes="popup-btn popup-cancel"
+                                Command="{Binding CancelEditTripCommand}"/>
+
+                        <Button Grid.Column="2"
+                                Content="Zapisz"
+                                Classes="popup-btn popup-primary"
+                                IsEnabled="{Binding IsEditTripFormValid}"
+                                Command="{Binding SaveEditTripCommand}"/>
+                    </Grid>
+                </StackPanel>
             </Border>
         </Grid>
+
 
         
         <Grid Background="#4000195A" IsVisible="{Binding IsDeleteTripConfirmVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

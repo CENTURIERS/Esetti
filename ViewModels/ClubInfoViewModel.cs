@@ -106,6 +106,16 @@ namespace Esseti.ViewModels
         [ObservableProperty]
         private bool _isEditTripPopupVisible;
 
+        [ObservableProperty] private bool _isAddTripNameInvalid;
+        [ObservableProperty] private bool _isAddTripDateInvalid;
+        [ObservableProperty] private bool _isAddTripFormValid = true;
+        [ObservableProperty] private string _addTripValidationError = string.Empty;
+
+        [ObservableProperty] private bool _isEditTripNameInvalid;
+        [ObservableProperty] private bool _isEditTripDateInvalid;
+        [ObservableProperty] private bool _isEditTripFormValid = true;
+        [ObservableProperty] private string _editTripValidationError = string.Empty;
+
         private Trip? _tripBeingEdited;
 
         public bool HasNoBoardMembers => !BoardMembers.Any();
@@ -190,7 +200,7 @@ namespace Esseti.ViewModels
                         var address = string.Join(", ", parts);
                         if (!string.IsNullOrEmpty(college.Phone))
                         {
-                            address += $"  •  tel. {college.Phone}";
+                            address += $"  â€˘  tel. {college.Phone}";
                         }
                         UniversityAddress = address;
                     }
@@ -205,7 +215,8 @@ namespace Esseti.ViewModels
 
                 var dbMembers = await _clubRepository.GetBoardMembersAsync();
                 BoardMembers.Clear();
-                foreach (var member in dbMembers)
+                var filteredMembers = dbMembers.Where(m => m.AuthorityRole?.Name != "Członek");
+                foreach (var member in filteredMembers)
                 {
                     BoardMembers.Add(member);
                 }
@@ -221,7 +232,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd ładowania danych koła: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d Ĺ‚adowania danych koĹ‚a: {ex.Message}");
             }
         }
 
@@ -266,7 +277,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd podczas zapisu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas zapisu: {ex.Message}");
             }
         }
 
@@ -286,7 +297,7 @@ namespace Esseti.ViewModels
                 {
                     var files = await window.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
                     {
-                        Title = "Wybierz logo koła",
+                        Title = "Wybierz logo koĹ‚a",
                         FileTypeFilter = new[] { Avalonia.Platform.Storage.FilePickerFileTypes.ImageAll }
                     });
                     if (files.Count > 0)
@@ -305,12 +316,63 @@ namespace Esseti.ViewModels
             }
         }
 
+        private new bool TryParseDate(string dateStr, out DateTime date)
+        {
+            return DateTime.TryParseExact(dateStr, 
+                new[] { "dd.MM.yyyy", "yyyy-MM-dd", "d.M.yyyy", "dd/MM/yyyy" }, 
+                System.Globalization.CultureInfo.InvariantCulture, 
+                System.Globalization.DateTimeStyles.None, 
+                out date) 
+                || DateTime.TryParse(dateStr, out date);
+        }
+
+        private void ValidateAddTripForm()
+        {
+            IsAddTripNameInvalid = string.IsNullOrWhiteSpace(NewTripName);
+            IsAddTripDateInvalid = string.IsNullOrWhiteSpace(NewTripDate) || !TryParseDate(NewTripDate, out _);
+            IsAddTripFormValid = !IsAddTripNameInvalid && !IsAddTripDateInvalid;
+
+            if (IsAddTripNameInvalid) AddTripValidationError = "Nazwa wyjazdu jest wymagana.";
+            else if (IsAddTripDateInvalid) AddTripValidationError = "Data wyjazdu jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
+            else AddTripValidationError = string.Empty;
+        }
+
+        private void ValidateEditTripForm()
+        {
+            IsEditTripNameInvalid = string.IsNullOrWhiteSpace(EditTripName);
+            IsEditTripDateInvalid = string.IsNullOrWhiteSpace(EditTripDate) || !TryParseDate(EditTripDate, out _);
+            IsEditTripFormValid = !IsEditTripNameInvalid && !IsEditTripDateInvalid;
+
+            if (IsEditTripNameInvalid) EditTripValidationError = "Nazwa wyjazdu jest wymagana.";
+            else if (IsEditTripDateInvalid) EditTripValidationError = "Data wyjazdu jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
+            else EditTripValidationError = string.Empty;
+        }
+
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(NewTripName) || e.PropertyName == nameof(NewTripDate))
+            {
+                ValidateAddTripForm();
+            }
+            if (e.PropertyName == nameof(EditTripName) || e.PropertyName == nameof(EditTripDate))
+            {
+                ValidateEditTripForm();
+            }
+        }
+
         [RelayCommand]
         private void OpenAddTrip()
         {
             NewTripName = string.Empty;
             NewTripDescription = string.Empty;
             NewTripDate = DateTime.Now.ToString("dd.MM.yyyy");
+            
+            IsAddTripNameInvalid = false;
+            IsAddTripDateInvalid = false;
+            IsAddTripFormValid = false;
+            AddTripValidationError = string.Empty;
+
             IsAddTripPopupVisible = true;
         }
 
@@ -319,10 +381,10 @@ namespace Esseti.ViewModels
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(NewTripName)) return;
+                if (!IsAddTripFormValid) return;
 
                 DateTime parsedDate = DateTime.Now;
-                DateTime.TryParse(NewTripDate, out parsedDate);
+                TryParseDate(NewTripDate, out parsedDate);
 
                 var newTrip = new Trip
                 {
@@ -337,7 +399,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd dodawania wycieczki: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d dodawania wycieczki: {ex.Message}");
             }
         }
 
@@ -355,13 +417,16 @@ namespace Esseti.ViewModels
             EditTripName = trip.Name ?? string.Empty;
             EditTripDescription = trip.Description ?? string.Empty;
             EditTripDate = trip.Date.ToString("dd.MM.yyyy");
+            
+            ValidateEditTripForm();
+
             IsEditTripPopupVisible = true;
         }
 
         [RelayCommand]
         private async Task SaveEditTripAsync()
         {
-            if (_tripBeingEdited == null || string.IsNullOrWhiteSpace(EditTripName))
+            if (_tripBeingEdited == null || !IsEditTripFormValid)
             {
                 return;
             }
@@ -369,7 +434,7 @@ namespace Esseti.ViewModels
             try
             {
                 DateTime parseDate = _tripBeingEdited.Date;
-                DateTime.TryParse(EditTripDate, out parseDate);
+                TryParseDate(EditTripDate, out parseDate);
 
                 _tripBeingEdited.Name = EditTripName;
                 _tripBeingEdited.Description = EditTripDescription;
@@ -381,7 +446,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd podczas edycji wycieczki: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas edycji wycieczki: {ex.Message}");
             }
         }
 
@@ -411,7 +476,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd usuwania wyjazdu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania wyjazdu: {ex.Message}");
             }
         }
         [RelayCommand]
@@ -446,7 +511,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd podczas dodawania sekcji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas dodawania sekcji: {ex.Message}");
             }
         }
 
@@ -476,7 +541,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Błąd usuwania sekcji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania sekcji: {ex.Message}");
             }
         }
         [RelayCommand]
@@ -487,3 +552,4 @@ namespace Esseti.ViewModels
         }
     }
 }
+
