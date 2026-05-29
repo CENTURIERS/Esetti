@@ -30,3 +30,15 @@ Thumbs.db
 
 ## [ Scratch folder ]
 scratch/
+
+## [ Pliki pomocnicze LaTeX (z wyłączeniem PDF) ]
+*.aux
+*.log
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+*.xdv
+*.blg
+*.bbl
