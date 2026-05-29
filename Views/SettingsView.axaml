@@ -1,5 +1,156 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Esseti.Views.SettingsView">
-    <TextBlock Text="Ustawienia" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Esseti.ViewModels"
+             x:DataType="vm:SettingsViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="Esseti.Views.SettingsView"
+             Background="Transparent">
+
+    <UserControl.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BoxShadow" Value="0 4 18 0 #0A000000"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <Style Selector="TextBlock.card-title">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <Style Selector="Border.stat-badge">
+            <Setter Property="Background" Value="#F8FAFF"/>
+            <Setter Property="BorderBrush" Value="#DDE2F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,16"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="*">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="12,12,12,0">
+            <StackPanel Spacing="12">
+                
+                
+                <TextBlock Text="Ustawienia Aplikacji" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="#0033A0" 
+                           Margin="4,0,0,8"/>
+
+                
+                <Border Classes="card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Informacje o programie" Classes="card-title"/>
+                        <Grid ColumnDefinitions="90,20,*">
+                            
+                            <Border Grid.Column="0" Background="#0033A0" CornerRadius="8" Width="90" Height="90" VerticalAlignment="Top">
+                                <TextBlock Text="UR" Foreground="White" FontSize="28" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+
+                            <StackPanel Grid.Column="2" Spacing="6">
+                                <TextBlock Text="Essetti - System Zarządzania SKN" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
+                                <TextBlock Text="Wersja: 1.0.0 (Wersja stabilna)" FontSize="12.5" Foreground="#64748B"/>
+                                <TextBlock Text="System przeznaczony jest do koordynacji prac, rejestracji aktywności członków oraz automatycznego generowania dokumentów i raportów dla Studenckich Kół Naukowych działających na Uniwersytecie Rzeszowskim." 
+                                           FontSize="13" Foreground="#475569" TextWrapping="Wrap" LineHeight="20"/>
+                                <TextBlock Text="Projekt zrealizowany w ramach przedmiotu Programowanie Obiektowe II." 
+                                           FontSize="12" FontStyle="Italic" Foreground="#94A3B8" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                
+                <Border Classes="card">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Podsumowanie statystyk w bazie danych" Classes="card-title"/>
+                        <Grid ColumnDefinitions="*,12,*,12,*,12,*">
+                            
+                            
+                            <Border Grid.Column="0" Classes="stat-badge">
+                                <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                    <TextBlock Text="{Binding TotalActiveMembers}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Aktywni Członkowie" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            
+                            <Border Grid.Column="2" Classes="stat-badge">
+                                <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                    <TextBlock Text="{Binding TotalProjects}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Projekty" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            
+                            <Border Grid.Column="4" Classes="stat-badge">
+                                <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                    <TextBlock Text="{Binding TotalActivities}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Aktywności" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            
+                            <Border Grid.Column="6" Classes="stat-badge">
+                                <StackPanel HorizontalAlignment="Center" Spacing="4">
+                                    <TextBlock Text="{Binding TotalTrips}" FontSize="24" FontWeight="Bold" Foreground="#0033A0" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Wyjazdy koła" FontSize="11" FontWeight="Medium" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                
+                <Border Classes="card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Zarządzanie bazą danych" Classes="card-title"/>
+                        <TextBlock Text="Możesz utworzyć kopię zapasową lokalnego pliku bazy danych (SQLite), aby zabezpieczyć dane przed przypadkowym usunięciem lub przenieść je na inne urządzenie." 
+                                   FontSize="13" Foreground="#475569" TextWrapping="Wrap" Margin="0,0,0,8" LineHeight="18"/>
+                        
+                        <Button Content="Utwórz kopię zapasową bazy danych (esseti.db)"
+                                Command="{Binding BackupDatabaseCommand}"
+                                Background="#0033A0"
+                                Foreground="White"
+                                Padding="16,12"
+                                FontSize="13"
+                                FontWeight="Bold"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                HorizontalAlignment="Left">
+                            <Button.Transitions>
+                                <Transitions>
+                                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                                </Transitions>
+                            </Button.Transitions>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                
+                <Border Classes="card" Margin="0,0,0,12">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Informacje techniczne" Classes="card-title"/>
+                        <TextBlock Text="Aplikacja bazuje na nowoczesnym stosie technologicznym .NET:" FontSize="13" Foreground="#475569"/>
+                        <StackPanel Spacing="4" Margin="0,6,0,0">
+                            <TextBlock Text="• Avalonia UI (v11.x)" FontSize="12.5" Foreground="#64748B"/>
+                            <TextBlock Text="• Entity Framework Core (SQLite)" FontSize="12.5" Foreground="#64748B"/>
+                            <TextBlock Text="• QuestPDF" FontSize="12.5" Foreground="#64748B"/>
+                            <TextBlock Text="• CommunityToolkit.Mvvm" FontSize="12.5" Foreground="#64748B"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

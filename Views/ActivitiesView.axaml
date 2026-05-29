@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -329,7 +329,7 @@
             <Setter Property="Opacity" Value="1.0"/>
         </Style>
 
-        <!-- Action and Delete Buttons from MemberProfileView -->
+        
         <Style Selector="Button.ActionBtn">
             <Setter Property="Background" Value="#f4f6fc"/>
             <Setter Property="BorderBrush" Value="#d0d8ed"/>
@@ -424,7 +424,7 @@
             <DockPanel>
                 <ScrollViewer Padding="20,16,20,30">
                     <StackPanel Spacing="9" HorizontalAlignment="Stretch">
-                        <!-- Add activity tile at the top -->
+                        
                         <Panel Classes="AddActivityTile" Height="58" Margin="0,0,0,9">
                             <Rectangle />
                             <Button HorizontalAlignment="Stretch" 
@@ -445,7 +445,7 @@
                             </Button>
                         </Panel>
 
-                        <!-- ItemsControl of activities -->
+                        
                         <ItemsControl ItemsSource="{Binding Activities}" Margin="0,0,0,16">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -456,14 +456,14 @@
                                 <DataTemplate>
                                     <Border Classes="list-row" Classes.selected="{Binding IsSelected}" Padding="16,0" Height="58">
                                         <Grid ColumnDefinitions="40, *, Auto">
-                                            <!-- Column 0: Checkbox -->
+                                            
                                             <CheckBox Grid.Column="0" 
                                                       Classes="MemberCheckBox" 
                                                       IsChecked="{Binding IsSelected}" 
                                                       HorizontalAlignment="Center" 
                                                       VerticalAlignment="Center"/>
                                             
-                                            <!-- Column 1: Info (Name, Description) -->
+                                            
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,20,0">
                                                 <TextBlock Text="{Binding Name}" 
                                                            FontFamily="Georgia" 
@@ -479,9 +479,9 @@
                                                            Margin="0,4,0,0"/>
                                             </StackPanel>
                                             
-                                            <!-- Column 2: Date + Action Buttons in one horizontal line -->
+                                            
                                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                                <!-- Repeatable/Cyclical Badge -->
+                                                
                                                 <Border Background="#eef1ff" BorderBrush="#0033A0" BorderThickness="1" CornerRadius="6" Padding="10,6" VerticalAlignment="Center" IsVisible="{Binding IsRepeatable}">
                                                     <StackPanel Orientation="Horizontal" Spacing="4">
                                                         <PathIcon Width="10" Height="10" Data="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-7.068 2h-3.932a.25.25 0 0 1-.192-.41l1.966-2.36a.25.25 0 0 1 .384 0l1.966 2.36a.25.25 0 0 1-.192.41z M8 3.5a4.5 4.5 0 0 0-4.5 4.5.5.5 0 0 1-1 0 5.5 5.5 0 1 1 9.387 3.887.5.5 0 1 1-.774-.633A4.5 4.5 0 1 0 8 3.5z" Foreground="#0033A0"/>
@@ -489,12 +489,12 @@
                                                     </StackPanel>
                                                 </Border>
 
-                                                <!-- Date Badge -->
+                                                
                                                 <Border Background="#f0f2f8" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding DateString}" FontSize="11.5" FontWeight="SemiBold" Foreground="#0033A0"/>
                                                 </Border>
                                                 
-                                                <!-- Action Buttons -->
+                                                
                                                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                                     <Button Classes="ActionBtn" 
                                                             Command="{ReflectionBinding $parent[UserControl].DataContext.OpenProfileCommand}" 
@@ -533,7 +533,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <!-- Spacer to ensure the last item has enough breathing room at the bottom -->
+                        
                         <Border Height="20" Background="Transparent" />
                     </StackPanel>
                 </ScrollViewer>
@@ -580,13 +580,13 @@
                     <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
                         <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" Margin="22,20,22,35" HorizontalAlignment="Stretch">
                             
-                            <!-- Row 0: Name -->
+                            
                             <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Nazwa aktywności" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Piknik Moc Odkrywców" Text="{Binding NewActivityName}"/>
                             </StackPanel>
 
-                            <!-- Row 1: Date & Time -->
+                            
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Data" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. 26.02.2025" Text="{Binding NewActivityDate}"/>
@@ -596,7 +596,7 @@
                                 <TextBox Classes="form-input" Watermark="np. 12:00" Text="{Binding NewActivityTime}"/>
                             </StackPanel>
 
-                            <!-- Row 2: City & Street -->
+                            
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Miasto" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Rzeszów" Text="{Binding NewActivityCity}"/>
@@ -606,7 +606,7 @@
                                 <TextBox Classes="form-input" Watermark="np. Rejtana 16C" Text="{Binding NewActivityStreet}"/>
                             </StackPanel>
 
-                            <!-- Row 3: Person In Charge Name & Cykliczne Checkbox -->
+                            
                             <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Osoba odpowiedzialna" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Jan Kowalski" Text="{Binding NewActivityPersonInChargeEvent}"/>
@@ -616,7 +616,7 @@
                                 <CheckBox Content="Aktywność cykliczna" IsChecked="{Binding NewActivityIsRepeatable}" Foreground="#1a1a2e" FontSize="12.5"/>
                             </StackPanel>
 
-                            <!-- Row 4: Phone & Email -->
+                            
                             <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Telefon kontaktowy" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. +48 123 456 789" Text="{Binding NewActivityPersonInChargePhone}"/>
@@ -626,7 +626,7 @@
                                 <TextBox Classes="form-input" Watermark="np. jan.kowalski@ur.edu.pl" Text="{Binding NewActivityPersonInChargeEmail}"/>
                             </StackPanel>
 
-                            <!-- Row 5: Description -->
+                            
                             <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Dodatkowe uwagi / Opis" Classes="form-label" />
                                 <TextBox Classes="form-textarea" Height="58" Watermark="Dodatkowe uwagi..." Text="{Binding NewActivityDescription}"/>

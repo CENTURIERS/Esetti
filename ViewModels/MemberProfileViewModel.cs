@@ -15,6 +15,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Models.Users;
 using Models.ClubBase;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
+using Avalonia.Controls.Chrome;
 
 namespace Esseti.ViewModels
 {
@@ -94,6 +97,35 @@ namespace Esseti.ViewModels
             _memberRepository = memberRepository;
             _openEditImmediately = openEditImmediately;
             _ = LoadAsync();
+        }
+
+        [RelayCommand]
+        private async Task ChangeAvatarAsync()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
+            {
+                var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+                    Title = "Wybierz nowe zdjęcie profilowe",
+                    AllowMultiple = false,
+                    FileTypeFilter = new[] { FilePickerFileTypes.ImageAll } 
+                });
+
+                if (files.Count > 0)
+                {
+                    using (var stream = await files[0].OpenReadAsync())
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(memoryStream);
+                        byte[] avatarData = memoryStream.ToArray();
+
+                        await _memberRepository.UpdateMemberAvatarAsync(_memberId, avatarData);
+
+                        using var ms = new MemoryStream(avatarData);
+                        Avatar = new Bitmap(ms);
+                    }
+                }
+            }
+
         }
 
         private async Task LoadAsync()

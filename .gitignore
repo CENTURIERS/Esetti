@@ -27,3 +27,6 @@ Thumbs.db
 # *.db
 # *.db-journal
 # *.db-wal
+
+## [ Scratch folder ]
+scratch/

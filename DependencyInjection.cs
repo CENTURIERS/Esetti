@@ -1,4 +1,4 @@
-﻿using Esseti.Data;
+using Esseti.Data;
 using Esseti.Repositories;
 using Esseti.Repositories.Interfaces;
 using Esseti.Services;
@@ -16,6 +16,8 @@ namespace Esseti
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
+            services.AddScoped<IClubRepository, ClubRepository>();
+            services.AddScoped<ITripRepository, TripRepository>();
             return services;
         }
 
@@ -24,6 +26,9 @@ namespace Esseti
             services.AddTransient<MembersViewModel>();
             services.AddTransient<ProjectsViewModel>();
             services.AddTransient<ActivitiesViewModel>();
+            services.AddTransient<ClubInfoViewModel>();
+            services.AddTransient<DocumentsViewModel>();
+            services.AddTransient<SettingsViewModel>();
             services.AddSingleton<MainWindowViewModel>();
             return services;
         }

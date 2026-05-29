@@ -22,6 +22,7 @@ namespace Models.Activities
         public string? AdditionalInformation { get; set; }
 
         public bool IsRepeatable { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public List<Member> Participants { get; set; } = new();
     }

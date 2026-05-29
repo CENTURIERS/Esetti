@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -328,7 +328,7 @@
             <DockPanel>
                 <ScrollViewer Padding="20,16,20,30">
                     <StackPanel Spacing="9" HorizontalAlignment="Stretch">
-                        <!-- Add project tile at the top -->
+                        
                         <Panel Classes="AddProjectTile" Height="58" Margin="0,0,0,9">
                             <Rectangle />
                             <Button HorizontalAlignment="Stretch" 
@@ -349,7 +349,7 @@
                             </Button>
                         </Panel>
 
-                        <!-- ItemsControl of projects -->
+                        
                         <ItemsControl ItemsSource="{Binding Projects}" Margin="0,0,0,16">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -360,14 +360,14 @@
                                 <DataTemplate>
                                     <Border Classes="list-row" Classes.selected="{Binding IsSelected}" Padding="16,0" Height="58">
                                         <Grid ColumnDefinitions="40, *, Auto">
-                                            <!-- Column 0: Checkbox -->
+                                            
                                             <CheckBox Grid.Column="0" 
                                                       Classes="MemberCheckBox" 
                                                       IsChecked="{Binding IsSelected}" 
                                                       HorizontalAlignment="Center" 
                                                       VerticalAlignment="Center"/>
                                             
-                                            <!-- Column 1: Info (Name, Leader, Description) -->
+                                            
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,20,0">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <TextBlock Text="{Binding Name}" 
@@ -390,14 +390,14 @@
                                                            Margin="0,4,0,0"/>
                                             </StackPanel>
                                             
-                                            <!-- Column 2: Badges & Action Buttons -->
+                                            
                                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                                <!-- Estimated Time Badge -->
+                                                
                                                 <Border Background="#f0f2f8" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding EstimatedTime}" FontSize="11.5" FontWeight="SemiBold" Foreground="#0033A0"/>
                                                 </Border>
                                                 
-                                                <!-- Action Buttons -->
+                                                
                                                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                                     <Button Classes="ActionBtn" 
                                                             Command="{ReflectionBinding $parent[UserControl].DataContext.OpenProfileCommand}" 
@@ -444,7 +444,7 @@
             </DockPanel>
         </Border>
 
-        <!-- ADD/EDIT POPUP -->
+        
         <Grid IsVisible="{Binding IsAddEditPopupVisible, FallbackValue=False}">
             <Border Background="#4000195A" />
             
@@ -485,13 +485,13 @@
                     <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
                         <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Margin="22,20,22,35" HorizontalAlignment="Stretch">
                             
-                            <!-- Row 0: Name -->
+                            
                             <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Nazwa projektu" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Łazik marsjański UR-1" Text="{Binding NewProjectName}"/>
                             </StackPanel>
 
-                            <!-- Row 1: Date Start & Date End -->
+                            
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Data rozpoczęcia" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. 24.05.2026" Text="{Binding NewProjectDateStart}"/>
@@ -501,7 +501,7 @@
                                 <TextBox Classes="form-input" Watermark="np. 31.12.2026" Text="{Binding NewProjectDateEnd}"/>
                             </StackPanel>
 
-                            <!-- Row 2: Estimated Time & GitHub -->
+                            
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Szacowany czas (godziny)" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. 120" Text="{Binding NewProjectEstimatedTime}"/>
@@ -511,7 +511,7 @@
                                 <TextBox Classes="form-input" Watermark="np. github.com/user/repo" Text="{Binding NewProjectGithub}"/>
                             </StackPanel>
 
-                            <!-- Row 3: Leader selection -->
+                            
                             <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Lider projektu" Classes="form-label" />
                                 <ComboBox Classes="form-select" ItemsSource="{Binding ClubMembers}" SelectedItem="{Binding NewProjectLeader, Mode=TwoWay}" HorizontalAlignment="Stretch" PlaceholderText="Wybierz lidera">
@@ -528,13 +528,13 @@
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- Row 4: Description -->
+                            
                             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Opis projektu" Classes="form-label" />
                                 <TextBox Classes="form-textarea" Height="58" Watermark="Krótki opis projektu..." Text="{Binding NewProjectDescription}"/>
                             </StackPanel>
 
-                            <!-- Row 5: Additional Info -->
+                            
                             <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Dodatkowe informacje / Uwagi" Classes="form-label" />
                                 <TextBox Classes="form-textarea" Height="48" Watermark="Dodatkowe uwagi dotyczące projektu..." Text="{Binding NewProjectAdditionalInfo}"/>

@@ -1,5 +1,208 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Esseti.Views.DocumentsView">
-    <TextBlock Text="Generator Dokumentów" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Esseti.ViewModels"
+             x:DataType="vm:DocumentsViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="Esseti.Views.DocumentsView"
+             Background="Transparent">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.form-label">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        
+        <Style Selector="TextBox.form-textarea">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="TextBox.form-textarea:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#b0bde8"/>
+            <Setter Property="Background" Value="#f9faff"/>
+        </Style>
+        <Style Selector="TextBox.form-textarea:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Background" Value="#FEFEFE"/>
+        </Style>
+
+        <Style Selector="Button.doc-btn-blue">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.doc-btn-blue:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#002270"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.doc-btn-green">
+            <Setter Property="Background" Value="#10B981"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.doc-btn-green:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#059669"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        
+        <Style Selector="DatePicker">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="DatePicker /template/ Button">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="DatePicker /template/ TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Border Background="#FEFEFE" 
+                CornerRadius="14" 
+                BorderBrush="#d0d4e8" 
+                BorderThickness="1" 
+                BoxShadow="0 6 28 0 #1A0033A0" 
+                ClipToBounds="True"
+                Margin="20">
+            <DockPanel>
+                <ScrollViewer Padding="24,24,24,30">
+                    <StackPanel Spacing="24">
+                        <Grid ColumnDefinitions="*,30,*">
+                            
+                            <StackPanel Grid.Column="0" Spacing="12">
+                                <TextBlock Text="Wybierz członków do zaświadczeń" 
+                                           FontSize="13" 
+                                           FontWeight="Bold" 
+                                           Foreground="#475569" />
+                                
+                                <Grid ColumnDefinitions="*,10,*">
+                                    <Button Grid.Column="0" Content="Zaznacz wszystkich" 
+                                            Command="{Binding SelectAllMembersCommand}" 
+                                            Height="34" FontSize="11.5" CornerRadius="6" 
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                            VerticalContentAlignment="Center"
+                                            Background="#E2E8F0" Foreground="#1E293B" Cursor="Hand"/>
+                                    <Button Grid.Column="2" Content="Odznacz wszystkich" 
+                                            Command="{Binding DeselectAllMembersCommand}" 
+                                            Height="34" FontSize="11.5" CornerRadius="6" 
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                            VerticalContentAlignment="Center"
+                                            Background="#E2E8F0" Foreground="#1E293B" Cursor="Hand"/>
+                                 </Grid>
+                                
+                                <ListBox ItemsSource="{Binding AvailableMembers}" 
+                                         Height="260" 
+                                         BorderBrush="#DDE2F0" 
+                                         BorderThickness="1.5" 
+                                         CornerRadius="8" 
+                                         Background="#FEFEFE">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsSelected}" Margin="4,2" HorizontalAlignment="Stretch">
+                                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                                    <TextBlock Text="{Binding FullName}" FontWeight="Medium" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding IndexNumber, StringFormat='({0})'}" Foreground="#64748B" FontSize="11" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </CheckBox>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+
+                            
+                            <StackPanel Grid.Column="2" Spacing="16">
+                                <TextBlock Text="Parametry generowania zaświadczeń" 
+                                           FontSize="13" 
+                                           FontWeight="Bold" 
+                                           Foreground="#475569" />
+                                
+                                <StackPanel Spacing="12">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Data początkowa" Classes="form-label"/>
+                                        <DatePicker SelectedDate="{Binding StartDate}" HorizontalAlignment="Stretch" CornerRadius="8"/>
+                                    </StackPanel>
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Data końcowa" Classes="form-label"/>
+                                        <DatePicker SelectedDate="{Binding EndDate}" HorizontalAlignment="Stretch" CornerRadius="8"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <Separator Background="#dde2f0" Height="1" Margin="0,10,0,10"/>
+
+                                <StackPanel Spacing="12">
+                                    <Button Content="Generuj zaświadczenia o aktywności"
+                                            Command="{Binding GenerateActivityCertificateCommand}"
+                                            Classes="doc-btn-blue"
+                                            Height="48"
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+
+                                    <Button Content="Generuj listę członków i zarządu"
+                                            Command="{Binding GenerateMembersListCommand}"
+                                            Classes="doc-btn-green"
+                                            Height="48"
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Background="#F8FAFF" BorderBrush="#DDE2F0" BorderThickness="1" CornerRadius="8" Padding="16">
+                            <TextBlock Text="Wybierz członków z listy po lewej stronie, ustaw zakres dat i kliknij przycisk, aby wygenerować dokument PDF. W przypadku zaświadczeń o aktywności, zaznaczenie wielu osób wygeneruje jedno wspólne zaświadczenie zbiorcze z podziałem na strony."
+                                       Foreground="#7A8099" FontSize="12.5" TextWrapping="Wrap" LineHeight="20"/>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
 </UserControl>

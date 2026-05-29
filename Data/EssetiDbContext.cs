@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Models.Activities;
 using Models.ClubBase;
 using Models.Other;
@@ -26,6 +26,106 @@ namespace Esseti.Data
         public DbSet<MemberClub> MemberClubs => Set<MemberClub>();
         public DbSet<SectionMember> SectionMembers => Set<SectionMember>();
         public DbSet<Trip> Trips => Set<Trip>();
+
+        public EssetiDbContext()
+        {
+            Database.EnsureCreated();
+            EnsureSchemaUpToDate();
+        }
+
+        private void EnsureSchemaUpToDate()
+        {
+            try
+            {
+                using (var command = Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = "PRAGMA table_info(club_info);";
+                    var connection = command.Connection;
+                    if (connection != null)
+                    {
+                        if (connection.State != System.Data.ConnectionState.Open)
+                        {
+                            connection.Open();
+                        }
+                        var columns = new List<string>();
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                columns.Add(reader["name"].ToString() ?? "");
+                            }
+                        }
+                        if (!columns.Contains("supervisor_name"))
+                        {
+                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN supervisor_name TEXT;");
+                        }
+                        if (!columns.Contains("meetings_schedule"))
+                        {
+                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN meetings_schedule TEXT;");
+                        }
+                        if (!columns.Contains("short_name"))
+                        {
+                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN short_name TEXT;");
+                        }
+                        if (!columns.Contains("club_photo"))
+                        {
+                            Database.ExecuteSqlRaw("ALTER TABLE club_info ADD COLUMN club_photo BLOB;");
+                        }
+                    }
+                }
+                using (var command = Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = "PRAGMA table_info(trip);";
+                    var connection = command.Connection;
+                    if (connection != null)
+                    {
+                        if (connection.State != System.Data.ConnectionState.Open)
+                        {
+                            connection.Open();
+                        }
+                        var columns = new List<string>();
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                columns.Add(reader["name"].ToString() ?? "");
+                            }
+                        }
+                        if (!columns.Contains("name"))
+                        {
+                            Database.ExecuteSqlRaw("ALTER TABLE trip ADD COLUMN name TEXT;");
+                        }
+                    }
+                }
+                using (var command = Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = "PRAGMA table_info(activity);";
+                    var connection = command.Connection;
+                    if (connection != null)
+                    {
+                        if (connection.State != System.Data.ConnectionState.Open)
+                        {
+                            connection.Open();
+                        }
+                        var columns = new List<string>();
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                columns.Add(reader["name"].ToString() ?? "");
+                            }
+                        }
+                        if (!columns.Contains("is_active"))
+                        {
+                            Database.ExecuteSqlRaw("ALTER TABLE activity ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1;");
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

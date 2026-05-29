@@ -30,6 +30,11 @@ namespace Esseti.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<AuthorityRole>> GetAuthorityRolesAsync()
+        {
+            return await _context.AuthorityRoles.ToListAsync();
+        }
+
         public async Task DeleteSingleMemberAsync(int id)
         {
             var member = await _context.Members.FindAsync(id);
@@ -56,8 +61,34 @@ namespace Esseti.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddMemberAsync(Member member)
+        public async Task AddMemberAsync(Member member, int? departmentId)
         {
+            if (departmentId.HasValue)
+            {
+                var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
+                if (club == null)
+                {
+                    var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
+                    if (dept != null)
+                    {
+                        club = new ClubInfo
+                        {
+                            Name = $"Koło Naukowe - {dept.Name}",
+                            DepartmentId = dept.CollegeDepartmentId,
+                            ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
+                        };
+                        _context.Clubs.Add(club);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                if (club != null)
+                {
+                    member.MemberClubs = new List<MemberClub>
+                    {
+                        new MemberClub { ClubId = club.ClubId }
+                    };
+                }
+            }
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
         }
@@ -161,6 +192,106 @@ namespace Esseti.Repositories
 
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task UpdateMemberBasicInfoAsync(Member member, int? departmentId)
+        {
+            var dbMember = await _context.Members
+                .Include(m => m.Account)
+                .Include(m => m.AuthorityRole)
+                .Include(m => m.MemberClubs)
+                .FirstOrDefaultAsync(m => m.MemberId == member.MemberId);
+
+            if (dbMember != null)
+            {
+                dbMember.FirstName = member.FirstName;
+                dbMember.LastName = member.LastName;
+                dbMember.IndexNumber = member.IndexNumber;
+                
+                if (member.MemberAvatar != null)
+                    dbMember.MemberAvatar = member.MemberAvatar;
+
+                if (member.Account != null)
+                {
+                    if (dbMember.Account != null)
+                    {
+                        dbMember.Account.Email = member.Account.Email;
+                    }
+                    else
+                    {
+                        dbMember.Account = new UserAccount
+                        {
+                            Email = member.Account.Email,
+                            SystemRole = Models.Enums.SystemRole.User
+                        };
+                    }
+                }
+                else
+                {
+                    dbMember.Account = null;
+                }
+
+                if (member.AuthorityRole != null)
+                {
+                    var roleName = member.AuthorityRole.Name;
+                    var dbRole = await _context.AuthorityRoles.FirstOrDefaultAsync(r => r.Name.ToLower() == roleName.ToLower());
+                    if (dbRole != null)
+                    {
+                        dbMember.RoleId = dbRole.RoleId;
+                        dbMember.AuthorityRole = dbRole;
+                    }
+                }
+
+                if (departmentId.HasValue)
+                {
+                    var club = await _context.Clubs.FirstOrDefaultAsync(c => c.DepartmentId == departmentId.Value);
+                    if (club == null)
+                    {
+                        var dept = await _context.CollegeDepartments.FindAsync(departmentId.Value);
+                        if (dept != null)
+                        {
+                            club = new ClubInfo
+                            {
+                                Name = $"Koło Naukowe - {dept.Name}",
+                                DepartmentId = dept.CollegeDepartmentId,
+                                ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
+                            };
+                            _context.Clubs.Add(club);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    if (club != null)
+                    {
+                        dbMember.MemberClubs ??= new List<MemberClub>();
+                        dbMember.MemberClubs.Clear();
+                        dbMember.MemberClubs.Add(new MemberClub { ClubId = club.ClubId, MemberId = dbMember.MemberId });
+                    }
+                }
+                else if (member.MemberClubs != null && member.MemberClubs.Any())
+                {
+                    var targetClubId = member.MemberClubs.First().ClubId;
+                    dbMember.MemberClubs ??= new List<MemberClub>();
+                    dbMember.MemberClubs.Clear();
+                    dbMember.MemberClubs.Add(new MemberClub { ClubId = targetClubId, MemberId = dbMember.MemberId });
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateMemberAvatarAsync(int memberId, byte[] avatarData)
+        {
+            var member = await _context.Members.FindAsync(memberId);
+            if (member != null)
+            {
+                member.MemberAvatar = avatarData;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<Models.University.CollegeDepartment>> GetCollegeDepartmentsAsync()
+        {
+            return await _context.CollegeDepartments.ToListAsync();
         }
     }
 }

@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Esseti.ViewModels"
              xmlns:mu="using:Models.Users"
@@ -264,7 +264,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="16" Margin="28,20,28,32">
                 
-                <!-- BACK BUTTON -->
+                
                 <Button Classes="BackBtn" Command="{Binding GoBackCommand}" HorizontalAlignment="Left">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon Width="13" Height="13" Foreground="#7a8099"
@@ -273,20 +273,20 @@
                     </StackPanel>
                 </Button>
 
-                <!-- LOADING SPINNER -->
+                
                 <TextBlock Text="Ładowanie profilu projektu..." FontSize="14" Foreground="#b0bde8"
                            HorizontalAlignment="Center" Margin="0,60"
                            IsVisible="{Binding IsLoading}"/>
 
                 <StackPanel Spacing="14" IsVisible="{Binding !IsLoading}">
                     
-                    <!-- HEADER BOARD -->
+                    
                     <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="28,24">
                         <Grid ColumnDefinitions="*, Auto">
                             <StackPanel Grid.Column="0" Spacing="8">
                                 <TextBlock Text="{Binding ProjectName}" FontSize="24" FontWeight="Bold" Foreground="#1a1a2e" />
                                 <StackPanel Orientation="Horizontal" Spacing="14">
-                                    <!-- Date Start / Date End -->
+                                    
                                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <PathIcon Width="12" Height="12" Data="M11 2H9V1a1 1 0 0 0-2 0v1H5V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m1 11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h10z" Foreground="#7a8099"/>
                                         <TextBlock Text="{Binding DateStartText}" FontSize="12.5" Foreground="#666" />
@@ -294,7 +294,7 @@
                                         <TextBlock Text="{Binding DateEndText}" FontSize="12.5" Foreground="#666" />
                                     </StackPanel>
                                     <TextBlock Text="•" Foreground="Gray" VerticalAlignment="Center" />
-                                    <!-- Estimated Time -->
+                                    
                                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <PathIcon Width="12" Height="12" Data="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16 M8 4a.5.5 0 0 1 .5.5v3.293l2.853 2.854a.5.5 0 0 1-.707.708l-3-3A.5.5 0 0 1 7.5 8V4.5A.5.5 0 0 1 8 4" Foreground="#7a8099" />
                                         <TextBlock Text="{Binding EstimatedTimeText}" FontSize="12.5" Foreground="#666"/>
@@ -302,7 +302,7 @@
                                 </StackPanel>
                             </StackPanel>
                             
-                            <!-- Actions -->
+                            
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                                 <Button Classes="ActionBtn" Command="{Binding OpenEditCommand}">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -320,9 +320,9 @@
                         </Grid>
                     </Border>
                     
-                    <!-- CONTENT ROW: LEFT (DETAILS), RIGHT (LEADER & PARTICIPANTS) -->
+                    
                     <Grid ColumnDefinitions="*, 20, 420" Margin="0">
-                        <!-- Left: Description and Additional Info -->
+                        
                         <StackPanel Grid.Column="0" Spacing="14">
                             <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
                                 <StackPanel Spacing="12">
@@ -349,9 +349,9 @@
                             </Border>
                         </StackPanel>
                         
-                        <!-- Right: Leader & Participants -->
+                        
                         <StackPanel Grid.Column="2" Spacing="14">
-                            <!-- Leader Card -->
+                            
                             <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="Lider projektu" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
@@ -368,12 +368,12 @@
                                 </StackPanel>
                             </Border>
                             
-                            <!-- Participants Card -->
+                            
                             <Border Background="#FEFEFE" CornerRadius="16" BoxShadow="0 2 20 0 #0E000000" Padding="24">
                                 <StackPanel Spacing="16">
                                     <TextBlock Text="Uczestnicy projektu" FontSize="15" FontWeight="Bold" Foreground="#0033A0" />
                                     
-                                    <!-- ComboBox to add a participant -->
+                                    
                                     <Grid ColumnDefinitions="*, 8, Auto">
                                         <ComboBox Grid.Column="0" 
                                                   Classes="form-select" 
@@ -394,7 +394,7 @@
                                     
                                     <Border Height="1" Background="#f0f2f8" />
                                     
-                                    <!-- List of participants -->
+                                    
                                     <TextBlock Text="Brak uczestników w projekcie." 
                                                FontSize="12" 
                                                Foreground="#7a8099" 
@@ -442,7 +442,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- EDIT DIALOG POPUP -->
+        
         <Grid IsVisible="{Binding IsProjectEditPopupVisible, FallbackValue=False}">
             <Border Background="#4000195A" />
             
@@ -483,13 +483,13 @@
                     <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
                         <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Margin="22,20,22,35" HorizontalAlignment="Stretch">
                             
-                            <!-- Row 0: Name -->
+                            
                             <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Nazwa projektu" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. Łazik marsjański UR-1" Text="{Binding EditName}"/>
                             </StackPanel>
 
-                            <!-- Row 1: Date Start & Date End -->
+                            
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Data rozpoczęcia" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. 24.05.2026" Text="{Binding EditDateStart}"/>
@@ -499,7 +499,7 @@
                                 <TextBox Classes="form-input" Watermark="np. 31.12.2026" Text="{Binding EditDateEnd}"/>
                             </StackPanel>
 
-                            <!-- Row 2: Estimated Time & GitHub -->
+                            
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,6,12" Spacing="5">
                                 <TextBlock Text="Szacowany czas (godziny)" Classes="form-label" />
                                 <TextBox Classes="form-input" Watermark="np. 120" Text="{Binding EditEstimatedTime}"/>
@@ -509,7 +509,7 @@
                                 <TextBox Classes="form-input" Watermark="np. github.com/user/repo" Text="{Binding EditGithub}"/>
                             </StackPanel>
 
-                            <!-- Row 3: Leader selection -->
+                            
                             <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Lider projektu" Classes="form-label" />
                                 <ComboBox Classes="form-select" ItemsSource="{Binding ClubMembers}" SelectedItem="{Binding EditLeader}">
@@ -526,13 +526,13 @@
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- Row 4: Description -->
+                            
                             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Opis projektu" Classes="form-label" />
                                 <TextBox Classes="form-textarea" Height="58" Watermark="Krótki opis projektu..." Text="{Binding EditDescription}"/>
                             </StackPanel>
 
-                            <!-- Row 5: Additional Info -->
+                            
                             <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12" Spacing="5">
                                 <TextBlock Text="Dodatkowe informacje / Uwagi" Classes="form-label" />
                                 <TextBox Classes="form-textarea" Height="48" Watermark="Dodatkowe uwagi dotyczące projektu..." Text="{Binding EditAdditionalInfo}"/>

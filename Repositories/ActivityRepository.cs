@@ -20,6 +20,7 @@ namespace Esseti.Repositories
         public async Task<List<Activity>> GetAllActivitiesAsync()
         {
             return await _context.Activities
+                .Where(a => a.IsActive)
                 .Include(a => a.Participants)
                 .ToListAsync();
         }
@@ -28,7 +29,7 @@ namespace Esseti.Repositories
         {
             return await _context.Activities
                         .Include(a => a.Participants)
-                        .FirstOrDefaultAsync(a => a.ActivityId == id);
+                        .FirstOrDefaultAsync(a => a.ActivityId == id && a.IsActive);
         }
 
         public async Task AddActivityAsync(Activity activity)
@@ -108,7 +109,7 @@ namespace Esseti.Repositories
 
             if (activity != null)
             {
-                _context.Activities.Remove(activity);
+                activity.IsActive = false;
                 await _context.SaveChangesAsync();
             }
         }
@@ -117,9 +118,12 @@ namespace Esseti.Repositories
         {
             List<Activity> activitiesToDelete = await _context.Activities.Where(a => activitiesIds.Contains(a.ActivityId)).ToListAsync();
 
-            _context.Activities.RemoveRange(activitiesToDelete);  
+            foreach (var activity in activitiesToDelete)
+            {
+                activity.IsActive = false;
+            }
 
-            await _context.SaveChangesAsync();                                                  
+            await _context.SaveChangesAsync();
         }
     }
 }

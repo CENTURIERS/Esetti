@@ -1,5 +1,560 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Esseti.Views.ClubInfoView">
-    <TextBlock Text="O kole" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Esseti.ViewModels"
+             x:DataType="vm:ClubInfoViewModel"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="900"
+             x:Class="Esseti.Views.ClubInfoView"
+             Background="Transparent">
+
+    <UserControl.Styles>
+        <Style Selector="Border.section-card">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BoxShadow" Value="0 6 20 0 #0F0033A0"/>
+        </Style>
+
+        <Style Selector="Border.stat-subcard">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+
+        <Style Selector="Border.board-member-card">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+
+        <Style Selector="Border.trip-card">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+
+        <Style Selector="TextBlock.form-label">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+        <Style Selector="TextBox.form-input">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="Foreground" Value="#1a1a2e"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.btn-cancel">
+            <Setter Property="Background" Value="#FEFEFE"/>
+            <Setter Property="BorderBrush" Value="#dde2f0"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="20,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.btn-save">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="22,7"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ActionBtn">
+            <Setter Property="Background" Value="#f4f6fc"/>
+            <Setter Property="BorderBrush" Value="#d0d8ed"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0033A0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#0033A0"/>
+            <Setter Property="BorderBrush" Value="#0033A0"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.modal-close">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.modal-close:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2EFFFFFF"/>
+            <Setter Property="Opacity" Value="1.0"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <ScrollViewer Padding="20,16,20,20">
+            <StackPanel Spacing="16">
+
+                <Border Classes="section-card" Padding="24,16">
+                    <Grid ColumnDefinitions="*, Auto, Auto">
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding ClubNameShort}" FontSize="26" FontWeight="Black" Foreground="#000000"/>
+                                <TextBlock Text="{Binding MembersCount, StringFormat='({0} członków)'}" FontSize="18" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding ClubName}" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+                        </StackPanel>
+
+                        <Button Grid.Column="1" Classes="ActionBtn" Command="{Binding OpenEditCommand}" VerticalAlignment="Center" Margin="0,0,16,0">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Width="11" Height="11" Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" Foreground="#0033A0"/>
+                                <TextBlock Text="Edytuj" VerticalAlignment="Center" FontSize="11"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Border Grid.Column="2" Background="#000000" CornerRadius="12" Width="140" Height="65" BorderBrush="#00C2FF" BorderThickness="1.5" ClipToBounds="True">
+                            <Panel>
+                                <Image Source="{Binding ClubPhotoBitmap}" Stretch="UniformToFill" IsVisible="{Binding HasClubPhoto}"/>
+                                <TextBlock Text="Brak logo" Foreground="#555555" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding !HasClubPhoto}"/>
+                            </Panel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Border Classes="section-card" Padding="20,24">
+                    <Grid ColumnDefinitions="Auto, 24, *">
+                        <Border Grid.Column="0" Width="110" Height="80" Background="#0033A0" CornerRadius="6" VerticalAlignment="Center" Padding="10">
+                            <TextBlock Text="{Binding UniversityShortName}" Foreground="White" FontSize="36" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="2" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding UniversityName}" FontSize="18" FontWeight="Black" Foreground="#000000"/>
+                            <TextBlock Text="{Binding DepartmentName}" FontSize="13.5" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBlock Text="{Binding UniversityAddress}" FontSize="12" Foreground="#64748B"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid ColumnDefinitions="*, 20, *">
+                    <Border Grid.Column="0" Classes="section-card" ClipToBounds="True">
+                        <StackPanel>
+                            <Border Background="#0033A0" Padding="16,10">
+                                <TextBlock Text="Spotkania" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                            <Border Padding="16">
+                                <TextBlock Text="{Binding MeetingsInfo}" FontSize="12.5" Foreground="#334155" TextWrapping="Wrap" LineHeight="18"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Classes="section-card" ClipToBounds="True">
+                        <StackPanel>
+                            <Border Background="#0033A0" Padding="16,10">
+                                <TextBlock Text="Pokój koła" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                            <Border Padding="16">
+                                <TextBlock Text="{Binding ClubRoom, StringFormat='Pokój znajduje się w sali {0}'}" FontSize="12.5" Foreground="#334155" TextWrapping="Wrap" LineHeight="18"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Classes="section-card" Padding="20">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,12">
+                            <TextBlock Grid.Column="0" Text="Sekcje Naukowe" FontSize="16" FontWeight="Bold" Foreground="#0033A0" VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="ActionBtn" Command="{Binding OpenAddSectionCommand}" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Width="11" Height="11" Data="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" Foreground="#0033A0"/>
+                                    <TextBlock Text="Dodaj sekcję" VerticalAlignment="Center" FontSize="11"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        
+                        <ItemsControl ItemsSource="{Binding Sections}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" Margin="-4"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="stat-subcard" Width="180">
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontSize="12.5" FontWeight="Bold" Foreground="#000000" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Command="{Binding $parent[UserControl].DataContext.RequestDeleteSectionCommand}" CommandParameter="{Binding}"
+                                                    Width="20" Height="20" CornerRadius="4" Padding="0" Background="#fff5f5" BorderBrush="#fcdada" BorderThickness="1" Cursor="Hand" VerticalAlignment="Center" Margin="6,0,0,0">
+                                                <PathIcon Width="8" Height="8" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" Foreground="#D32F2F"/>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="section-card" Padding="20">
+                    <StackPanel Spacing="16">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" Text="Zarząd koła:" FontSize="16" FontWeight="Bold" Foreground="#0033A0" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <TextBlock Text="Opiekun naukowy:" FontSize="14" FontWeight="Bold" Foreground="#555555"/>
+                                <TextBlock Text="{Binding SupervisorName}" FontSize="14" FontWeight="Bold" Foreground="#0033A0"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <TextBlock Text="Brak danych o zarządzie koła." FontSize="13" FontStyle="Italic" Foreground="#7a8099" HorizontalAlignment="Left" IsVisible="{Binding HasNoBoardMembers}"/>
+                        <ItemsControl ItemsSource="{Binding BoardMembers}" IsVisible="{Binding !HasNoBoardMembers}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" Margin="-4"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="board-member-card" Width="145">
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="{Binding AuthorityRole.Name, StringFormat='{}{0}:'}" FontSize="10" Foreground="#d0d4e8" FontWeight="SemiBold"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock Text="{Binding FirstName}" FontSize="12.5" Foreground="White" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding LastName}" FontSize="12.5" Foreground="White" FontWeight="Bold"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="section-card" Padding="20">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,12">
+                            <TextBlock Grid.Column="0" Text="Wyjazdy i Delegacje" FontSize="16" FontWeight="Bold" Foreground="#0033A0" VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="ActionBtn" Command="{Binding OpenAddTripCommand}" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Width="11" Height="11" Data="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" Foreground="#0033A0"/>
+                                    <TextBlock Text="Dodaj wyjazd" VerticalAlignment="Center" FontSize="11"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        
+                        <TextBlock Text="Brak zarejestrowanych wyjazdów i delegacji." FontSize="13" FontStyle="Italic" Foreground="#7a8099" HorizontalAlignment="Left" IsVisible="{Binding HasNoTrips}"/>
+                        <ItemsControl ItemsSource="{Binding Trips}" IsVisible="{Binding !HasNoTrips}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" Margin="-4"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="trip-card">
+                                        <Grid ColumnDefinitions="60, *, Auto">
+                                            <Border Grid.Column="0" CornerRadius="6" Background="#0033A0" Width="48" Height="48" VerticalAlignment="Center">
+                                                <TextBlock Text="✈" Foreground="White" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                <Grid ColumnDefinitions="*, Auto">
+                                                    <TextBlock Grid.Column="0" Text="{Binding Name, TargetNullValue='Delegacja'}" FontSize="11.5" FontWeight="Bold" Foreground="#000000"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Date, StringFormat='dd.MM.yyyy r.'}" FontSize="9.5" Foreground="#7a8099" Margin="8,0,0,0"/>
+                                                </Grid>
+                                                <TextBlock Text="{Binding Description}" FontSize="10" Foreground="#555555" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                                                           
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="12,0,4,0">
+                                                <Button Command="{Binding $parent[UserControl].DataContext.OpenEditTripCommand}" CommandParameter="{Binding}"
+                                                        Width="26" Height="26" CornerRadius="6" Padding="0" Background="#f4f6fc" BorderBrush="#d0d8ed" BorderThickness="1" Cursor="Hand" ToolTip.Tip="Edytuj wyjazd">
+                                                    <PathIcon Width="10" Height="10" Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" Foreground="#0033A0"/>
+                                                </Button>
+                                                <Button Command="{Binding $parent[UserControl].DataContext.RequestDeleteTripCommand}" CommandParameter="{Binding}"
+                                                        Width="26" Height="26" CornerRadius="6" Padding="0" Background="#fff5f5" BorderBrush="#fcdada" BorderThickness="1" Cursor="Hand" ToolTip.Tip="Usuń wyjazd">
+                                                    <PathIcon Width="10" Height="10" Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" Foreground="#D32F2F"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Panel Height="50" />
+            </StackPanel>
+        </ScrollViewer>
+
+        
+        <Grid Background="#4000195A" IsVisible="{Binding IsEditPopupVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Width="500" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" 
+                                       Text="Edytuj dane koła" 
+                                       FontFamily="Georgia" 
+                                       FontStyle="Italic" 
+                                       FontSize="15" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelEditCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelEditCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz" Command="{Binding SaveEditCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer MaxHeight="650" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="22" Spacing="12">
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Nazwa koła" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditClubName}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Skrót nazwy koła" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditClubNameShort}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Logo koła" Classes="form-label" />
+                                <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,10">
+                                    <Border Grid.Column="0" Background="#f4f6fc" BorderBrush="#d0d8ed" BorderThickness="1" CornerRadius="8" Height="60" Width="140" HorizontalAlignment="Left" ClipToBounds="True">
+                                        <Panel>
+                                            <Image Source="{Binding EditClubPhotoBitmap}" Stretch="UniformToFill" IsVisible="{Binding HasEditClubPhoto}"/>
+                                            <TextBlock Text="Brak logo" Foreground="#7a8099" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding !HasEditClubPhoto}"/>
+                                        </Panel>
+                                    </Border>
+                                    <Button Grid.Column="1" Classes="ActionBtn" Content="Wybierz logo" Command="{Binding ChooseClubPhotoCommand}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Pokój koła" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditClubRoom}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Wydział" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditDepartmentName}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Opiekun naukowy" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditSupervisorName}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Terminy spotkań" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditMeetingsSchedule}" TextWrapping="Wrap" AcceptsReturn="True" Height="60"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+        
+        
+        <Grid Background="#4000195A" IsVisible="{Binding IsAddTripPopupVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Width="450" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" 
+                                       Text="Dodaj wyjazd / delegację" 
+                                       FontFamily="Georgia" 
+                                       FontStyle="Italic" 
+                                       FontSize="15" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelAddTripCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelAddTripCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz" Command="{Binding SaveAddTripCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer MaxHeight="550" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="22" Spacing="12">
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Nazwa wyjazdu" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. Wyjazd szkoleniowy Google" Text="{Binding NewTripName}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Data wyjazdu" Classes="form-label" />
+                                <TextBox Classes="form-input" Watermark="np. 28.05.2026" Text="{Binding NewTripDate}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Opis wyjazdu" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding NewTripDescription}" TextWrapping="Wrap" AcceptsReturn="True" Height="80"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        
+        <Grid Background="#4000195A" IsVisible="{Binding IsEditTripPopupVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Width="450" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Background="#FEFEFE"
+                    CornerRadius="14"
+                    BorderBrush="#d0d4e8"
+                    BorderThickness="1"
+                    BoxShadow="0 10 48 0 #2E0033A0"
+                    ClipToBounds="True"
+                    Margin="24">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" 
+                                       Text="Edytuj wyjazd / delegację" 
+                                       FontFamily="Georgia" 
+                                       FontStyle="Italic" 
+                                       FontSize="15" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelEditTripCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelEditTripCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz" Command="{Binding SaveEditTripCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer MaxHeight="550" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="22" Spacing="12">
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Nazwa wyjazdu" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditTripName}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Data wyjazdu" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditTripDate}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Opis wyjazdu" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditTripDescription}" TextWrapping="Wrap" AcceptsReturn="True" Height="80"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        
+        <Grid Background="#4000195A" IsVisible="{Binding IsDeleteTripConfirmVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Width="380" VerticalAlignment="Center" HorizontalAlignment="Center" Background="#FEFEFE" CornerRadius="14" BorderBrush="#d0d4e8" BorderThickness="1" BoxShadow="0 10 48 0 #2E0033A0" ClipToBounds="True">
+                <Border Padding="24">
+                    <StackPanel Spacing="18">
+                        <TextBlock Text="Potwierdź usunięcie wyjazdu" FontSize="15" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Czy na pewno chcesz bezpowrotnie usunąć ten wyjazd z bazy danych?" FontSize="12.5" Foreground="#64748B" TextAlignment="Center" TextWrapping="Wrap"/>
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                            <Button Grid.Column="0" Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelDeleteTripCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="btn-save" Content="Usuń" Command="{Binding ConfirmDeleteTripCommand}" Background="#D32F2F" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </Grid>
+
+        
+        <Grid Background="#4000195A" IsVisible="{Binding IsAddSectionPopupVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Width="400" VerticalAlignment="Center" HorizontalAlignment="Center" Background="#FEFEFE" CornerRadius="14" BorderBrush="#d0d4e8" BorderThickness="1" BoxShadow="0 10 48 0 #2E0033A0" ClipToBounds="True">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0033A0" Padding="22,15">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Column="0" Text="Dodaj sekcję naukową" FontFamily="Georgia" FontStyle="Italic" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="modal-close" Command="{Binding CancelAddSectionCommand}">
+                                <TextBlock Text="✕" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <Border DockPanel.Dock="Bottom" Padding="22,14" Background="#fafbff" BorderBrush="#eee" BorderThickness="0,1,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                            <Button Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelAddSectionCommand}"/>
+                            <Button Classes="btn-save" Content="Zapisz" Command="{Binding SaveAddSectionCommand}"/>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Margin="22" Spacing="12">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Nazwa sekcji" Classes="form-label" />
+                            <TextBox Classes="form-input" Watermark="np. Sekcja Programowania" Text="{Binding NewSectionName}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        
+        <Grid Background="#4000195A" IsVisible="{Binding IsDeleteSectionConfirmVisible}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Width="380" VerticalAlignment="Center" HorizontalAlignment="Center" Background="#FEFEFE" CornerRadius="14" BorderBrush="#d0d4e8" BorderThickness="1" BoxShadow="0 10 48 0 #2E0033A0" ClipToBounds="True">
+                <Border Padding="24">
+                    <StackPanel Spacing="18">
+                        <TextBlock Text="Potwierdź usunięcie sekcji" FontSize="15" FontWeight="Bold" Foreground="#1E293B" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Czy na pewno chcesz bezpowrotnie usunąć tę sekcję naukową?" FontSize="12.5" Foreground="#64748B" TextAlignment="Center" TextWrapping="Wrap"/>
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                            <Button Grid.Column="0" Classes="btn-cancel" Content="Anuluj" Command="{Binding CancelDeleteSectionCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Classes="btn-save" Content="Usuń" Command="{Binding ConfirmDeleteSectionCommand}" Background="#D32F2F" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

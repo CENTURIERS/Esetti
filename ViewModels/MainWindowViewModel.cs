@@ -131,7 +131,7 @@ namespace Esseti.ViewModels
         [RelayCommand]
         public void ShowClubInfo()
         {
-            CurrentViewModel = new ClubInfoViewModel();
+            CurrentViewModel = App.Services.GetRequiredService<ClubInfoViewModel>();
             SetActiveMenuItem(3);
             if (!_isViewChanged)
             {
@@ -142,7 +142,7 @@ namespace Esseti.ViewModels
         [RelayCommand]
         public void ShowDocumentsPage()
         {
-            CurrentViewModel = new DocumentsViewModel();
+            CurrentViewModel = App.Services.GetRequiredService<DocumentsViewModel>();
             SetActiveMenuItem(4);
             if (!_isViewChanged)
             {
@@ -153,7 +153,7 @@ namespace Esseti.ViewModels
         [RelayCommand]
         public void ShowSettingsPage()
         {
-            CurrentViewModel = new SettingsViewModel();
+            CurrentViewModel = App.Services.GetRequiredService<SettingsViewModel>();
 
             if (!_isViewChanged)
             {

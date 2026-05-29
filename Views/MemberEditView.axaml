@@ -11,8 +11,8 @@
             <Setter Property="Foreground" Value="#1a1a2e"/>
             <Setter Property="BorderBrush" Value="#dde2f0"/>
             <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Height" Value="44"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Height" Value="42"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Padding" Value="14,0"/>
