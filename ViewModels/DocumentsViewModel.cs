@@ -16,7 +16,7 @@ namespace Esseti.ViewModels
 {
     public partial class DocumentsViewModel : ViewModelBase
     {
-        public override string PageTitle => "Centrum Dokumentów";
+        public override string PageTitle => "Centrum Dokument\u00F3w";
 
         private readonly IMemberRepository _memberRepository;
         private readonly IClubRepository _clubRepository;
@@ -41,6 +41,7 @@ namespace Esseti.ViewModels
 
             _ = LoadMembersAsync();
         }
+
         private async Task LoadMembersAsync()
         {
             try
@@ -53,7 +54,7 @@ namespace Esseti.ViewModels
                     AvailableMembers.Clear();
                     foreach (var m in activeMembers)
                     {
-                        var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziaĹ‚u";
+                        var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydzia\u0142u";
                         AvailableMembers.Add(new MemberItemViewModel(
                             memberId: m.MemberId,
                             avatar: m.MemberAvatar ?? Array.Empty<byte>(),
@@ -74,7 +75,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas Ĺ‚adowania czĹ‚onkĂłw w centrum dokumentĂłw: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"B\u0142\u0105d podczas \u0142adowania cz\u0142onk\u00F3w w centrum dokument\u00F3w: {ex.Message}");
             }
         }
 
@@ -113,7 +114,7 @@ namespace Esseti.ViewModels
             }
 
             var club = await _clubRepository.GetClubInfoAsync();
-            var clubName = club?.Name ?? "KoĹ‚o naukowe";
+            var clubName = club?.Name ?? "Ko\u0142o naukowe";
 
             var now = DateTime.Now;
             string academicYear = string.Empty;
@@ -172,7 +173,7 @@ namespace Esseti.ViewModels
                 var fullMember = await _memberRepository.GetMemberByIdAsync(sm.MemberId);
                 if (fullMember == null) continue;
 
-                var dept = fullMember.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziaĹ‚u";
+                var dept = fullMember.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydzia\u0142u";
 
                 var achievements = new List<string>();
                 int idx = 1;
@@ -183,8 +184,8 @@ namespace Esseti.ViewModels
                     {
                         var pFrom = p.DateStart?.ToString("MM.yyyy") ?? fromDateStr;
                         var pTo = p.DateEnd?.ToString("MM.yyyy") ?? toDateStr;
-                        var desc = !string.IsNullOrEmpty(p.Description) ? p.Description : (!string.IsNullOrEmpty(p.AdditionalInformation) ? p.AdditionalInformation : "Zadaniem studenta byĹ‚ czynny udziaĹ‚ w projekcie.");
-                        achievements.Add($"{idx++}. UdziaĹ‚ w projekcie: â€ž{p.Name}â€ť w okresie {pFrom} r. â€“ {pTo} r. {desc}");
+                        var desc = !string.IsNullOrEmpty(p.Description) ? p.Description : (!string.IsNullOrEmpty(p.AdditionalInformation) ? p.AdditionalInformation : "Zadaniem studenta by\u0142 czynny udzia\u0142 w projekcie.");
+                        achievements.Add($"{idx++}. Udzia\u0142 w projekcie: \u201E{p.Name}\u201D w okresie {pFrom} r. \u2013 {pTo} r. {desc}");
                     }
                 }
 
@@ -193,14 +194,14 @@ namespace Esseti.ViewModels
                     foreach (var a in fullMember.Activities)
                     {
                         var aDate = a.Date.ToString("dd.MM.yyyy");
-                        var info = !string.IsNullOrEmpty(a.AdditionalInformation) ? a.AdditionalInformation : "ZaangaĹĽowanie w organizacjÄ™ wydarzenia.";
-                        achievements.Add($"{idx++}. UdziaĹ‚ w aktywnoĹ›ci: â€ž{a.Name}â€ť dnia {aDate} r. {info}");
+                        var info = !string.IsNullOrEmpty(a.AdditionalInformation) ? a.AdditionalInformation : "Zaanga\u017Cowanie w organizacj\u0119 wydarzenia.";
+                        achievements.Add($"{idx++}. Udzia\u0142 w aktywno\u015Bci: \u201E{a.Name}\u201D dnia {aDate} r. {info}");
                     }
                 }
 
                 if (achievements.Count == 0)
                 {
-                    achievements.Add("1. Czynny udziaĹ‚ w spotkaniach koĹ‚a naukowego oraz zaangaĹĽowanie w bieĹĽÄ…cÄ… dziaĹ‚alnoĹ›Ä‡ statutowÄ….");
+                    achievements.Add("1. Czynny udzia\u0142 w spotkaniach ko\u0142a naukowego oraz zaanga\u017Cowanie w bie\u017C\u0105c\u0105 dzia\u0142alno\u015B\u0107 statutow\u0105.");
                 }
 
                 membersData.Add((fullMember, achievements, dept));
@@ -234,7 +235,7 @@ namespace Esseti.ViewModels
                     File.WriteAllText("pdf_error_certificate.txt", ex.ToString());
                 }
                 catch { }
-                Debug.WriteLine($"Nie moĹĽna wygenerowaÄ‡ lub otworzyÄ‡ zaĹ›wiadczenia: {ex}");
+                Debug.WriteLine($"Nie mo\u017Cna wygenerowa\u0107 lub otworzy\u0107 za\u015Bwiadczenia: {ex}");
             }
         }
 
@@ -244,15 +245,15 @@ namespace Esseti.ViewModels
             var members = (await _memberRepository.GetAllMembersAsync()).Where(m => m.IsActive).ToList();
             var club = await _clubRepository.GetClubInfoAsync();
 
-            var clubName = club?.Name ?? "KoĹ‚o naukowe";
+            var clubName = club?.Name ?? "Ko\u0142o naukowe";
             var supervisor = club?.SupervisorName ?? "Brak opiekuna";
             var supervisorEmail = club?.SupervisorEmail ?? "---";
             var supervisorPhone = club?.SupervisorPhone ?? "---";
 
-            var zarzadRoles = new[] { "Prezes", "Wiceprezes", "Skarbnik", "Sekretarz", "ZarzÄ…d" };
+            var zarzadRoles = new[] { "Prezes", "Wiceprezes", "Skarbnik", "Sekretarz", "Zarz\u0105d" };
             var zarzadList = members.Where(m => zarzadRoles.Contains(m.AuthorityRole?.Name ?? ""))
-                                .OrderBy(m => m.LastName)
-                                .ToList();
+                                    .OrderBy(m => m.LastName)
+                                    .ToList();
             
             var zwykliCzlonkowie = members.OrderBy(m => m.LastName).ToList();
 
@@ -320,9 +321,8 @@ namespace Esseti.ViewModels
                     File.WriteAllText("pdf_error.txt", ex.ToString());
                 }
                 catch { }
-                Debug.WriteLine($"Nie moĹĽna wygenerowaÄ‡ lub otworzyÄ‡ pliku listy: {ex}");
+                Debug.WriteLine($"Nie mo\u017Cna wygenerowa\u0107 lub otworzy\u0107 pliku listy: {ex}");
             }
         }
     }
 }
-

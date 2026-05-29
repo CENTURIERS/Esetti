@@ -30,7 +30,7 @@ namespace Esseti.Services
                         page.Size(PageSizes.A4);
                         page.MarginVertical(36);
                         page.MarginHorizontal(72);
-                        page.DefaultTextStyle(x => x.FontFamily("Corbel").FontSize(10));
+                        page.DefaultTextStyle(x => x.FontFamily("Arial").FontSize(10));
 
                         page.Content().PaddingVertical(15).Column(col =>
                         {
@@ -38,7 +38,7 @@ namespace Esseti.Services
                             {
                                 row.RelativeItem().AlignRight().Column(c =>
                                 {
-                                    c.Item().Text("ZaĹ‚Ä…cznik nr 1 do Statutu").Italic().FontSize(8.5f).FontColor("#475569");
+                                    c.Item().Text("Za\u0142\u0105cznik nr 1 do Statutu").Italic().FontSize(8.5f).FontColor("#475569");
                                     c.Item().Text("Studenckiego Towarzystwa Naukowego UR").Italic().FontSize(8.5f).FontColor("#475569");
                                 });
                             });
@@ -62,10 +62,10 @@ namespace Esseti.Services
                                 row.RelativeItem().Column(studentData =>
                                 {
                                     studentData.Item().Text($"{m.FirstName} {m.LastName}").FontSize(11);
-                                    studentData.Item().PaddingBottom(5).Text("ImiÄ™ i Nazwisko studenta").FontSize(7.5f).FontColor("#64748b");
+                                    studentData.Item().PaddingBottom(5).Text("Imi\u0119 i Nazwisko studenta").FontSize(7.5f).FontColor("#64748b");
                                 });
 
-                                row.RelativeItem().AlignRight().AlignBottom().Text("RzeszĂłw, ........................").Bold().FontSize(10);
+                                row.RelativeItem().AlignRight().AlignBottom().Text("Rzesz\u00F3w, ........................").Bold().FontSize(10);
                             });
 
                             col.Item().Row(row =>
@@ -76,26 +76,26 @@ namespace Esseti.Services
                                     studentData.Item().PaddingBottom(5).Text("Numer albumu").FontSize(7.5f).FontColor("#64748b");
 
                                     studentData.Item().Text($"{m.Major}").FontSize(11);
-                                    studentData.Item().Text("Kierunek studiĂłw").FontSize(7.5f).FontColor("#64748b");
+                                    studentData.Item().Text("Kierunek studi\u00F3w").FontSize(7.5f).FontColor("#64748b");
                                 });
                             });
 
                             col.Item().PaddingTop(30).AlignCenter().Text(t =>
                             {
-                                t.Line("ZAĹšWIADCZENIE O DZIAĹALNOĹšCI W STUDENCKIM KOLE NAUKOWYM").Bold().FontSize(12);
+                                t.Line("ZA\u015AWIADCZENIE O DZIA\u0141ALNO\u015BCI W STUDENCKIM KOLE NAUKOWYM").Bold().FontSize(12);
                                 t.Line($"W ROKU AKADEMICKIM {academicYear}").Bold().FontSize(12);
                             });
 
                             col.Item().PaddingTop(25).Text(t =>
                             {
-                                t.Span("Potwierdzam mĂłj udziaĹ‚ w pracach Studenckiego KoĹ‚a Naukowego ").FontSize(10.5f);
+                                t.Span("Potwierdzam m\u00F3j udzia\u0142 w pracach Studenckiego Ko\u0142a Naukowego ").FontSize(10.5f);
                                 t.Span(clubName).Bold().FontSize(10.5f);
-                                t.Span(" dziaĹ‚ajÄ…cego przy ").FontSize(10.5f);
+                                t.Span(" dzia\u0142aj\u0105cego przy ").FontSize(10.5f);
                                 t.Span(dept).Bold().FontSize(10.5f);
                                 t.Span($", w okresie od {fromDateStr} do {toDateStr}").FontSize(10.5f);
                             });
 
-                            col.Item().PaddingTop(20).Text("Wykaz szczegĂłlnych osiÄ…gniÄ™Ä‡ studenta (peĹ‚nione funkcje/udziaĹ‚ w projektach/ prace badawcze/ publikacje/ inne)").Bold().FontSize(10);
+                            col.Item().PaddingTop(20).Text("Wykaz szczeg\u00F3lnych osi\u0105gni\u0119\u0107 studenta (pe\u0142nione funkcje/udzia\u0142 w projektach/ prace badawcze/ publikacje/ inne)").Bold().FontSize(10);
 
                             col.Item().PaddingTop(10).Column(list =>
                             {
@@ -112,12 +112,12 @@ namespace Esseti.Services
                                     r.RelativeItem().Column(c =>
                                     {
                                         c.Item().AlignCenter().Text("......................................................").FontSize(9);
-                                        c.Item().AlignCenter().Text("akceptacja merytoryczna Opiekuna KoĹ‚a Naukowego").FontSize(7.5f).FontColor("#64748b");
+                                        c.Item().AlignCenter().Text("akceptacja merytoryczna Opiekuna Ko\u0142a Naukowego").FontSize(7.5f).FontColor("#64748b");
                                     });
                                     r.RelativeItem().Column(c =>
                                     {
                                         c.Item().AlignCenter().Text("......................................................").FontSize(9);
-                                        c.Item().AlignCenter().Text("podpis studenta skĹ‚adajÄ…cego zaĹ›wiadczenie").FontSize(7.5f).FontColor("#64748b");
+                                        c.Item().AlignCenter().Text("podpis studenta sk\u0142adaj\u0105cego za\u015Bwiadczenie").FontSize(7.5f).FontColor("#64748b");
                                     });
                                 });
 
@@ -128,12 +128,12 @@ namespace Esseti.Services
                                     r.RelativeItem().Column(c =>
                                     {
                                         c.Item().AlignCenter().Text("......................................................").FontSize(9);
-                                        c.Item().AlignCenter().Text("podpis PeĹ‚nomocnika Rektora ds. SKN").FontSize(7.5f).FontColor("#64748b");
+                                        c.Item().AlignCenter().Text("podpis Pe\u0142nomocnika Rektora ds. SKN").FontSize(7.5f).FontColor("#64748b");
                                     });
                                     r.RelativeItem().Column(c =>
                                     {
                                         c.Item().AlignCenter().Text("......................................................").FontSize(9);
-                                        c.Item().AlignCenter().Text("podpis reprezentanta ZarzÄ…du STN").FontSize(7.5f).FontColor("#64748b");
+                                        c.Item().AlignCenter().Text("podpis reprezentanta Zarz\u0105du STN").FontSize(7.5f).FontColor("#64748b");
                                     });
                                 });
                             });
@@ -162,7 +162,7 @@ namespace Esseti.Services
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(36);
-                    page.DefaultTextStyle(x => x.FontFamily("Corbel").FontSize(10));
+                    page.DefaultTextStyle(x => x.FontFamily("Arial").FontSize(10));
 
                     page.Content().PaddingVertical(15).Column(col =>
                     {
@@ -181,26 +181,26 @@ namespace Esseti.Services
 
                         col.Item().PaddingTop(10).AlignRight().Text(t =>
                         {
-                            t.Line("ZaĹ‚Ä…cznik nr 6").Italic().FontSize(9).FontColor("#475569");
-                            t.Line("do Regulaminu dziaĹ‚alnoĹ›ci SKN z dnia 25.11.2024 r.").Italic().FontSize(9).FontColor("#475569");
+                            t.Line("Za\u0142\u0105cznik nr 6").Italic().FontSize(9).FontColor("#475569");
+                            t.Line("do Regulaminu dzia\u0142alno\u015Bci SKN z dnia 25.11.2024 r.").Italic().FontSize(9).FontColor("#475569");
                         });
 
-                        col.Item().PaddingTop(15).AlignCenter().Text("LISTA CZĹONKĂ“W STUDENCKIEGO KOĹA NAUKOWEGO").Bold().FontSize(13);
+                        col.Item().PaddingTop(15).AlignCenter().Text("LISTA CZ\u0141ONK\u00D3W STUDENCKIEGO KO\u0141A NAUKOWEGO").Bold().FontSize(13);
 
                         col.Item().PaddingTop(12).AlignCenter().Text(t =>
                         {
                             t.Line(clubName).Bold().FontSize(11);
                             t.Line("...............................................................................").Bold();
-                            t.Line("Nazwa Studenckiego KoĹ‚a Naukowego").FontSize(8).FontColor("#64748b");
+                            t.Line("Nazwa Studenckiego Ko\u0142a Naukowego").FontSize(8).FontColor("#64748b");
                         });
 
                         col.Item().PaddingVertical(10).AlignCenter().Width(240).Border(0.5f).Padding(8).Text(t =>
                         {
-                            t.Span("stan na dzieĹ„ ").Bold();
+                            t.Span("stan na dzie\u0144 ").Bold();
                             t.Span(DateTime.Now.ToString("dd.MM.yyyy"));
                         });
 
-                        col.Item().PaddingTop(10).Text("SKĹAD ZARZÄ„DU STUDENCKIEGO KOĹA NAUKOWEGO:").Bold().FontSize(11);
+                        col.Item().PaddingTop(10).Text("SK\u0141AD ZARZ\u0104DU STUDENCKIEGO KO\u0141A NAUKOWEGO:").Bold().FontSize(11);
 
                         col.Item().PaddingTop(5).Table(table =>
                         {
@@ -217,8 +217,8 @@ namespace Esseti.Services
                             table.Header(header =>
                             {
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Lp.").Bold().FontSize(8);
-                                header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("ImiÄ™ i nazwisko").Bold().FontSize(8);
-                                header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("PeĹ‚niona funkcja").Bold().FontSize(8);
+                                header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Imi\u0119 i nazwisko").Bold().FontSize(8);
+                                header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Pe\u0142niona funkcja").Bold().FontSize(8);
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Nr telefonu").Bold().FontSize(8);
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Adres e-mail").Bold().FontSize(8);
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Podpis").Bold().FontSize(8);
@@ -236,14 +236,14 @@ namespace Esseti.Services
                             }
                         });
 
-                        col.Item().PaddingTop(15).Text("OPIEKUN NAUKOWY STUDENCKIEGO KOĹA NAUKOWEGO:").Bold().FontSize(11);
+                        col.Item().PaddingTop(15).Text("OPIEKUN NAUKOWY STUDENCKIEGO KO\u0141A NAUKOWEGO:").Bold().FontSize(11);
                         col.Item().PaddingTop(5).Border(0.5f).Column(box =>
                         {
-                            box.Item().Background("#F1F5F9").BorderBottom(0.5f).BorderColor("#000000").Padding(5).Text("ImiÄ™ i nazwisko, stopieĹ„ naukowy/tytuĹ‚ naukowy, nr telefonu, e-mail").FontSize(8).Bold();
+                            box.Item().Background("#F1F5F9").BorderBottom(0.5f).BorderColor("#000000").Padding(5).Text("Imi\u0119 i nazwisko, stopie\u0144 naukowy/tytu\u0142 naukowy, nr telefonu, e-mail").FontSize(8).Bold();
                             box.Item().Padding(8).Text($"{supervisor}, tel: {supervisorPhone}, e-mail: {supervisorEmail}").FontSize(10);
                         });
 
-                        col.Item().PaddingTop(15).Text("LISTA CZĹONKĂ“W SKN:").Bold().FontSize(11);
+                        col.Item().PaddingTop(15).Text("LISTA CZ\u0141ONK\u00D3W SKN:").Bold().FontSize(11);
                         col.Item().PaddingTop(5).Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
@@ -258,7 +258,7 @@ namespace Esseti.Services
                             table.Header(header =>
                             {
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Lp.").Bold().FontSize(8);
-                                header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("ImiÄ™ i nazwisko").Bold().FontSize(8);
+                                header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Imi\u0119 i nazwisko").Bold().FontSize(8);
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Nr telefonu").Bold().FontSize(8);
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Adres e-mail").Bold().FontSize(8);
                                 header.Cell().Border(0.5f).Background("#E6EEFF").AlignCenter().AlignMiddle().PaddingVertical(6).PaddingHorizontal(4).Text("Podpis").Bold().FontSize(8);
@@ -288,23 +288,23 @@ namespace Esseti.Services
                                 r.RelativeItem().Column(c =>
                                 {
                                     c.Item().AlignCenter().Text("......................................................").FontSize(9);
-                                    c.Item().AlignCenter().Text("Opiekun SKN i pieczÄ™Ä‡ jednostki zatrudniajÄ…cej").FontSize(8).FontColor("#64748b");
+                                    c.Item().AlignCenter().Text("Opiekun SKN i piecz\u0119\u0107 jednostki zatrudniaj\u0105cej").FontSize(8).FontColor("#64748b");
                                 });
                             });
                         });
 
                         col.Item().PaddingTop(25).Text("KLAUZULA INFORMACYJNA").Bold().Underline().FontSize(8);
                         col.Item().PaddingTop(4).Text(
-                            "Zgodnie z art. 13 RozporzÄ…dzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osĂłb fizycznych w zwiÄ…zku z przetwarzaniem danych osobowych i w sprawie swobodnego przepĹ‚ywu takich danych oraz uchylenia dyrektywy 95/46/WE (Dz. Urz. UE L 119 z 04.05.2016) informujemy, iĹĽ:\n" +
-                            "1) Administratorem Pani/Pana danych osobowych jest Uniwersytet Rzeszowski, al. Rejtana 16 C, 35-959 RzeszĂłw, reprezentowany przez Rektora.\n" +
+                            "Zgodnie z art. 13 Rozporz\u0105dzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony os\u00F3b fizycznych w zwi\u0105zku z przetwarzaniem danych osobowych i w sprawie swobodnego przep\u0142ywu takich danych oraz uchylenia dyrektywy 95/46/WE (Dz. Urz. UE L 119 z 04.05.2016) informujemy, i\u017C:\n" +
+                            "1) Administratorem Pani/Pana danych osobowych jest Uniwersytet Rzeszowski, al. Rejtana 16 C, 35-959 Rzesz\u00F3w, reprezentowany przez Rektora.\n" +
                             "2) Dane kontaktowe Inspektora Ochrony Danych w Uniwersytecie Rzeszowskim adres email: antochow@ur.edu.pl, +48 17 872 34 39, +48 17 872 36 46.\n" +
-                            "3) Pani/Pana dane osobowe przetwarzane bÄ™dÄ… w celach prowadzenia dziaĹ‚alnoĹ›ci organizacji studenckich/kĂłĹ‚ naukowych na podstawie ustawy z dnia 20 lipca 2018 r. â€“ Prawo o szkolnictwie wyĹĽszym i nauce (Dz. U. z 2018 r. poz. 1668).\n" +
-                            "4) Pani/Pana dane osobowe przetwarzane bÄ™dÄ… na podstawie art. 6 ust. 1 lit. b ww. RozporzÄ…dzenia, (przetwarzanie jest niezbÄ™dne do wykonania umowy, ktĂłrej stronÄ… jest osoba, ktĂłrej dane dotyczÄ…, lub do podjÄ™cia dziaĹ‚ania na ĹĽÄ…danie osoby, ktĂłrej dane dotyczÄ…, przed zawarciem umowy).\n" +
-                            "5) Podanie danych jest dobrowolne, jednak niezbÄ™dne do realizacji celu, do jakiego zostaĹ‚y zebrane.\n" +
-                            "6) Pani/Pani dane osobowe przechowywane bÄ™dÄ… przez okres niezbÄ™dny do realizacji ww. celu z uwzglÄ™dnieniem okresĂłw przechowywania okreĹ›lonych w przepisach odrÄ™bnych, w tym przepisĂłw archiwalnych.\n" +
-                            "7) Odbiorcami Pani/Pana danych bÄ™dÄ… podmioty, ktĂłre na podstawie zawartych umĂłw przetwarzajÄ… dane osobowe w imieniu Administratora.\n" +
-                            "8) Posiada Pani/Pan prawo do: ĹĽÄ…dania dostÄ™pu do treĹ›ci swoich danych osobowych, do ich sprostowania, usuniÄ™cia lub ograniczenia przetwarzania, prawo do wniesienia sprzeciwu wobec przetwarzania, a takĹĽe prawo do przenoszenia danych.\n" +
-                            "9) Posiada Pani/Pan prawo wniesienia skargi do organu nadzorczego, gdy uzasadnione jest, ĹĽe Pani/Pana dane osobowe przetwarzane sÄ… przez Administratora Danych niezgodnie z ww. RozporzÄ…dzeniem."
+                            "3) Pani/Pana dane osobowe przetwarzane b\u0119d\u0105 w celach prowadzenia dzia\u0142alno\u015Bci organizacji studenckich/k\u00F3\u0142 naukowych na podstawie ustawy z dnia 20 lipca 2018 r. \u2013 Prawo o szkolnictwie wy\u017Cszym i nauce (Dz. U. z 2018 r. poz. 1668).\n" +
+                            "4) Pani/Pana dane osobowe przetwarzane b\u0119d\u0105 na podstawie art. 6 ust. 1 lit. b ww. Rozporz\u0105dzenia, (przetwarzanie jest niezb\u0119dne do wykonania umowy, kt\u00F3rej stron\u0105 jest osoba, kt\u00F3rej dane dotycz\u0105, lub do podj\u0119cia dzia\u0142a\u0144 na \u017C\u0105danie osoby, kt\u00F3rej dane dotycz\u0105, przed zawarciem umowy).\n" +
+                            "5) Podanie danych jest dobrowolne, jednak niezb\u0119dne do realizacji celu, do jakiego zosta\u0142y zebrane.\n" +
+                            "6) Pani/Pani dane osobowe przechowywane b\u0119d\u0105 przez okres niezb\u0119dny do realizacji ww. celu z uwzgl\u0119dnieniem okres\u00F3w przechowywania okre\u015Blonych w przepisach odr\u0119bnych, w tym przepis\u00F3w archiwalnych.\n" +
+                            "7) Odbiorcami Pani/Pana danych b\u0119d\u0105 podmioty, kt\u00F3re na podstawie zawartych um\u00F3w przetwarzaj\u0105 dane osobowe w imieniu Administratora.\n" +
+                            "8) Posiada Pani/Pan prawo do: \u017C\u0105dania dost\u0119pu do tre\u015Bci swoich danych osobowych, do ich sprostowania, usuni\u0119cia lub ograniczenia przetwarzania, prawo do wniesienia sprzeciwu wobec przetwarzania, a tak\u017Ce prawo do przenoszenia danych.\n" +
+                            "9) Posiada Pani/Pan prawo wniesienia skargi do organu nadzorczego, gdy uzasadnione jest, \u017Ce Pani/Pana dane osobowe przetwarzane s\u0105 przez Administratora Danych niezgodnie z ww. Rozporz\u0105dzeniem."
                         ).FontSize(7.5f).FontColor("#475569").Justify();
                     });
 
@@ -314,7 +314,7 @@ namespace Esseti.Services
                         {
                             row.RelativeItem().Text(t =>
                             {
-                                t.Line("al. T. Rejtana 16c, 35-959 RzeszĂłw").FontSize(7.5f).FontColor("#64748b");
+                                t.Line("al. T. Rejtana 16c, 35-959 Rzesz\u00F3w").FontSize(7.5f).FontColor("#64748b");
                                 t.Line("tel. +48 17 872 10 10, faks +48 17 872 12 65").FontSize(7.5f).FontColor("#64748b");
                                 t.Line("rektorur@ur.edu.pl").FontSize(7.5f).FontColor("#64748b");
                             });
@@ -328,5 +328,3 @@ namespace Esseti.Services
         }
     }
 }
-
-

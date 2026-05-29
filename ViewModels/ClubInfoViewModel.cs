@@ -215,7 +215,7 @@ namespace Esseti.ViewModels
 
                 var dbMembers = await _clubRepository.GetBoardMembersAsync();
                 BoardMembers.Clear();
-                var filteredMembers = dbMembers.Where(m => m.AuthorityRole?.Name != "Członek");
+                var filteredMembers = dbMembers.Where(m => m.AuthorityRole?.Name != "Członek" && m.AuthorityRole?.Name != "Sympatyk");
                 foreach (var member in filteredMembers)
                 {
                     BoardMembers.Add(member);

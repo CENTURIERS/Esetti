@@ -44,9 +44,6 @@ namespace Esseti.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Primary Keys
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             modelBuilder.Entity<AuthorityRole>().HasKey(e => e.RoleId);
             modelBuilder.Entity<Trip>().HasKey(e => e.TripId);
             modelBuilder.Entity<College>().HasKey(e => e.CollegeId);
@@ -58,49 +55,32 @@ namespace Esseti.Data
             modelBuilder.Entity<Activity>().HasKey(e => e.ActivityId);
             modelBuilder.Entity<Project>().HasKey(e => e.ProjectId);
 
-            // Composite keys for join entities
             modelBuilder.Entity<MemberClub>().HasKey(mc => new { mc.ClubId, mc.MemberId });
             modelBuilder.Entity<SectionMember>().HasKey(sm => new { sm.SectionId, sm.MemberId });
-
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // One-to-Many Relationships
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-            // CollegeDepartment â†’ College
             modelBuilder.Entity<CollegeDepartment>()
                 .HasOne(cd => cd.College)
                 .WithMany(c => c.Departments)
                 .HasForeignKey(cd => cd.CollegeId);
 
-            // ClubInfo â†’ CollegeDepartment
             modelBuilder.Entity<ClubInfo>()
                 .HasOne(ci => ci.Department)
                 .WithMany()
                 .HasForeignKey(ci => ci.DepartmentId);
 
-            // Member â†’ UserAccount (one-to-one via FK)
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Account)
                 .WithMany()
                 .HasForeignKey(m => m.AccountId);
 
-            // Member â†’ AuthorityRole
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.AuthorityRole)
                 .WithMany()
                 .HasForeignKey(m => m.RoleId);
 
-            // Project â†’ Member (PersonInCharge)
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.PersonInCharge)
                 .WithMany()
                 .HasForeignKey("PersonInChargeId");
-
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Join Entity Relationships (explicit)
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-            // MemberClub â†’ ClubInfo & Member
             modelBuilder.Entity<MemberClub>()
                 .HasOne(mc => mc.Club)
                 .WithMany(c => c.MemberClubs)
@@ -111,7 +91,6 @@ namespace Esseti.Data
                 .WithMany(m => m.MemberClubs)
                 .HasForeignKey(mc => mc.MemberId);
 
-            // SectionMember â†’ Section & Member
             modelBuilder.Entity<SectionMember>()
                 .HasOne(sm => sm.Section)
                 .WithMany(s => s.SectionMembers)
@@ -122,11 +101,6 @@ namespace Esseti.Data
                 .WithMany(m => m.SectionMembers)
                 .HasForeignKey(sm => sm.MemberId);
 
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Many-to-Many (implicit join tables)
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-            // Project â†” Section (project_sections)
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.Sections)
                 .WithMany(s => s.Projects)
@@ -136,7 +110,6 @@ namespace Esseti.Data
                     j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
                 );
 
-            // Project â†” Member (project_member)
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.Participants)
                 .WithMany(m => m.Projects)
@@ -146,7 +119,6 @@ namespace Esseti.Data
                     j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
                 );
 
-            // Activity â†” Member (activity_member)
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Participants)
                 .WithMany(m => m.Activities)
@@ -156,7 +128,6 @@ namespace Esseti.Data
                     j => j.HasOne<Activity>().WithMany().HasForeignKey("activity_id")
                 );
 
-            // Project â†” ClubInfo (project_club)
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.Clubs)
                 .WithMany(c => c.Projects)
@@ -166,7 +137,6 @@ namespace Esseti.Data
                     j => j.HasOne<Project>().WithMany().HasForeignKey("project_id")
                 );
 
-            // Trip â†” ClubInfo (club_trip)
             modelBuilder.Entity<Trip>()
                 .HasMany(t => t.Clubs)
                 .WithMany(c => c.Trips)
@@ -176,7 +146,6 @@ namespace Esseti.Data
                     j => j.HasOne<Trip>().WithMany().HasForeignKey("trip_id")
                 );
 
-            // UserAccount â†” College (account_college)
             modelBuilder.Entity<UserAccount>()
                 .HasMany(ua => ua.Colleges)
                 .WithMany(c => c.UserAccounts)
@@ -185,10 +154,6 @@ namespace Esseti.Data
                     j => j.HasOne<College>().WithMany().HasForeignKey("college_id"),
                     j => j.HasOne<UserAccount>().WithMany().HasForeignKey("account_id")
                 );
-
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Value Converters (enum â†’ TEXT in SQLite)
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
             var systemRoleConverter = new ValueConverter<SystemRole, string>(
                 v => v == SystemRole.SuperAdmin ? "superadmin" :
@@ -230,16 +195,10 @@ namespace Esseti.Data
                 .Property(sm => sm.Role)
                 .HasConversion(sectionRoleConverter);
 
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Column Name Overrides
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             modelBuilder.Entity<College>()
                 .Property(c => c.NIP)
                 .HasColumnName("NIP");
 
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Indexes
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             modelBuilder.Entity<UserAccount>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -248,9 +207,6 @@ namespace Esseti.Data
                 .HasIndex(r => r.Name)
                 .IsUnique();
 
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // Snake_case naming convention
-            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 if (entity.IsPropertyBag || entity.ClrType == null ||
