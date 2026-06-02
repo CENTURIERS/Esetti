@@ -29,7 +29,7 @@ graph TD
 ```
 
 ### 2.1. Uzasadnienie Wyboru Technologii
-* **C# i .NET 10.0:** Zapewnia wysoką wydajność, bezpieczeństwo typów oraz dostęp do potężnego ekosystemu bibliotek.
+* **C# i .NET 9.0:** Zapewnia wysoką wydajność, bezpieczeństwo typów oraz dostęp do potężnego ekosystemu bibliotek.
 * **Avalonia UI:** Wybrana zamiast przestarzałego WPF ze względu na jej wieloplatformowość (działa na Windows, Linux, macOS) oraz nowoczesne podejście do renderowania UI.
 * **SQLite:** Lekka, bezserwerowa relacyjna baza danych. Idealna dla aplikacji desktopowej, ponieważ nie wymaga od użytkownika instalacji i konfiguracji zewnętrznego serwera bazodanowego, oferując jednocześnie pełne wsparcie dla języka SQL.
 * **QuestPDF:** Nowoczesna biblioteka do generowania dokumentów PDF z poziomu kodu (Fluent API), niewymagająca użycia powolnych silników konwersji HTML do PDF.
