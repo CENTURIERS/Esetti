@@ -1,9 +1,10 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Esseti.ViewModels;
 using Esseti.Views;
 using System;
+using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Esseti;
@@ -18,10 +19,50 @@ namespace Esseti
 
         public override void Initialize()
         {
+            CheckAndSwapDatabase();
             AvaloniaXamlLoader.Load(this);
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
             ConfigureServices();
             InitializeDatabase();
+        }
+
+        private void CheckAndSwapDatabase()
+        {
+            try
+            {
+                string dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+                string importPath = Path.Combine(dataDir, "esseti_import.db");
+                string dbPath = Path.Combine(dataDir, "esseti.db");
+
+                if (File.Exists(importPath))
+                {
+                    string walPath = Path.Combine(dataDir, "esseti.db-wal");
+                    string shmPath = Path.Combine(dataDir, "esseti.db-shm");
+
+                    Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+
+                    if (File.Exists(dbPath))
+                    {
+                        File.Delete(dbPath);
+                    }
+                    if (File.Exists(walPath))
+                    {
+                        File.Delete(walPath);
+                    }
+                    if (File.Exists(shmPath))
+                    {
+                        File.Delete(shmPath);
+                    }
+
+                    File.Move(importPath, dbPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas podmieniania bazy danych: {ex.Message}");
+            }
         }
 
         private void InitializeDatabase()
@@ -39,7 +80,7 @@ namespace Esseti
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas inicjalizacji bazy danych: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas inicjalizacji bazy danych: {ex.Message}");
             }
         }
 

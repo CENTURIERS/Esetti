@@ -60,7 +60,7 @@
 
     </UserControl.Styles>
 
-    <Grid RowDefinitions="*">
+    <Grid RowDefinitions="*, Auto">
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="1">
             <ItemsControl ItemsSource="{Binding Members}">
                 
@@ -119,6 +119,11 @@
                                                        FontWeight="SemiBold"
                                                        HorizontalAlignment="Center" 
                                                        Margin="0,4,0,4"/>
+                                            <TextBlock Text="{Binding PhoneNumber}" 
+                                                       FontSize="11.5" 
+                                                       Foreground="#555555" 
+                                                       HorizontalAlignment="Center" 
+                                                       Margin="0,0,0,4"/>
                                             <TextBlock Text="{Binding CollegeDepartment}" 
                                                        FontSize="11" 
                                                        Foreground="#7a8099" 
@@ -134,18 +139,21 @@
                                         </StackPanel>
 
                                         <Border Grid.Row="2" Margin="0,20,0,0" BorderThickness="0,1,0,0" BorderBrush="#e4e7f0" Padding="0,12,0,0">
-                                            <Grid ColumnDefinitions="*, *, *">
+                                            <Grid ColumnDefinitions="*, * , *">
                                                 <Button Grid.Column="0" Classes="iconButton" ToolTip.Tip="Profil"
+                                                        AutomationProperties.Name="Profil"
                                                         Command="{ReflectionBinding $parent[UserControl].DataContext.OpenProfileCommand}"
                                                         CommandParameter="{Binding}">
                                                     <PathIcon Data="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                                 </Button>
                                                 <Button Grid.Column="1" Classes="iconButton" ToolTip.Tip="Edytuj"
+                                                        AutomationProperties.Name="Edytuj"
                                                         Command="{ReflectionBinding $parent[UserControl].DataContext.EditMemberCommand}"
                                                         CommandParameter="{Binding}">
                                                     <PathIcon Data="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                                                 </Button>
                                                 <Button Grid.Column="2" Classes="iconButton" ToolTip.Tip="Usuń" 
+                                                        AutomationProperties.Name="Usuń"
                                                         Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteSingleMemberCommand}"
                                                         CommandParameter="{Binding}">
                                                     <PathIcon Data="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -177,5 +185,21 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        <Border Grid.Row="1" Background="#FEFEFE" BorderBrush="#e4e7f0" BorderThickness="0,1,0,0" Padding="16,12" Height="60">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+                <Button Classes="iconButton" Command="{Binding PreviousPageCommand}" IsEnabled="{Binding HasPreviousPage}" ToolTip.Tip="Poprzednia strona">
+                    <PathIcon Data="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                </Button>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4">
+                    <TextBlock Text="Strona" Foreground="#7a8099" FontSize="14" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding CurrentPage}" FontWeight="SemiBold" Foreground="#0033A0" FontSize="14" VerticalAlignment="Center" />
+                    <TextBlock Text="z" Foreground="#7a8099" FontSize="14" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TotalPages}" FontWeight="SemiBold" Foreground="#0033A0" FontSize="14" VerticalAlignment="Center" />
+                </StackPanel>
+                <Button Classes="iconButton" Command="{Binding NextPageCommand}" IsEnabled="{Binding HasNextPage}" ToolTip.Tip="Następna strona">
+                    <PathIcon Data="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                </Button>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -79,9 +79,9 @@ namespace Esseti.ViewModels
             IsFormValid = !IsNameInvalid && !IsEstTimeInvalid && !IsDateStartInvalid && !IsDateEndInvalid;
 
             if (IsNameInvalid) ValidationError = "Nazwa projektu jest wymagana.";
-            else if (IsDateStartInvalid) ValidationError = "Data rozpoczÄ™cia jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
-            else if (IsDateEndInvalid) ValidationError = "Data zakoĹ„czenia jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
-            else if (IsEstTimeInvalid) ValidationError = "Szacowany czas trwania jest wymagany i musi byÄ‡ liczbÄ… caĹ‚kowitÄ….";
+            else if (IsDateStartInvalid) ValidationError = "Data rozpoczęcia jest wymagana i musi być poprawna (np. dd.MM.yyyy).";
+            else if (IsDateEndInvalid) ValidationError = "Data zakończenia jest wymagana i musi być poprawna (np. dd.MM.yyyy).";
+            else if (IsEstTimeInvalid) ValidationError = "Szacowany czas trwania jest wymagany i musi być liczbą całkowitą.";
             else ValidationError = string.Empty;
         }
 
@@ -99,7 +99,7 @@ namespace Esseti.ViewModels
 
         public string SelectAllText =>  IsAllSelected ? "Odznacz wszystko" : "Zaznacz wszystko";
         public bool HasSelectedItems => IsAnySelected;
-        public string SelectedCountText => $"Zaznaczono {SelectedCount} projektĂłw";
+        public string SelectedCountText => $"Zaznaczono {SelectedCount} projektów";
         
         public ProjectsViewModel(IProjectRepository projectRepository, IMemberRepository memberRepository, INavigationService navigationService)
         {
@@ -188,7 +188,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d LoadDataAsync: {e}");
+                System.Diagnostics.Debug.WriteLine($"Błąd LoadDataAsync: {e}");
             }
         }
 
@@ -394,7 +394,7 @@ namespace Esseti.ViewModels
                 await LoadDataAsync();
             } catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania projektu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd usuwania projektu: {ex.Message}");
             }
         }
 
@@ -403,21 +403,66 @@ namespace Esseti.ViewModels
             _projectToDelete = null;
         }
 
-        protected override void OnSearchQueryUpdated(string value)=> ApplyFilter();
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
+        [NotifyPropertyChangedFor(nameof(HasNextPage))]
+        private int _currentPage = 1;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
+        [NotifyPropertyChangedFor(nameof(HasNextPage))]
+        private int _totalPages = 1;
+
+        public bool HasPreviousPage => CurrentPage > 1;
+        public bool HasNextPage => CurrentPage < TotalPages;
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (HasNextPage)
+            {
+                CurrentPage++;
+                ApplyFilter();
+            }
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (HasPreviousPage)
+            {
+                CurrentPage--;
+                ApplyFilter();
+            }
+        }
+
+        protected override void OnSearchQueryUpdated(string value)
+        {
+            CurrentPage = 1;
+            ApplyFilter();
+        }
 
         private void ApplyFilter()
         {
             Projects.Clear();
             var query = SearchQuery?.ToLower() ?? "";
 
-            foreach (var item in _allProjects)
+            var filteredList = _allProjects
+                .Where(item => (item.Name ?? "").ToLower().Contains(query) || (item.LeaderName ?? "").ToLower().Contains(query))
+                .ToList();
+
+            int pageSize = 9;
+            int totalCount = filteredList.Count;
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            if (TotalPages < 1) TotalPages = 1;
+
+            if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+            if (CurrentPage < 1) CurrentPage = 1;
+
+            var pageItems = filteredList.Skip((CurrentPage - 1) * pageSize).Take(pageSize);
+            foreach (var item in pageItems)
             {
-                var name = item.Name ?? "";
-                var leader = item.LeaderName ?? "";
-                if (name.ToLower().Contains(query) || leader.ToLower().Contains(query))
-                {
-                    Projects.Add(item);
-                }
+                Projects.Add(item);
             }
 
             UpdateSelectionState();

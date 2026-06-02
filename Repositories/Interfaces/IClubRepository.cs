@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models.ClubBase;
 using Models.Users;
@@ -17,7 +17,7 @@ namespace Esseti.Repositories.Interfaces
         Task<List<Section>> GetSectionsAsync();
         Task<List<Member>> GetBoardMembersAsync();
         Task<List<Trip>> GetTripsAsync();
-        Task UpdateClubInfoAsync(string clubName, string clubRoom, string departmentName, string supervisorName, string meetingsSchedule, string shortName, byte[]? clubPhoto);
+        Task UpdateClubInfoAsync(string clubName, string clubRoom, string departmentName, string supervisorName, string supervisorEmail, string supervisorPhone, string meetingsSchedule, string shortName, byte[]? clubPhoto);
         Task AddSectionAsync(Section section);
         Task DeleteSectionAsync(int sectionId);
     }

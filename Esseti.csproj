@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net10.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -26,13 +26,13 @@
 		<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.9" />
 
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
 		<PackageReference Include="QuestPDF" Version="2026.5.0" />
 		<PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

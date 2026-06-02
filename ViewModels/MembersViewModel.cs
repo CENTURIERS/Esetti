@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
@@ -41,6 +41,9 @@ namespace Esseti.ViewModels
 
         [ObservableProperty] 
         private string _newEmail = string.Empty;
+
+        [ObservableProperty] 
+        private string _newPhoneNumber = string.Empty;
 
         [ObservableProperty] 
         private string _newIndexNumber = string.Empty;
@@ -129,6 +132,9 @@ namespace Esseti.ViewModels
 
         [ObservableProperty]
         private string _editEmail = string.Empty;
+
+        [ObservableProperty]
+        private string _editPhoneNumber = string.Empty;
 
         [ObservableProperty]
         private string _editIndexNumber = string.Empty;
@@ -225,7 +231,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d bazy: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd bazy: {ex.Message}");
             }
         }
 
@@ -260,11 +266,12 @@ namespace Esseti.ViewModels
             EditFirstName = member.FirstName;
             EditLastName = member.LastName;
             EditEmail = member.Email;
+            EditPhoneNumber = member.PhoneNumber;
             EditIndexNumber = member.IndexNumber;
             EditDescription = member.Description;
             EditMajor = member.Major;
             EditAvatar = null;
-            EditSelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == member.Role) ?? AvailableRoles.FirstOrDefault(r => r.Name == "CzĹ‚onek");
+            EditSelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == member.Role) ?? AvailableRoles.FirstOrDefault(r => r.Name == "Członek");
             EditSelectedDepartment = AvailableDepartments.FirstOrDefault(d => d.Name == member.CollegeDepartment);
 
             ValidateEditForm();
@@ -287,7 +294,7 @@ namespace Esseti.ViewModels
                 {
                     var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
-                        Title = "Wybierz zdjÄ™cie",
+                        Title = "Wybierz zdjęcie",
                         AllowMultiple = false,
                         FileTypeFilter = new[] { FilePickerFileTypes.ImageAll }
                     });
@@ -313,7 +320,7 @@ namespace Esseti.ViewModels
 
             if (string.IsNullOrWhiteSpace(EditFirstName))
             {
-                EditValidationError = "ImiÄ™ jest wymagane.";
+                EditValidationError = "Imię jest wymagane.";
                 return;
             }
 
@@ -331,7 +338,7 @@ namespace Esseti.ViewModels
 
             if (!string.IsNullOrWhiteSpace(EditIndexNumber) && !EditIndexNumber.All(char.IsDigit))
             {
-                EditValidationError = "Numer indeksu musi skĹ‚adaÄ‡ siÄ™ wyĹ‚Ä…cznie z cyfr.";
+                EditValidationError = "Numer indeksu musi składać się wyłącznie z cyfr.";
                 return;
             }
 
@@ -346,6 +353,7 @@ namespace Esseti.ViewModels
                 Major = EditMajor,
                 Description = EditDescription,
                 MemberAvatar = EditAvatar,
+                PhoneNumber = EditPhoneNumber,
                 AuthorityRole = EditSelectedRole,
                 RoleId = EditSelectedRole?.RoleId ?? 0,
                 Account = string.IsNullOrWhiteSpace(EditEmail) ? null : new UserAccount
@@ -372,11 +380,12 @@ namespace Esseti.ViewModels
             NewFirstName = string.Empty;
             NewLastName = string.Empty;
             NewEmail = string.Empty;
+            NewPhoneNumber = string.Empty;
             NewIndexNumber = string.Empty;
             NewDescription = string.Empty;
             NewMajor = string.Empty;
             NewAvatar = null;
-            SelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == "CzĹ‚onek");
+            SelectedRole = AvailableRoles.FirstOrDefault(r => r.Name == "Członek");
             SelectedDepartment = AvailableDepartments.FirstOrDefault();
 
             IsAddFirstNameInvalid = false;
@@ -404,7 +413,7 @@ namespace Esseti.ViewModels
                 {
                     var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
-                        Title = "Wybierz zdjÄ™cie",
+                        Title = "Wybierz zdjęcie",
                         AllowMultiple = false,
                         FileTypeFilter = new[] { FilePickerFileTypes.ImageAll }
                     });
@@ -433,7 +442,7 @@ namespace Esseti.ViewModels
 
             if (string.IsNullOrWhiteSpace(NewFirstName))
             {
-                AddValidationError = "ImiÄ™ jest wymagane.";
+                AddValidationError = "Imię jest wymagane.";
                 return;
             }
 
@@ -451,7 +460,7 @@ namespace Esseti.ViewModels
 
             if (!string.IsNullOrWhiteSpace(NewIndexNumber) && !NewIndexNumber.All(char.IsDigit))
             {
-                AddValidationError = "Numer indeksu musi skĹ‚adaÄ‡ siÄ™ wyĹ‚Ä…cznie z cyfr.";
+                AddValidationError = "Numer indeksu musi składać się wyłącznie z cyfr.";
                 return;
             }
 
@@ -463,6 +472,7 @@ namespace Esseti.ViewModels
                 Major = NewMajor,
                 Description = NewDescription,
                 MemberAvatar = NewAvatar,
+                PhoneNumber = NewPhoneNumber,
                 IsActive = true,
                 JoinDate = System.DateTime.Now,
                 AuthorityRole = SelectedRole,
@@ -487,7 +497,11 @@ namespace Esseti.ViewModels
             IsAddPopupVisible = false;
         }
 
-        protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
+        protected override void OnSearchQueryUpdated(string value)
+        {
+            CurrentPage = 1;
+            ApplyFilter();
+        }
 
         private void OnMemberItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -542,13 +556,13 @@ namespace Esseti.ViewModels
                 {
                     ClearMemberSubscriptions();
                     _allMembers.Clear();
-                    _allMembers.Add(new MemberItemViewModel(0, Array.Empty<byte>(), "", "", "", "", "", "", "", "", true, "", true));
+                    _allMembers.Add(new MemberItemViewModel(0, Array.Empty<byte>(), "", "", "", "", "", "", "", "", "", true, "", true));
 
                     if (membersFromDb != null)
                     {
                         foreach (var m in membersFromDb)
                         {
-                            var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziaĹ‚u";
+                            var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziału";
                             var vm = new MemberItemViewModel(
                                 memberId: m.MemberId,
                                 avatar: m.MemberAvatar ?? Array.Empty<byte>(),
@@ -557,6 +571,7 @@ namespace Esseti.ViewModels
                                 role: m.AuthorityRole?.Name ?? "Brak roli",
                                 indexNumber: m.IndexNumber ?? string.Empty,
                                 email: m.Account?.Email ?? string.Empty,
+                                phoneNumber: m.PhoneNumber ?? string.Empty,
                                 collegeDepartment: dept,
                                 major: m.Major ?? string.Empty,
                                 joinDate: m.JoinDate.ToString("dd.MM.yyyy"),
@@ -574,23 +589,89 @@ namespace Esseti.ViewModels
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
         }
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
+        [NotifyPropertyChangedFor(nameof(HasNextPage))]
+        private int _currentPage = 1;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
+        [NotifyPropertyChangedFor(nameof(HasNextPage))]
+        private int _totalPages = 1;
+
+        public bool HasPreviousPage => CurrentPage > 1;
+        public bool HasNextPage => CurrentPage < TotalPages;
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (HasNextPage)
+            {
+                CurrentPage++;
+                ApplyFilter();
+            }
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (HasPreviousPage)
+            {
+                CurrentPage--;
+                ApplyFilter();
+            }
+        }
+
         private void ApplyFilter()
         {
             Members.Clear();
             var query = SearchQuery?.ToLower() ?? "";
-            foreach (var item in _allMembers)
-            {
-                if (item.IsSystemAddTile || 
+            
+            var filteredActualMembers = _allMembers
+                .Where(item => !item.IsSystemAddTile)
+                .Where(item => 
                     item.FullName.ToLower().Contains(query) || 
                     item.Role.ToLower().Contains(query) ||
                     item.IndexNumber.ToLower().Contains(query) ||
                     item.Email.ToLower().Contains(query) ||
                     item.CollegeDepartment.ToLower().Contains(query) ||
                     item.Major.ToLower().Contains(query))
+                .ToList();
+
+            int pageSize = 9;
+            
+            if (CurrentPage == 1)
+            {
+                int totalCount = filteredActualMembers.Count;
+                TotalPages = (int)Math.Ceiling((double)(totalCount - 8) / pageSize) + 1;
+                if (TotalPages < 1) TotalPages = 1;
+
+                var addTile = _allMembers.FirstOrDefault(item => item.IsSystemAddTile);
+                if (addTile != null)
+                {
+                    Members.Add(addTile);
+                }
+
+                var pageMembers = filteredActualMembers.Take(8);
+                foreach (var item in pageMembers)
                 {
                     Members.Add(item);
                 }
             }
+            else
+            {
+                int totalCount = filteredActualMembers.Count;
+                TotalPages = (int)Math.Ceiling((double)(totalCount - 8) / pageSize) + 1;
+                if (TotalPages < 1) TotalPages = 1;
+
+                int skip = 8 + (CurrentPage - 2) * pageSize;
+                var pageMembers = filteredActualMembers.Skip(skip).Take(pageSize);
+                foreach (var item in pageMembers)
+                {
+                    Members.Add(item);
+                }
+            }
+            
             UpdateSelectionState();
         }
     }

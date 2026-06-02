@@ -28,6 +28,12 @@ Thumbs.db
 # *.db-journal
 # *.db-wal
 
+# Tymczasowe i pomocnicze pliki SQLite (zawsze ignorowane)
+*.db-shm
+*.db-wal
+*.db-journal
+*import.db
+
 ## [ Scratch folder ]
 scratch/
 
@@ -41,4 +47,10 @@ scratch/
 *.out
 *.xdv
 *.blg
-*.bbl
+*.bbl
+
+## [ Inne IDE ]
+.idea/
+.vscode/
+*.sln.iml
+

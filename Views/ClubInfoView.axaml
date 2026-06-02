@@ -219,9 +219,15 @@
                     <StackPanel Spacing="16">
                         <Grid ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Column="0" Text="Zarząd koła:" FontSize="16" FontWeight="Bold" Foreground="#0033A0" VerticalAlignment="Center"/>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                <TextBlock Text="Opiekun naukowy:" FontSize="14" FontWeight="Bold" Foreground="#555555"/>
-                                <TextBlock Text="{Binding SupervisorName}" FontSize="14" FontWeight="Bold" Foreground="#0033A0"/>
+                            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                                    <TextBlock Text="Opiekun naukowy:" FontSize="14" FontWeight="Bold" Foreground="#555555"/>
+                                    <TextBlock Text="{Binding SupervisorName}" FontSize="14" FontWeight="Bold" Foreground="#0033A0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding SupervisorEmail}" FontSize="12" Foreground="#0033A0" FontWeight="SemiBold" IsVisible="{Binding SupervisorEmail, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                    <TextBlock Text="{Binding SupervisorPhone}" FontSize="12" Foreground="#555555" IsVisible="{Binding SupervisorPhone, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
                         
@@ -374,6 +380,14 @@
                             <StackPanel Spacing="5">
                                 <TextBlock Text="Opiekun naukowy" Classes="form-label" />
                                 <TextBox Classes="form-input" Text="{Binding EditSupervisorName}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="E-mail opiekuna" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditSupervisorEmail}"/>
+                            </StackPanel>
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Telefon opiekuna" Classes="form-label" />
+                                <TextBox Classes="form-input" Text="{Binding EditSupervisorPhone}"/>
                             </StackPanel>
                             <StackPanel Spacing="5">
                                 <TextBlock Text="Terminy spotkań" Classes="form-label" />

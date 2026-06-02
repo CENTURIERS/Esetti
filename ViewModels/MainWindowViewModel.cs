@@ -1,4 +1,4 @@
-﻿using Avalonia.Media.Imaging;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -198,7 +198,7 @@ namespace Esseti.ViewModels
                 oldLogo?.Dispose();
             } catch (Exception ex)
             {
-                Console.WriteLine($"Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ logo: {ex.Message}");
+                Console.WriteLine($"Nie udało się załadować logo: {ex.Message}");
             }
         }
 

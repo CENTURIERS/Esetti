@@ -1,4 +1,4 @@
-﻿using Avalonia.Media.Imaging;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -47,6 +47,9 @@ namespace Esseti.ViewModels.Member
         private string _description = string.Empty;
 
         [ObservableProperty]
+        private string _phoneNumber = string.Empty;
+
+        [ObservableProperty]
         private bool _isSystemAddTile;
 
         public string FullName => $"{FirstName} {LastName}".Trim();
@@ -64,7 +67,7 @@ namespace Esseti.ViewModels.Member
             }
         }
 
-        public MemberItemViewModel(int memberId, byte[] avatar, string firstName, string lastName, string role, string indexNumber, string email, string collegeDepartment, string major, string joinDate, bool isActive, string description = "", bool isSystemAddTile = false)
+        public MemberItemViewModel(int memberId, byte[] avatar, string firstName, string lastName, string role, string indexNumber, string email, string phoneNumber, string collegeDepartment, string major, string joinDate, bool isActive, string description = "", bool isSystemAddTile = false)
         {
             MemberId = memberId;
             FirstName = firstName;
@@ -72,6 +75,7 @@ namespace Esseti.ViewModels.Member
             Role = role;
             IndexNumber = indexNumber;
             Email = email;
+            PhoneNumber = phoneNumber;
             CollegeDepartment = collegeDepartment;
             Major = major;
             JoinDate = joinDate;

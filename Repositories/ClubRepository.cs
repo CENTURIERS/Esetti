@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +43,7 @@ namespace Esseti.Repositories
                             NameShort = "UR",
                             AddressLine = "Al. Tadeusza Rejtana 16C",
                             PostalCode = "35-959",
-                            City = "RzeszĂłw",
+                            City = "Rzeszów",
                             Phone = "+48 17 872 10 00"
                         };
                         _context.Colleges.Add(college);
@@ -53,14 +53,14 @@ namespace Esseti.Repositories
                     {
                         college.AddressLine = "Al. Tadeusza Rejtana 16C";
                         college.PostalCode = "35-959";
-                        college.City = "RzeszĂłw";
+                        college.City = "Rzeszów";
                         college.Phone = "+48 17 872 10 00";
                         await _context.SaveChangesAsync();
                     }
 
                     var dept = new CollegeDepartment
                     {
-                        Name = "WydziaĹ‚ Nauk ĹšcisĹ‚ych i Technicznych",
+                        Name = "Wydział Nauk Ścisłych i Technicznych",
                         CollegeId = college.CollegeId
                     };
                     _context.CollegeDepartments.Add(dept);
@@ -68,11 +68,11 @@ namespace Esseti.Repositories
 
                     club = new ClubInfo
                     {
-                        Name = "KoĹ‚o Naukowe InformatykĂłw KNI",
+                        Name = "Koło Naukowe Informatyków KNI",
                         ClubRoom = "Sala 333 B2, ul. Pigonia 1",
                         DepartmentId = dept.CollegeDepartmentId,
-                        SupervisorName = "dr inĹĽ. Marcin Ochab",
-                        MeetingsSchedule = "PoniedziaĹ‚ki w tygodniu B, godzina 18:00, sala 333 B2",
+                        SupervisorName = "dr inż. Marcin Ochab",
+                        MeetingsSchedule = "Poniedziałki w tygodniu B, godzina 18:00, sala 333 B2",
                         ShortName = "KNI"
                     };
                     _context.Clubs.Add(club);
@@ -85,18 +85,18 @@ namespace Esseti.Repositories
                     {
                         club.Department.College.AddressLine = "Al. Tadeusza Rejtana 16C";
                         club.Department.College.PostalCode = "35-959";
-                        club.Department.College.City = "RzeszĂłw";
+                        club.Department.College.City = "Rzeszów";
                         club.Department.College.Phone = "+48 17 872 10 00";
                         changed = true;
                     }
                     if (string.IsNullOrEmpty(club.SupervisorName))
                     {
-                        club.SupervisorName = "dr inĹĽ. Marcin Ochab";
+                        club.SupervisorName = "dr inż. Marcin Ochab";
                         changed = true;
                     }
                     if (string.IsNullOrEmpty(club.MeetingsSchedule))
                     {
-                        club.MeetingsSchedule = "PoniedziaĹ‚ki w tygodniu B, godzina 18:00, sala 333 B2";
+                        club.MeetingsSchedule = "Poniedziałki w tygodniu B, godzina 18:00, sala 333 B2";
                         changed = true;
                     }
                     if (string.IsNullOrEmpty(club.ShortName))
@@ -142,7 +142,7 @@ namespace Esseti.Repositories
         {
             return await _cacheService.GetOrLoadAsync("board_members", () => _context.Members
                 .Include(m => m.AuthorityRole)
-                .Where(m => m.AuthorityRole != null && m.AuthorityRole.Name != "CzĹ‚onek" && m.AuthorityRole.Name != "czĹ‚onek")
+                .Where(m => m.AuthorityRole != null && m.AuthorityRole.Name != "Członek" && m.AuthorityRole.Name != "członek")
                 .ToListAsync());
         }
  
@@ -151,7 +151,7 @@ namespace Esseti.Repositories
             return await _cacheService.GetOrLoadAsync("trips_all", () => _context.Trips.ToListAsync());
         }
 
-        public async Task UpdateClubInfoAsync(string clubName, string clubRoom, string departmentName, string supervisorName, string meetingsSchedule, string shortName, byte[]? clubPhoto)
+        public async Task UpdateClubInfoAsync(string clubName, string clubRoom, string departmentName, string supervisorName, string supervisorEmail, string supervisorPhone, string meetingsSchedule, string shortName, byte[]? clubPhoto)
         {
             var club = await GetClubInfoAsync();
             if (club != null)
@@ -159,6 +159,8 @@ namespace Esseti.Repositories
                 club.Name = clubName;
                 club.ClubRoom = clubRoom;
                 club.SupervisorName = supervisorName;
+                club.SupervisorEmail = supervisorEmail;
+                club.SupervisorPhone = supervisorPhone;
                 club.MeetingsSchedule = meetingsSchedule;
                 club.ShortName = shortName;
                 club.ClubPhoto = clubPhoto;

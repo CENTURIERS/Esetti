@@ -45,6 +45,12 @@ namespace Esseti.ViewModels
         private string _supervisorName = string.Empty;
 
         [ObservableProperty]
+        private string _supervisorEmail = string.Empty;
+
+        [ObservableProperty]
+        private string _supervisorPhone = string.Empty;
+
+        [ObservableProperty]
         private string _meetingsInfo = string.Empty;
 
         [ObservableProperty]
@@ -58,6 +64,12 @@ namespace Esseti.ViewModels
 
         [ObservableProperty]
         private string _editSupervisorName = string.Empty;
+
+        [ObservableProperty]
+        private string _editSupervisorEmail = string.Empty;
+
+        [ObservableProperty]
+        private string _editSupervisorPhone = string.Empty;
 
         [ObservableProperty]
         private string _editMeetingsSchedule = string.Empty;
@@ -176,6 +188,8 @@ namespace Esseti.ViewModels
                     ClubRoom = club.ClubRoom ?? string.Empty;
                     DepartmentName = club.Department?.Name ?? string.Empty;
                     SupervisorName = club.SupervisorName ?? string.Empty;
+                    SupervisorEmail = club.SupervisorEmail ?? string.Empty;
+                    SupervisorPhone = club.SupervisorPhone ?? string.Empty;
                     MeetingsInfo = club.MeetingsSchedule ?? string.Empty;
 
                     _clubPhotoBytes = club.ClubPhoto;
@@ -232,7 +246,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d Ĺ‚adowania danych koĹ‚a: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd ładowania danych koła: {ex.Message}");
             }
         }
 
@@ -260,6 +274,8 @@ namespace Esseti.ViewModels
             EditClubRoom = ClubRoom;
             EditDepartmentName = DepartmentName;
             EditSupervisorName = SupervisorName;
+            EditSupervisorEmail = SupervisorEmail;
+            EditSupervisorPhone = SupervisorPhone;
             EditMeetingsSchedule = MeetingsInfo;
             _editClubPhotoBytes = _clubPhotoBytes;
             EditClubPhotoBitmap = LoadBitmap(_editClubPhotoBytes);
@@ -271,13 +287,13 @@ namespace Esseti.ViewModels
         {
             try
             {
-                await _clubRepository.UpdateClubInfoAsync(EditClubName, EditClubRoom, EditDepartmentName, EditSupervisorName, EditMeetingsSchedule, EditClubNameShort, _editClubPhotoBytes);
+                await _clubRepository.UpdateClubInfoAsync(EditClubName, EditClubRoom, EditDepartmentName, EditSupervisorName, EditSupervisorEmail, EditSupervisorPhone, EditMeetingsSchedule, EditClubNameShort, _editClubPhotoBytes);
                 IsEditPopupVisible = false;
                 await LoadDataAsync();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas zapisu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas zapisu: {ex.Message}");
             }
         }
 
@@ -297,7 +313,7 @@ namespace Esseti.ViewModels
                 {
                     var files = await window.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
                     {
-                        Title = "Wybierz logo koĹ‚a",
+                        Title = "Wybierz logo koła",
                         FileTypeFilter = new[] { Avalonia.Platform.Storage.FilePickerFileTypes.ImageAll }
                     });
                     if (files.Count > 0)
@@ -333,7 +349,7 @@ namespace Esseti.ViewModels
             IsAddTripFormValid = !IsAddTripNameInvalid && !IsAddTripDateInvalid;
 
             if (IsAddTripNameInvalid) AddTripValidationError = "Nazwa wyjazdu jest wymagana.";
-            else if (IsAddTripDateInvalid) AddTripValidationError = "Data wyjazdu jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
+            else if (IsAddTripDateInvalid) AddTripValidationError = "Data wyjazdu jest wymagana i musi być poprawna (np. dd.MM.yyyy).";
             else AddTripValidationError = string.Empty;
         }
 
@@ -344,7 +360,7 @@ namespace Esseti.ViewModels
             IsEditTripFormValid = !IsEditTripNameInvalid && !IsEditTripDateInvalid;
 
             if (IsEditTripNameInvalid) EditTripValidationError = "Nazwa wyjazdu jest wymagana.";
-            else if (IsEditTripDateInvalid) EditTripValidationError = "Data wyjazdu jest wymagana i musi byÄ‡ poprawna (np. dd.MM.yyyy).";
+            else if (IsEditTripDateInvalid) EditTripValidationError = "Data wyjazdu jest wymagana i musi być poprawna (np. dd.MM.yyyy).";
             else EditTripValidationError = string.Empty;
         }
 
@@ -399,7 +415,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d dodawania wycieczki: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd dodawania wycieczki: {ex.Message}");
             }
         }
 
@@ -446,7 +462,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas edycji wycieczki: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas edycji wycieczki: {ex.Message}");
             }
         }
 
@@ -476,7 +492,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania wyjazdu: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd usuwania wyjazdu: {ex.Message}");
             }
         }
         [RelayCommand]
@@ -511,7 +527,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d podczas dodawania sekcji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas dodawania sekcji: {ex.Message}");
             }
         }
 
@@ -541,7 +557,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania sekcji: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd usuwania sekcji: {ex.Message}");
             }
         }
         [RelayCommand]

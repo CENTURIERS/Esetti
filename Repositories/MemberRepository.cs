@@ -1,4 +1,4 @@
-﻿using Esseti.Data;
+using Esseti.Data;
 using Esseti.Repositories.Interfaces;
 using Esseti.Services;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +82,7 @@ namespace Esseti.Repositories
                     existingMember.IsActive = true;
                     existingMember.FirstName = member.FirstName;
                     existingMember.LastName = member.LastName;
+                    existingMember.PhoneNumber = member.PhoneNumber;
                     existingMember.Major = member.Major;
                     existingMember.Description = member.Description;
                     existingMember.MemberAvatar = member.MemberAvatar;
@@ -114,7 +115,7 @@ namespace Esseti.Repositories
                             {
                                 club = new ClubInfo
                                 {
-                                    Name = $"KoĹ‚o Naukowe - {dept.Name}",
+                                    Name = $"Koło Naukowe - {dept.Name}",
                                     DepartmentId = dept.CollegeDepartmentId,
                                     ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
                                 };
@@ -147,7 +148,7 @@ namespace Esseti.Repositories
                             {
                                 club = new ClubInfo
                                 {
-                                    Name = $"KoĹ‚o Naukowe - {dept.Name}",
+                                    Name = $"Koło Naukowe - {dept.Name}",
                                     DepartmentId = dept.CollegeDepartmentId,
                                     ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
                                 };
@@ -297,6 +298,7 @@ namespace Esseti.Repositories
                 {
                     dbMember.FirstName = member.FirstName;
                     dbMember.LastName = member.LastName;
+                    dbMember.PhoneNumber = member.PhoneNumber;
                     dbMember.IndexNumber = member.IndexNumber;
                     dbMember.Major = member.Major;
                     dbMember.Description = member.Description;
@@ -345,7 +347,7 @@ namespace Esseti.Repositories
                             {
                                 club = new ClubInfo
                                 {
-                                    Name = $"KoĹ‚o Naukowe - {dept.Name}",
+                                    Name = $"Koło Naukowe - {dept.Name}",
                                     DepartmentId = dept.CollegeDepartmentId,
                                     ShortName = dept.Name.Split(' ').LastOrDefault() ?? "KN"
                                 };

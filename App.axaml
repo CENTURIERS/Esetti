@@ -226,9 +226,35 @@
         <Style Selector="TextBox.invalid">
             <Setter Property="BorderBrush" Value="#D32F2F"/>
         </Style>
+        <Style Selector="TextBox.invalid /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Background" Value="#FFF5F5"/>
+        </Style>
+        <Style Selector="TextBox.invalid:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#E53935"/>
+            <Setter Property="Background" Value="#FFEAEA"/>
+        </Style>
+        <Style Selector="TextBox.invalid:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Background" Value="#FFF5F5"/>
+        </Style>
+
         <Style Selector="ComboBox.invalid">
             <Setter Property="BorderBrush" Value="#D32F2F"/>
         </Style>
+        <Style Selector="ComboBox.invalid /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Background" Value="#FFF5F5"/>
+        </Style>
+        <Style Selector="ComboBox.invalid:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#E53935"/>
+            <Setter Property="Background" Value="#FFEAEA"/>
+        </Style>
+        <Style Selector="ComboBox.invalid:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#D32F2F"/>
+            <Setter Property="Background" Value="#FFF5F5"/>
+        </Style>
+
         <Style Selector="DatePicker.invalid">
             <Setter Property="BorderBrush" Value="#D32F2F"/>
         </Style>

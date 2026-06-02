@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -103,7 +103,7 @@ namespace Esseti.ViewModels
                 {
                     ActivityName = act.Name;
                     DateText = act.Date.ToString("dd.MM.yyyy");
-                    TimeText = act.Time?.ToString(@"hh\:mm") ?? "Nie okreĹ›lono";
+                    TimeText = act.Time?.ToString(@"hh\:mm") ?? "Nie określono";
                     City = act.City ?? "Brak danych";
                     AddressLine = act.AddressLine ?? "Brak danych";
                     PersonInChargeName = act.PersonInChargeName ?? "Brak danych";
@@ -138,7 +138,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d Ĺ‚adowania aktywnoĹ›ci: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd ładowania aktywności: {ex.Message}");
                 IsLoading = false;
             }
         }
@@ -155,7 +155,7 @@ namespace Esseti.ViewModels
             EditName = ActivityName;
             EditDate = DateText;
 
-            EditTime = TimeText == "Nie okreĹ›lono" ? "" : TimeText;
+            EditTime = TimeText == "Nie określono" ? "" : TimeText;
             EditCity = City == "Brak danych" ? "" : City;
             EditAddressLine = AddressLine == "Brak danych" ? "" : AddressLine;
             EditPersonInChargeName = PersonInChargeName == "Brak danych" ? "" : PersonInChargeName;
@@ -227,7 +227,7 @@ namespace Esseti.ViewModels
         
 
         [RelayCommand]
-        private async Task DeleteThisActivity()
+        private void DeleteThisActivity()
         {
             IsActivityEditPopupVisible = false;
             IsPopupVisible = true;

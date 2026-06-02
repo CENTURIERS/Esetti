@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +50,24 @@ namespace Esseti.ViewModels
             }
         }
 
+        [ObservableProperty]
+        private bool _isStatusPopupVisible;
+
+        [ObservableProperty]
+        private string _statusPopupTitle = string.Empty;
+
+        [ObservableProperty]
+        private string _statusPopupMessage = string.Empty;
+
+        [ObservableProperty]
+        private bool _isStatusError;
+
+        [RelayCommand]
+        private void CloseStatusPopup()
+        {
+            IsStatusPopupVisible = false;
+        }
+
         [RelayCommand]
         private async Task BackupDatabaseAsync()
         {
@@ -60,7 +78,7 @@ namespace Esseti.ViewModels
                 {
                     var file = await window.StorageProvider.SaveFilePickerAsync(new Avalonia.Platform.Storage.FilePickerSaveOptions
                     {
-                        Title = "Zapisz kopiÄ™ zapasowÄ… bazy danych",
+                        Title = "Zapisz kopię zapasową bazy danych",
                         DefaultExtension = "db",
                         SuggestedFileName = $"esseti_backup_{DateTime.Now:yyyyMMdd_HHmmss}.db",
                         FileTypeChoices = new[]
@@ -79,16 +97,27 @@ namespace Esseti.ViewModels
                             string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
                             if (File.Exists(dbPath))
                             {
-                                await using (var sourceStream = File.OpenRead(dbPath))
+                                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+                                GC.Collect();
+                                GC.WaitForPendingFinalizers();
+                                await using (var sourceStream = new FileStream(dbPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                                 await using (var targetStream = await file.OpenWriteAsync())
                                 {
                                     await sourceStream.CopyToAsync(targetStream);
                                 }
+                                StatusPopupTitle = "Sukces";
+                                StatusPopupMessage = "Kopia zapasowa bazy danych została pomyślnie utworzona.";
+                                IsStatusError = false;
+                                IsStatusPopupVisible = true;
                             }
                         }
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine($"Failed to backup database: {ex.Message}");
+                            StatusPopupTitle = "Błąd";
+                            StatusPopupMessage = $"Nie udało się utworzyć kopii zapasowej bazy danych: {ex.Message}";
+                            IsStatusError = true;
+                            IsStatusPopupVisible = true;
                         }
                     }
                 }
@@ -105,7 +134,7 @@ namespace Esseti.ViewModels
                 {
                     var file = await window.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
                     {
-                        Title = "Importuj bazÄ™ danych",
+                        Title = "Importuj bazę danych",
                         AllowMultiple = false,
                         FileTypeFilter = new[]
                         {
@@ -121,19 +150,32 @@ namespace Esseti.ViewModels
                     {
                         try
                         {
-                            string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "esseti.db");
-                            // Overwrite existing DB with imported file
+                            string dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+                            if (!Directory.Exists(dataDir))
+                            {
+                                Directory.CreateDirectory(dataDir);
+                            }
+                            string importPath = Path.Combine(dataDir, "esseti_import.db");
+                            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
                             await using (var source = await selected.OpenReadAsync())
-                            await using (var destination = File.Open(dbPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                            await using (var destination = File.Open(importPath, FileMode.Create, FileAccess.Write, FileShare.None))
                             {
                                 await source.CopyToAsync(destination);
                             }
-                            // Reload stats after import
-                            await LoadStatsAsync();
+                            StatusPopupTitle = "Wymagany restart";
+                            StatusPopupMessage = "Baza danych została przygotowana do importu. Aby zastosować zmiany i załadować nowe dane, uruchom aplikację ponownie.";
+                            IsStatusError = false;
+                            IsStatusPopupVisible = true;
                         }
                         catch (Exception ex)
                         {
                             System.Diagnostics.Debug.WriteLine($"Failed to import database: {ex.Message}");
+                            StatusPopupTitle = "Błąd";
+                            StatusPopupMessage = $"Nie udało się przygotować bazy danych do importu: {ex.Message}";
+                            IsStatusError = true;
+                            IsStatusPopupVisible = true;
                         }
                     }
                 }

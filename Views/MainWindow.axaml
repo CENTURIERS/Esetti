@@ -280,7 +280,7 @@
             </Border>
 
             <Border Grid.Row="2" Margin="0, 0, 0, 20"  Padding="5,0,5,0">
-		        <Button Classes="LeftPanelButton" Command="{Binding ShowSettingsPageCommand}">
+		        <Button Classes="LeftPanelButton" Classes.Active="{Binding IsSettingsActive}" Command="{Binding ShowSettingsPageCommand}">
 					<StackPanel Orientation="Horizontal" Spacing="15">
 						<PathIcon Width="24" Height="24" Data="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492 M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0 M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z M7.163 1.626c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
                         <TextBlock Text="Ustawienia" />
@@ -436,6 +436,16 @@
                     </StackPanel>
 
                     <StackPanel Spacing="4">
+                        <TextBlock Text="Numer telefonu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-input" Watermark="np. +48 123 456 789" Text="{ReflectionBinding CurrentViewModel.NewPhoneNumber}">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Foreground="#b0bde8" Height="14" Width="14" Margin="10,0,4,0"
+                                          Data="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
                         <TextBlock Text="Numer indeksu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
                         <TextBox Classes="form-input" Classes.invalid="{ReflectionBinding CurrentViewModel.IsAddIndexNumberInvalid}" Watermark="np. 123456" Text="{ReflectionBinding CurrentViewModel.NewIndexNumber}">
                             <TextBox.InnerLeftContent>
@@ -500,6 +510,14 @@
                         <TextBlock Text="Opis" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
                         <TextBox Classes="form-textarea" Watermark="Krótki opis członka..." Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="12,8" Text="{ReflectionBinding CurrentViewModel.NewDescription}"/>
                     </StackPanel>
+
+                    <TextBlock Text="{ReflectionBinding CurrentViewModel.AddValidationError}"
+                               Foreground="#D32F2F"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"
+                               IsVisible="{ReflectionBinding CurrentViewModel.AddValidationError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                     <Border Height="1" Background="#f0f2f8" Margin="0,4,0,4"/>
 
@@ -576,6 +594,16 @@
                             </TextBox.InnerLeftContent>
                         </TextBox>
                     </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Numer telefonu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
+                        <TextBox Classes="form-input" Watermark="np. +48 123 456 789" Text="{ReflectionBinding CurrentViewModel.EditPhoneNumber}">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Foreground="#b0bde8" Height="14" Width="14" Margin="10,0,4,0"
+                                          Data="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                    </StackPanel>
                     <StackPanel Spacing="4">
                         <TextBlock Text="Numer indeksu" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
                         <TextBox Classes="form-input" Classes.invalid="{ReflectionBinding CurrentViewModel.IsEditIndexNumberInvalid}" Watermark="np. 123456" Text="{ReflectionBinding CurrentViewModel.EditIndexNumber}">
@@ -630,6 +658,14 @@
                         <TextBlock Text="Opis" FontSize="11" FontWeight="SemiBold" Foreground="#7a8099"/>
                         <TextBox Classes="form-textarea" Watermark="Krótki opis członka..." Height="60" TextWrapping="Wrap" AcceptsReturn="True" Text="{ReflectionBinding CurrentViewModel.EditDescription}"/>
                     </StackPanel>
+                    <TextBlock Text="{ReflectionBinding CurrentViewModel.EditValidationError}"
+                               Foreground="#D32F2F"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"
+                               IsVisible="{ReflectionBinding CurrentViewModel.EditValidationError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
                     <Border Height="1" Background="#f0f2f8" Margin="0,4,0,4"/>
                     <Grid ColumnDefinitions="*, 12, *">
                         <Button Grid.Column="0" Content="Anuluj" Command="{ReflectionBinding CurrentViewModel.CancelEditCommand}" Background="#f0f2f8" Foreground="#7a8099" FontSize="13" FontWeight="SemiBold" CornerRadius="8" Height="40" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Cursor="Hand">

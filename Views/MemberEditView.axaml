@@ -249,18 +249,28 @@
         </ScrollViewer>
 
         <Border Grid.Row="2" Background="#FEFEFE" Margin="0,32,0,0" Padding="0,24,0,0" BorderBrush="#f0f2f8" BorderThickness="0,1,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-                <Button Classes="PremiumBtn Secondary"
-                        Content="Anuluj"
-                        Command="{Binding CancelEditCommand}"
-                        Width="160"
-                        Height="52"/>
+            <StackPanel Spacing="16" HorizontalAlignment="Stretch">
+                <TextBlock Text="{Binding EditValidationError}"
+                           Foreground="#D32F2F"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap"
+                           IsVisible="{Binding EditValidationError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
-                <Button Classes="PremiumBtn Primary"
-                        Content="Zapisz zmiany"
-                        Command="{Binding SaveEditCommand}"
-                        Width="240"
-                        Height="52"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                    <Button Classes="PremiumBtn Secondary"
+                            Content="Anuluj"
+                            Command="{Binding CancelEditCommand}"
+                            Width="160"
+                            Height="52"/>
+
+                    <Button Classes="PremiumBtn Primary"
+                            Content="Zapisz zmiany"
+                            Command="{Binding SaveEditCommand}"
+                            Width="240"
+                            Height="52"/>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>

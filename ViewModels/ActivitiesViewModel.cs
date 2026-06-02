@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Esseti.Repositories.Interfaces;
@@ -68,7 +68,7 @@ namespace Esseti.ViewModels
         private bool _isAddEditPopupVisible;
 
         [ObservableProperty]
-        private string _popupTitle = "Nowa aktywnoĹ›Ä‡";
+        private string _popupTitle = "Nowa aktywność";
 
         [ObservableProperty]
         private bool _isNameInvalid;
@@ -97,9 +97,9 @@ namespace Esseti.ViewModels
 
             IsFormValid = !IsNameInvalid && !IsDateInvalid && !IsTimeInvalid && !IsEmailInvalid && !IsPhoneInvalid;
 
-            if (IsNameInvalid) ValidationError = "Nazwa aktywnoĹ›ci jest wymagana.";
-            else if (IsDateInvalid) ValidationError = "Data aktywnoĹ›ci jest wymagana i musi byÄ‡ poprawna.";
-            else if (IsTimeInvalid) ValidationError = "Godzina aktywnoĹ›ci jest wymagana i musi byÄ‡ poprawna (np. hh:mm).";
+            if (IsNameInvalid) ValidationError = "Nazwa aktywności jest wymagana.";
+            else if (IsDateInvalid) ValidationError = "Data aktywności jest wymagana i musi być poprawna.";
+            else if (IsTimeInvalid) ValidationError = "Godzina aktywności jest wymagana i musi być poprawna (np. hh:mm).";
             else if (IsEmailInvalid) ValidationError = "Niepoprawny format adresu e-mail osoby odpowiedzialnej.";
             else if (IsPhoneInvalid) ValidationError = "Niepoprawny format numeru telefonu osoby odpowiedzialnej.";
             else ValidationError = string.Empty;
@@ -122,7 +122,7 @@ namespace Esseti.ViewModels
 
         public string SelectAllText => IsAllSelected ? "Odznacz wszystko" : "Zaznacz wszystko"; 
         public bool HasSelectedItems => IsAnySelected;
-        public string SelectedCountText => $"Zaznaczono: {SelectedCount} aktywnoĹ›ci";
+        public string SelectedCountText => $"Zaznaczono: {SelectedCount} aktywności";
 
         public ActivitiesViewModel(IActivityRepository activityRepository, IMemberRepository memberRepository, INavigationService navigationService)
         {
@@ -142,7 +142,7 @@ namespace Esseti.ViewModels
         private void OpenAddPopup()
         {
             _editingActivity = null;
-            PopupTitle = "Nowa aktywnoĹ›Ä‡";
+            PopupTitle = "Nowa aktywność";
             NewActivityName = string.Empty;
             NewActivityDescription = string.Empty;
             NewActivityDate = DateTime.Now.ToString("dd.MM.yyyy");
@@ -169,7 +169,7 @@ namespace Esseti.ViewModels
         {
             if (item == null) return;
             _editingActivity = item;
-            PopupTitle = "Edycja aktywnoĹ›ci";
+            PopupTitle = "Edycja aktywności";
 
             if (int.TryParse(item.ActivityId, out var activityId))
             {
@@ -288,7 +288,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d usuwania aktywnoĹ›ci: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd usuwania aktywności: {ex.Message}");
             }
         }
 
@@ -322,21 +322,66 @@ namespace Esseti.ViewModels
             OnPropertyChanged(nameof(SelectedCountText));
         }
 
-        protected override void OnSearchQueryUpdated(string value) => ApplyFilter();
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
+        [NotifyPropertyChangedFor(nameof(HasNextPage))]
+        private int _currentPage = 1;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
+        [NotifyPropertyChangedFor(nameof(HasNextPage))]
+        private int _totalPages = 1;
+
+        public bool HasPreviousPage => CurrentPage > 1;
+        public bool HasNextPage => CurrentPage < TotalPages;
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (HasNextPage)
+            {
+                CurrentPage++;
+                ApplyFilter();
+            }
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (HasPreviousPage)
+            {
+                CurrentPage--;
+                ApplyFilter();
+            }
+        }
+
+        protected override void OnSearchQueryUpdated(string value)
+        {
+            CurrentPage = 1;
+            ApplyFilter();
+        }
 
         private void ApplyFilter()
         {
             Activities.Clear();
             var query = SearchQuery?.ToLower() ?? "";
 
-            foreach (var item in _allActivities)
+            var filteredList = _allActivities
+                .Where(item => (item.Name ?? "").ToLower().Contains(query) || (item.Description ?? "").ToLower().Contains(query))
+                .ToList();
+
+            int pageSize = 9;
+            int totalCount = filteredList.Count;
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            if (TotalPages < 1) TotalPages = 1;
+
+            if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+            if (CurrentPage < 1) CurrentPage = 1;
+
+            var pageItems = filteredList.Skip((CurrentPage - 1) * pageSize).Take(pageSize);
+            foreach (var item in pageItems)
             {
-                var name = item.Name ?? "";
-                var desc = item.Description ?? "";
-                if (name.ToLower().Contains(query) || desc.ToLower().Contains(query))
-                {
-                    Activities.Add(item);
-                }
+                Activities.Add(item);
             }
 
             UpdateSelectionState();
@@ -407,7 +452,7 @@ namespace Esseti.ViewModels
                     ApplyFilter();
                 });
             } catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine($"BĹ‚Ä…d pobierania aktywnoĹ›ci: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd pobierania aktywności: {ex.Message}");
             }
         }
 

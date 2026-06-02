@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -140,7 +140,7 @@ namespace Esseti.ViewModels
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
                 var files = await desktop.MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
-                    Title = "Wybierz nowe zdjÄ™cie profilowe",
+                    Title = "Wybierz nowe zdjęcie profilowe",
                     AllowMultiple = false,
                     FileTypeFilter = new[] { FilePickerFileTypes.ImageAll } 
                 });
@@ -170,7 +170,7 @@ namespace Esseti.ViewModels
                 var member = await _memberRepository.GetMemberByIdAsync(_memberId);
                 if (member == null)
                 {
-                    Dispatcher.UIThread.Post(() => { IsLoading = false; Description = "Nie znaleziono uĹĽytkownika w bazie."; });
+                    Dispatcher.UIThread.Post(() => { IsLoading = false; Description = "Nie znaleziono użytkownika w bazie."; });
                     return;
                 }
 
@@ -197,7 +197,7 @@ namespace Esseti.ViewModels
                     var college = dept?.College;
 
                     CollegeName = college?.Name ?? "Brak uczelni";
-                    DepartmentName = dept?.Name ?? "Brak wydziaĹ‚u";
+                    DepartmentName = dept?.Name ?? "Brak wydziału";
                     DepartmentAddress = dept != null
                         ? $"{dept.AddressLine}, {dept.PostalCode} {dept.City}".Trim(' ', ',')
                         : "";
@@ -243,7 +243,7 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"BĹ‚Ä…d Ĺ‚adowania profilu: {ex}");
+                Debug.WriteLine($"Błąd ładowania profilu: {ex}");
                 IsLoading = false;
             }
         }
@@ -289,7 +289,7 @@ namespace Esseti.ViewModels
 
             if (string.IsNullOrWhiteSpace(EditFirstName))
             {
-                EditValidationError = "ImiÄ™ jest wymagane.";
+                EditValidationError = "Imię jest wymagane.";
                 return;
             }
 
@@ -307,7 +307,7 @@ namespace Esseti.ViewModels
 
             if (!string.IsNullOrWhiteSpace(EditIndexNumber) && !EditIndexNumber.All(char.IsDigit))
             {
-                EditValidationError = "Numer indeksu musi skĹ‚adaÄ‡ siÄ™ wyĹ‚Ä…cznie z cyfr.";
+                EditValidationError = "Numer indeksu musi składać się wyłącznie z cyfr.";
                 return;
             }
 
@@ -330,7 +330,6 @@ namespace Esseti.ViewModels
 
             await _memberRepository.UpdateMemberAsync(updatedMember, remainingProjectIds, remainingActivityIds);
 
-            // PrzeĹ‚aduj profil po zapisaniu
             await LoadAsync();
 
             IsEditPopupVisible = false;

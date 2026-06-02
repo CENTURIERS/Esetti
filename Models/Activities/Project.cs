@@ -1,4 +1,4 @@
-﻿using Models.Users;
+using Models.Users;
 using Models.ClubBase;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Models.Activities
             if (DateStart.HasValue && DateEnd.HasValue && DateEnd.Value < DateStart.Value)
             {
                 yield return new System.ComponentModel.DataAnnotations.ValidationResult(
-                    "Data zakoĹ„czenia projektu nie moĹĽe byÄ‡ wczeĹ›niejsza niĹĽ data rozpoczÄ™cia.",
+                    "Data zakończenia projektu nie może być wcześniejsza niż data rozpoczęcia.",
                     new[] { nameof(DateEnd) });
             }
         }

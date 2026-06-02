@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -63,6 +63,7 @@ namespace Esseti.ViewModels
                             role: m.AuthorityRole?.Name ?? "Brak roli",
                             indexNumber: m.IndexNumber ?? string.Empty,
                             email: m.Account?.Email ?? string.Empty,
+                            phoneNumber: m.PhoneNumber ?? string.Empty,
                             collegeDepartment: dept,
                             major: m.Major ?? string.Empty,
                             joinDate: m.JoinDate.ToString("dd.MM.yyyy"),

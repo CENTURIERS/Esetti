@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Esseti.Migrations
 {
-    
+
     public partial class InitialCreate : Migration
     {
-        
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -504,7 +504,7 @@ namespace Esseti.Migrations
                 unique: true);
         }
 
-        
+
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
