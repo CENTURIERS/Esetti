@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Models.Activities;
 using Models.ClubBase;
 using Models.Enums;
@@ -13,21 +13,76 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Esseti.Data
 {
+    /// <summary>
+    /// Główny kontekst bazy danych EF Core (Entity Framework).
+    /// Mapuje nasze klasy modelowe na tabele w bazie SQLite i zarządza połączeniem.
+    /// </summary>
     public class EssetiDbContext : DbContext
     {
+        /// <summary>
+        /// Tabela z członkami koła naukowego (studenci, zarząd itp.).
+        /// </summary>
         public DbSet<Member> Members => Set<Member>();
+
+        /// <summary>
+        /// Tabela z projektami realizowanymi w ramach koła.
+        /// </summary>
         public DbSet<Project> Projects => Set<Project>();
+
+        /// <summary>
+        /// Tabela z aktywnościami (np. warsztaty, spotkania, eventy).
+        /// </summary>
         public DbSet<Activity> Activities => Set<Activity>();
+
+        /// <summary>
+        /// Tabela z kontami użytkowników (dane logowania, hasła, role).
+        /// </summary>
         public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
+
+        /// <summary>
+        /// Tabela z rolami i uprawnieniami (zarząd, skarbnik, członek itp.).
+        /// </summary>
         public DbSet<AuthorityRole> AuthorityRoles => Set<AuthorityRole>();
+
+        /// <summary>
+        /// Tabela z informacjami o kołach naukowych.
+        /// </summary>
         public DbSet<ClubInfo> Clubs => Set<ClubInfo>();
+
+        /// <summary>
+        /// Tabela z sekcjami tematycznymi koła (np. sekcja gamedev, sekcja AI).
+        /// </summary>
         public DbSet<Section> Sections => Set<Section>();
+
+        /// <summary>
+        /// Tabela uczelni powiązanych z systemem.
+        /// </summary>
         public DbSet<College> Colleges => Set<College>();
+
+        /// <summary>
+        /// Tabela z wydziałami danej uczelni.
+        /// </summary>
         public DbSet<CollegeDepartment> CollegeDepartments => Set<CollegeDepartment>();
+
+        /// <summary>
+        /// Tabela łącząca członków z konkretnymi kołami (relacja wiele-do-wielu z dodatkową rolą).
+        /// </summary>
         public DbSet<MemberClub> MemberClubs => Set<MemberClub>();
+
+        /// <summary>
+        /// Tabela łącząca członków z konkretnymi sekcjami.
+        /// </summary>
         public DbSet<SectionMember> SectionMembers => Set<SectionMember>();
+
+        /// <summary>
+        /// Tabela z wyjazdami i delegacjami na konferencje.
+        /// </summary>
         public DbSet<Trip> Trips => Set<Trip>();
 
+        /// <summary>
+        /// Konfiguracja połączenia z bazą danych. Używamy SQLite i zapisujemy plik bazy w podfolderze Data.
+        /// </summary>
+        /// <param name="optionsBuilder">Builder opcji konfiguracji kontekstu.</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -42,6 +97,11 @@ namespace Esseti.Data
             }
         }
 
+        /// <summary>
+        /// Konfiguracja modeli (mapowanie tabel, klucze główne, relacje i konwertery typów wyliczeniowych).
+        /// Ustawia też automatyczne nazywanie tabel i kolumn w stylu snake_case.
+        /// </summary>
+        /// <param name="modelBuilder">Builder do konfiguracji modeli bazy danych.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AuthorityRole>().HasKey(e => e.RoleId);
@@ -235,6 +295,12 @@ namespace Esseti.Data
             }
         }
 
+        /// <summary>
+        /// Prosta funkcja pomocnicza, która zamienia PascalCase (np. UserAccount) na snake_case (np. user_account).
+        /// Przydatne pod SQLite, żeby tabele i kolumny były czytelniejsze.
+        /// </summary>
+        /// <param name="name">Tekst wejściowy w formacie PascalCase.</param>
+        /// <returns>Tekst sformatowany do małych liter z podkreśleniami.</returns>
         private static string ToSnakeCase(string? name)
         {
             if (string.IsNullOrEmpty(name)) return name ?? string.Empty;

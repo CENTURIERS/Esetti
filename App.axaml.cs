@@ -12,11 +12,20 @@ using Esseti.Data;
 
 namespace Esseti
 {
+    /// <summary>
+    /// Główna klasa aplikacji Esseti — odpowiada za inicjalizację, konfigurację DI i uruchomienie okna głównego.
+    /// </summary>
     public partial class App : Application
     {
 
+        /// <summary>
+        /// Globalny kontener usług (DI) dostępny w całej aplikacji.
+        /// </summary>
         public static IServiceProvider Services { get; private set; } = null!;
 
+        /// <summary>
+        /// Inicjalizuje aplikację — ładuje XAML, konfiguruje licencję QuestPDF, rejestruje usługi i przygotowuje bazę danych.
+        /// </summary>
         public override void Initialize()
         {
             CheckAndSwapDatabase();
@@ -26,6 +35,9 @@ namespace Esseti
             InitializeDatabase();
         }
 
+        /// <summary>
+        /// Sprawdza, czy istnieje plik importu bazy danych i jeśli tak, podmienia nim aktualną bazę.
+        /// </summary>
         private void CheckAndSwapDatabase()
         {
             try
@@ -65,6 +77,9 @@ namespace Esseti
             }
         }
 
+        /// <summary>
+        /// Uruchamia migracje EF Core i seeduje bazę danych początkowymi danymi, jeśli jest pusta.
+        /// </summary>
         private void InitializeDatabase()
         {
             try
@@ -84,6 +99,9 @@ namespace Esseti
             }
         }
 
+        /// <summary>
+        /// Konfiguruje kontener Dependency Injection — rejestruje repozytoria i ViewModele.
+        /// </summary>
         private void ConfigureServices()
         {
             var services = new ServiceCollection();
@@ -93,6 +111,9 @@ namespace Esseti
             Services = services.BuildServiceProvider();
         }
 
+        /// <summary>
+        /// Wywoływane po zakończeniu inicjalizacji frameworka — tworzy i wyświetla główne okno aplikacji.
+        /// </summary>
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

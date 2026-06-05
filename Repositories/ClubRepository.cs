@@ -13,17 +13,27 @@ using Models.University;
 
 namespace Esseti.Repositories
 {
+    /// <summary>
+    /// Repozytorium odpowiedzialne za operacje bazodanowe na informacjach o kole naukowym,
+    /// członkach, projektach, sekcjach i aktywnościach.
+    /// </summary>
     public class ClubRepository : IClubRepository
     {
         private readonly EssetiDbContext _context;
         private readonly ICacheService _cacheService;
 
+        /// <summary>
+        /// Inicjalizuje nową instancję repozytorium koła naukowego z podanym kontekstem bazy danych i serwisem cache.
+        /// </summary>
+        /// <param name="context">Kontekst bazy danych EF Core.</param>
+        /// <param name="cacheService">Serwis pamięci podręcznej do cachowania wyników zapytań.</param>
         public ClubRepository(EssetiDbContext context, ICacheService cacheService)
         {
             _context = context;
             _cacheService = cacheService;
         }
 
+        /// <inheritdoc />
         public async Task<ClubInfo?> GetClubInfoAsync()
         {
             return await _cacheService.GetOrLoadAsync("club_info", async () =>
@@ -113,31 +123,37 @@ namespace Esseti.Repositories
             });
         }
 
+        /// <inheritdoc />
         public async Task<int> GetMembersCountAsync()
         {
             return await _context.Members.CountAsync();
         }
 
+        /// <inheritdoc />
         public async Task<int> GetProjectsCountAsync()
         {
             return await _context.Projects.CountAsync();
         }
 
+        /// <inheritdoc />
         public async Task<int> GetSectionsCountAsync()
         {
             return await _context.Sections.CountAsync();
         }
 
+        /// <inheritdoc />
         public async Task<int> GetActivitiesCountAsync()
         {
             return await _context.Activities.CountAsync();
         }
 
+        /// <inheritdoc />
         public async Task<List<Section>> GetSectionsAsync()
         {
             return await _cacheService.GetOrLoadAsync("sections_all", () => _context.Sections.ToListAsync());
         }
  
+        /// <inheritdoc />
         public async Task<List<Member>> GetBoardMembersAsync()
         {
             return await _cacheService.GetOrLoadAsync("board_members", () => _context.Members
@@ -146,11 +162,13 @@ namespace Esseti.Repositories
                 .ToListAsync());
         }
  
+        /// <inheritdoc />
         public async Task<List<Trip>> GetTripsAsync()
         {
             return await _cacheService.GetOrLoadAsync("trips_all", () => _context.Trips.ToListAsync());
         }
 
+        /// <inheritdoc />
         public async Task UpdateClubInfoAsync(string clubName, string clubRoom, string departmentName, string supervisorName, string supervisorEmail, string supervisorPhone, string meetingsSchedule, string shortName, byte[]? clubPhoto)
         {
             var club = await GetClubInfoAsync();
@@ -173,6 +191,7 @@ namespace Esseti.Repositories
                 _cacheService.Invalidate("sections_all");
             }
         }
+        /// <inheritdoc />
         public async Task AddSectionAsync(Section section)
         {
             _context.Sections.Add(section);
@@ -181,6 +200,7 @@ namespace Esseti.Repositories
             _cacheService.Invalidate("sections_all");
         }
  
+        /// <inheritdoc />
         public async Task DeleteSectionAsync(int sectionId)
         {
             var section = await _context.Sections.FindAsync(sectionId);

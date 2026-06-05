@@ -1,13 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Esseti.Migrations
 {
-    
+    /// <summary>
+    /// Migracja dodająca walidacje do modeli — ustawia maksymalne długości i wymagalność pól.
+    /// </summary>
     public partial class AddValidationsToModels : Migration
     {
-        
+        /// <summary>
+        /// Aplikuje walidacje — zmienia kolumny na wymagane i dodaje ograniczenia długości.
+        /// </summary>
+        /// <param name="migrationBuilder">Builder do konstruowania operacji migracji.</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
@@ -55,7 +60,10 @@ namespace Esseti.Migrations
                 oldNullable: true);
         }
 
-        
+        /// <summary>
+        /// Cofa walidacje — przywraca kolumny do stanu opcjonalnego bez ograniczeń długości.
+        /// </summary>
+        /// <param name="migrationBuilder">Builder do konstruowania operacji migracji.</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(

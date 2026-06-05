@@ -53,4 +53,17 @@ scratch/
 .idea/
 .vscode/
 *.sln.iml
+
+## [ DocFX ]
+_site/
+api/
+.manifest
+
+## [ Skrypty, LaTeX i Archiwa ]
+*.tex
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
 

@@ -13,8 +13,15 @@ using Avalonia.Media.Imaging;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// ViewModel odpowiedzialny za obsługę widoku informacji o kole naukowym.
+    /// Zarządza danymi takimi jak nazwa koła, członkowie zarządu, wyjazdy i sekcje.
+    /// </summary>
     public partial class ClubInfoViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Tytuł strony wyświetlany w nagłówku widoku.
+        /// </summary>
         public override string PageTitle => "O kole";
 
         private readonly IClubRepository _clubRepository;
@@ -91,7 +98,14 @@ namespace Esseti.ViewModels
         private byte[]? _clubPhotoBytes;
         private byte[]? _editClubPhotoBytes;
 
+        /// <summary>
+        /// Zwraca true, jeśli koło ma ustawione zdjęcie (logo).
+        /// </summary>
         public bool HasClubPhoto => ClubPhotoBitmap != null;
+
+        /// <summary>
+        /// Zwraca true, jeśli w formularzu edycji wybrano zdjęcie koła.
+        /// </summary>
         public bool HasEditClubPhoto => EditClubPhotoBitmap != null;
 
         [ObservableProperty]
@@ -130,7 +144,14 @@ namespace Esseti.ViewModels
 
         private Trip? _tripBeingEdited;
 
+        /// <summary>
+        /// Zwraca true, jeśli nie ma żadnych członków zarządu do wyświetlenia.
+        /// </summary>
         public bool HasNoBoardMembers => !BoardMembers.Any();
+
+        /// <summary>
+        /// Zwraca true, jeśli nie ma żadnych wyjazdów do wyświetlenia.
+        /// </summary>
         public bool HasNoTrips => !Trips.Any();
 
         [ObservableProperty]
@@ -160,10 +181,26 @@ namespace Esseti.ViewModels
         private Trip? _tripToDelete;
         private Section? _sectionToDelete;
 
+        /// <summary>
+        /// Kolekcja sekcji należących do koła naukowego.
+        /// </summary>
         public ObservableCollection<Section> Sections { get; } = new();
+
+        /// <summary>
+        /// Kolekcja członków zarządu koła naukowego.
+        /// </summary>
         public ObservableCollection<Models.Users.Member> BoardMembers { get; } = new();
+
+        /// <summary>
+        /// Kolekcja wyjazdów organizowanych przez koło naukowe.
+        /// </summary>
         public ObservableCollection<Trip> Trips { get; } = new();
 
+        /// <summary>
+        /// Inicjalizuje ViewModel informacji o kole i uruchamia ładowanie danych z bazy.
+        /// </summary>
+        /// <param name="clubRepository">Repozytorium danych koła naukowego.</param>
+        /// <param name="tripRepository">Repozytorium danych wyjazdów.</param>
         public ClubInfoViewModel(IClubRepository clubRepository, ITripRepository tripRepository)
         {
             _clubRepository = clubRepository;
@@ -214,7 +251,7 @@ namespace Esseti.ViewModels
                         var address = string.Join(", ", parts);
                         if (!string.IsNullOrEmpty(college.Phone))
                         {
-                            address += $"  â€˘  tel. {college.Phone}";
+                            address += $"  \u2022  tel. {college.Phone}";
                         }
                         UniversityAddress = address;
                     }
@@ -364,6 +401,10 @@ namespace Esseti.ViewModels
             else EditTripValidationError = string.Empty;
         }
 
+        /// <summary>
+        /// Reaguje na zmianę właściwości i uruchamia walidację formularzy wyjazdów.
+        /// </summary>
+        /// <param name="e">Argumenty zdarzenia zmiany właściwości.</param>
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);

@@ -1,14 +1,19 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Esseti.Migrations
 {
-
+    /// <summary>
+    /// Migracja inicjalizująca bazę danych — tworzy wszystkie tabele i relacje.
+    /// </summary>
     public partial class InitialCreate : Migration
     {
-
+        /// <summary>
+        /// Tworzy początkowy schemat bazy danych ze wszystkimi tabelami, kluczami i indeksami.
+        /// </summary>
+        /// <param name="migrationBuilder">Builder do konstruowania operacji migracji.</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -504,7 +509,10 @@ namespace Esseti.Migrations
                 unique: true);
         }
 
-
+        /// <summary>
+        /// Cofa migrację — usuwa wszystkie tabele utworzone w metodzie Up.
+        /// </summary>
+        /// <param name="migrationBuilder">Builder do konstruowania operacji migracji.</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

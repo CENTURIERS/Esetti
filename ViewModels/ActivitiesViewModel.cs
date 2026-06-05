@@ -14,77 +14,190 @@ using Models.Activities;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// Model widoku obsługujący listę wszystkich aktywności w kole/klubie.
+    /// Zawiera wyszukiwanie, podział na strony, obsługę popupów do dodawania i edytowania danych oraz usuwanie jednej lub wielu aktywności.
+    /// </summary>
     public partial class ActivitiesViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Tytuł wyświetlany w nagłówku strony.
+        /// </summary>
         public override string PageTitle => "Lista Aktywności";
+
+        /// <summary>
+        /// Pokazujemy pasek z wyszukiwarką i przyciskami akcji w nagłówku.
+        /// </summary>
         public override bool ShowActionHeader => true;
+
+        /// <summary>
+        /// Tekst pomocniczy w polu wyszukiwania aktywności.
+        /// </summary>
         public override string SearchPlaceholder => "Szukaj aktywności...";
 
+        /// <summary>
+        /// Kolekcja aktywności wyświetlana na aktualnej stronie.
+        /// </summary>
         public ObservableCollection<ActivityItemViewModel> Activities { get; } = new();
+
+        /// <summary>
+        /// Repozytorium do operacji na bazie danych związanych z aktywnościami.
+        /// </summary>
         private readonly IActivityRepository _activityRepository;
+
+        /// <summary>
+        /// Repozytorium do operacji na bazie danych związanych z członkami koła.
+        /// </summary>
         private readonly IMemberRepository _memberRepository;
+
+        /// <summary>
+        /// Pełna lista wszystkich aktywności załadowanych na początku, przydatna do filtrowania.
+        /// </summary>
         private readonly List<ActivityItemViewModel> _allActivities = new();
+
+        /// <summary>
+        /// Wybrana aktywność przeznaczona do usunięcia.
+        /// </summary>
         private ActivityItemViewModel? _activityToDelete;
+
+        /// <summary>
+        /// Referencja do aktywności aktualnie edytowanej w popupie (null przy dodawaniu).
+        /// </summary>
         private ActivityItemViewModel? _editingActivity;
 
+        /// <summary>
+        /// Nazwa nowej lub edytowanej aktywności w formularzu.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityName = string.Empty;
 
+        /// <summary>
+        /// Opis lub szczegóły aktywności w formularzu.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityDescription = string.Empty;
 
+        /// <summary>
+        /// Data wydarzenia/aktywności jako tekst.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityDate = DateTime.Now.ToString("dd.MM.yyyy");
 
+        /// <summary>
+        /// Godzina wydarzenia jako tekst.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityTime = DateTime.Now.ToString("HH:mm");
 
+        /// <summary>
+        /// Miasto, w którym odbywa się aktywność.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityCity = string.Empty;
 
+        /// <summary>
+        /// Ulica i numer (adres), gdzie odbywa się aktywność.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityStreet = string.Empty;
 
+        /// <summary>
+        /// Nazwisko lub nazwa osoby odpowiedzialnej za to wydarzenie (jeśli spoza klubu).
+        /// </summary>
         [ObservableProperty]
         private string _newActivityPersonInChargeEvent = string.Empty;
 
+        /// <summary>
+        /// Telefon kontaktowy do osoby odpowiedzialnej.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityPersonInChargePhone = string.Empty;
 
+        /// <summary>
+        /// Email kontaktowy do osoby odpowiedzialnej.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityPersonInChargeEmail = string.Empty;
 
+        /// <summary>
+        /// Czy ta aktywność jest powtarzalna cyklicznie.
+        /// </summary>
         [ObservableProperty]
         private bool _newActivityIsRepeatable;
 
+        /// <summary>
+        /// Tekstowa lista wszystkich członków koła (sformatowane jako "Imię Nazwisko") do wyboru.
+        /// </summary>
         public ObservableCollection<string> ClubMembers { get; } = new();
         
+        /// <summary>
+        /// Wybrany z klubu członek odpowiedzialny za tę aktywność.
+        /// </summary>
         [ObservableProperty]
         private string _newActivityPersonInChargeClub = string.Empty;
 
+        /// <summary>
+        /// Lista uczestników przypisanych do tego wydarzenia.
+        /// </summary>
         public ObservableCollection<string> EventMembers { get; } = new();
 
+        /// <summary>
+        /// Czy popup dodawania/edycji aktywności jest obecnie wyświetlany na ekranie.
+        /// </summary>
         [ObservableProperty]
         private bool _isAddEditPopupVisible;
 
+        /// <summary>
+        /// Tytuł okienka popup (np. "Nowa aktywność" lub "Edycja aktywności").
+        /// </summary>
         [ObservableProperty]
         private string _popupTitle = "Nowa aktywność";
 
+        /// <summary>
+        /// Flaga błędu walidacji dla nazwy.
+        /// </summary>
         [ObservableProperty]
         private bool _isNameInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla daty.
+        /// </summary>
         [ObservableProperty]
         private bool _isDateInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla godziny.
+        /// </summary>
         [ObservableProperty]
         private bool _isTimeInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla emaila.
+        /// </summary>
         [ObservableProperty]
         private bool _isEmailInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla telefonu.
+        /// </summary>
         [ObservableProperty]
         private bool _isPhoneInvalid;
+
+        /// <summary>
+        /// Flaga informująca, czy cały formularz aktywności przeszedł walidację pomyślnie.
+        /// </summary>
         [ObservableProperty]
         private bool _isFormValid = true;
+
+        /// <summary>
+        /// Komunikat błędu z opisem problemu w formularzu.
+        /// </summary>
         [ObservableProperty]
         private string _validationError = string.Empty;
 
+        /// <summary>
+        /// Przeprowadza walidację pól formularza nowej/edycji aktywności. Ustawia odpowiednie flagi błędów.
+        /// </summary>
         private void ValidateForm()
         {
             IsNameInvalid = string.IsNullOrWhiteSpace(NewActivityName);
@@ -105,6 +218,10 @@ namespace Esseti.ViewModels
             else ValidationError = string.Empty;
         }
 
+        /// <summary>
+        /// Metoda wywoływana przy zmianie obserwowanych właściwości. Uruchamia automatyczną walidację formularza.
+        /// </summary>
+        /// <param name="e">Argumenty zdarzenia.</param>
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -118,12 +235,32 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Serwis służący do przełączania ekranów.
+        /// </summary>
         private readonly INavigationService _navigationService;
 
+        /// <summary>
+        /// Zwraca napis dla przycisku zaznaczania na podstawie aktualnego stanu zaznaczenia wszystkich kafelków.
+        /// </summary>
         public string SelectAllText => IsAllSelected ? "Odznacz wszystko" : "Zaznacz wszystko"; 
+
+        /// <summary>
+        /// Czy jakikolwiek aktywność z listy jest w tym momencie zaznaczona checkboxem.
+        /// </summary>
         public bool HasSelectedItems => IsAnySelected;
+
+        /// <summary>
+        /// Tekst informujący o liczbie zaznaczonych aktywności do usunięcia.
+        /// </summary>
         public string SelectedCountText => $"Zaznaczono: {SelectedCount} aktywności";
 
+        /// <summary>
+        /// Konstruktor modelu widoku. Wstrzykuje repozytoria i serwis nawigacyjny oraz ładuje asynchronicznie dane z bazy.
+        /// </summary>
+        /// <param name="activityRepository">Repozytorium aktywności.</param>
+        /// <param name="memberRepository">Repozytorium członków.</param>
+        /// <param name="navigationService">Wspólny serwis nawigacji.</param>
         public ActivitiesViewModel(IActivityRepository activityRepository, IMemberRepository memberRepository, INavigationService navigationService)
         {
             _activityRepository = activityRepository;
@@ -132,12 +269,18 @@ namespace Esseti.ViewModels
             _ = LoadDataAsync();
         }
 
+        /// <summary>
+        /// Komenda do zaznaczenia lub odznaczenia wszystkich widocznych aktywności.
+        /// </summary>
         [RelayCommand]
         private void ToggleSelectAll()
         {
             IsAllSelected = !IsAllSelected;
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup tworzenia nowej aktywności z wyczyszczonym formularzem.
+        /// </summary>
         [RelayCommand]
         private void OpenAddPopup()
         {
@@ -159,11 +302,15 @@ namespace Esseti.ViewModels
             IsTimeInvalid = false;
             IsEmailInvalid = false;
             IsPhoneInvalid = false;
-            IsFormValid = false; // Name is empty initially
+            IsFormValid = false; // Pusta nazwa na start oznacza formularz do poprawy
 
             IsAddEditPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup w trybie edycji danej aktywności i wczytująca jej aktualne dane.
+        /// </summary>
+        /// <param name="item">Model widoku aktywności wybranej do edycji.</param>
         [RelayCommand]
         private async Task OpenEditPopup(ActivityItemViewModel item)
         {
@@ -192,12 +339,18 @@ namespace Esseti.ViewModels
             IsAddEditPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda zamykająca popup edycji/dodawania aktywności.
+        /// </summary>
         [RelayCommand]
         private void ClosePopup()
         {
             IsAddEditPopupVisible = false;
         }
 
+        /// <summary>
+        /// Komenda zapisująca dane aktywności (tworzy nową lub aktualizuje w bazie).
+        /// </summary>
         [RelayCommand(CanExecute = nameof(IsFormValid))]
         private async Task SaveActivity()
         {
@@ -248,6 +401,10 @@ namespace Esseti.ViewModels
             IsAddEditPopupVisible = false;
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup potwierdzenia usunięcia pojedynczej aktywności z bazy.
+        /// </summary>
+        /// <param name="item">Model widoku aktywności do usunięcia.</param>
         [RelayCommand]
         private void DeleteSingleActivity(ActivityItemViewModel item)
         {
@@ -256,6 +413,9 @@ namespace Esseti.ViewModels
             IsPopupVisible = true;
         }
 
+        /// <summary>
+        /// Wykonuje operację usunięcia wybranej aktywności lub grupy zaznaczonych aktywności z bazy.
+        /// </summary>
         protected override async Task ExecuteConfirmDeleteAsync()
         {
             try
@@ -292,11 +452,18 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Czyszczenie referencji przy zamykaniu popupa.
+        /// </summary>
         protected override void OnPopupClosed()
         {
             _activityToDelete = null;
         }
 
+        /// <summary>
+        /// Nadpisana metoda obsługująca masowe zaznaczanie/odznaczanie kafelków.
+        /// </summary>
+        /// <param name="value">Czy zaznaczyć wszystkie (true), czy odznaczyć (false).</param>
         protected override void OnIsAllSelectedChangedVirtual(bool value)
         {
             if (_isUpdatingSelection) return;
@@ -312,6 +479,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Przelicza liczbę zaznaczonych aktywności na liście i zgłasza zmianę właściwości.
+        /// </summary>
         public void UpdateSelectionState() {
             var selected = Activities.Where(a => a.IsSelected).ToList();
             SelectedCount = selected.Count;
@@ -322,19 +492,35 @@ namespace Esseti.ViewModels
             OnPropertyChanged(nameof(SelectedCountText));
         }
 
+        /// <summary>
+        /// Numer aktualnie wyświetlanej strony aktywności.
+        /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
         [NotifyPropertyChangedFor(nameof(HasNextPage))]
         private int _currentPage = 1;
 
+        /// <summary>
+        /// Łączna liczba stron z aktywnościami po przefiltrowaniu.
+        /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
         [NotifyPropertyChangedFor(nameof(HasNextPage))]
         private int _totalPages = 1;
 
+        /// <summary>
+        /// Zwraca true, jeśli istnieje poprzednia strona z wynikami.
+        /// </summary>
         public bool HasPreviousPage => CurrentPage > 1;
+
+        /// <summary>
+        /// Zwraca true, jeśli istnieje kolejna strona z wynikami.
+        /// </summary>
         public bool HasNextPage => CurrentPage < TotalPages;
 
+        /// <summary>
+        /// Przełącza listę na następną stronę.
+        /// </summary>
         [RelayCommand]
         private void NextPage()
         {
@@ -345,6 +531,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Przełącza listę na poprzednią stronę.
+        /// </summary>
         [RelayCommand]
         private void PreviousPage()
         {
@@ -355,12 +544,19 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Metoda uruchamiana przy wpisaniu tekstu w pole wyszukiwania. Resetuje stronę do pierwszej i filtruje.
+        /// </summary>
+        /// <param name="value">Wyszukiwana fraza.</param>
         protected override void OnSearchQueryUpdated(string value)
         {
             CurrentPage = 1;
             ApplyFilter();
         }
 
+        /// <summary>
+        /// Filtruje listę aktywności i rozdziela je na strony (paginacja).
+        /// </summary>
         private void ApplyFilter()
         {
             Activities.Clear();
@@ -387,6 +583,9 @@ namespace Esseti.ViewModels
             UpdateSelectionState();
         }
 
+        /// <summary>
+        /// Obsługa zmiany zaznaczenia na pojedynczym kafelku aktywności.
+        /// </summary>
         private void OnActivityItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ActivityItemViewModel.IsSelected)) {
@@ -405,6 +604,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Odczepia subskrypcje zdarzeń od wszystkich kafelków, by nie śmiecić w pamięci.
+        /// </summary>
         private void ClearActivitySubscriptions()
         {
             foreach (var vm in _allActivities)
@@ -413,6 +615,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Asynchronicznie ładuje listę wszystkich aktywności i członków koła z bazy danych do comboboxa.
+        /// </summary>
         private async Task LoadDataAsync()
         {
             try 
@@ -456,6 +661,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda nawigująca użytkownika do pełnego profilu szczegółowego wybranej aktywności.
+        /// </summary>
+        /// <param name="item">Model widoku aktywności.</param>
         [RelayCommand]
         private void OpenProfile(ActivityItemViewModel item) 
         {
@@ -475,5 +684,3 @@ namespace Esseti.ViewModels
         }
     }
 }
-
-

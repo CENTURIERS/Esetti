@@ -13,44 +13,91 @@ using Esseti.Services;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// Główny ViewModel dla głównego okna aplikacji.
+    /// Steruje tym, co się wyświetla w głównym oknie (podwidoki), zarządza menu bocznym, kolorami motywu oraz ładowaniem logo.
+    /// </summary>
     public partial class MainWindowViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Nadpisany tytuł strony - dla głównego okna zostawiamy pusty.
+        /// </summary>
         public override string PageTitle => "";
 
+        /// <summary>
+        /// Aktualnie załadowany ViewModel, który wyświetla się w głównym obszarze aplikacji.
+        /// </summary>
         [ObservableProperty]
         private ViewModelBase? _currentViewModel;
 
+        /// <summary>
+        /// Kolor tła dla bocznego paska menu (Sidebar).
+        /// </summary>
         [ObservableProperty]
         private string _sidebarColor = "#FFFFFF";
 
+        /// <summary>
+        /// Kolor tła dla głównego panelu z treścią.
+        /// </summary>
         [ObservableProperty]
         private string _mainPanelColor = "#0033A0";
 
+        /// <summary>
+        /// Kolor tekstu na przyciskach w menu bocznym.
+        /// </summary>
         [ObservableProperty]
         private string _sidebarButtonTextColor = "#0033A0";
 
+        /// <summary>
+        /// Kolor tła przycisków w menu bocznym.
+        /// </summary>
         [ObservableProperty]
         private string _sidebarButtonBackgroundColor = "#FFFFFF";
 
+        /// <summary>
+        /// Kolor tła przycisku w menu bocznym, gdy najedziemy na niego myszką.
+        /// </summary>
         [ObservableProperty]
         private string _sidebarButtonHoverBackgroundColor = "#0033A0";
 
+        /// <summary>
+        /// Kolor tekstu na przycisku w menu bocznym, gdy najedziemy na niego myszką.
+        /// </summary>
         [ObservableProperty]
         private string _sidebarButtonHoverTextColor = "#FFFFFF";
 
+        /// <summary>
+        /// Flaga sterująca widocznością górnego nagłówka (Header).
+        /// </summary>
         [ObservableProperty]
         private bool _isHeaderVisible = false;
 
+        /// <summary>
+        /// Obiekt bitmapy z załadowanym logo uczelni/klubu do nagłówka.
+        /// </summary>
         [ObservableProperty]
         private Bitmap? _headerLogo;
 
+        /// <summary>
+        /// Nazwa pliku graficznego logo w zasobach.
+        /// </summary>
         [ObservableProperty]
         private string _headerLogoPath = "urNiebieskie.png";
 
+        /// <summary>
+        /// Flaga informująca, czy widok został zmieniony z ekranu powitalnego na główny interfejs.
+        /// </summary>
         private bool _isViewChanged = false;
 
+        /// <summary>
+        /// Lista opcji w menu bocznym, podpięta pod kontrolkę listy w widoku.
+        /// </summary>
         public ObservableCollection<NavigationItemViewModel> MenuItems { get; }
 
+        /// <summary>
+        /// Konstruktor głównego ViewModelu. Ustawia nawigację i przygotowuje elementy menu bocznego.
+        /// </summary>
+        /// <param name="navigationService">Serwis do obsługi przechodzenia między widokami.</param>
         public MainWindowViewModel(INavigationService navigationService)
         {
             if (navigationService is NavigationService nav)
@@ -88,9 +135,16 @@ namespace Esseti.ViewModels
             };
         }
 
+        /// <summary>
+        /// Flaga informująca, czy zakładka Ustawienia jest aktualnie zaznaczona w menu bocznym.
+        /// </summary>
         [ObservableProperty]
         private bool _isSettingsActive;
 
+        /// <summary>
+        /// Ustawia aktywny (podświetlony) element w menu bocznym na podstawie przekazanego indeksu.
+        /// </summary>
+        /// <param name="index">Indeks elementu menu do aktywacji. Wartość -1 oznacza brak aktywnego elementu głównego menu (np. gdy wybrane są Ustawienia).</param>
         private void SetActiveMenuItem(int index)
         {
             IsSettingsActive = (index == -1);
@@ -98,6 +152,9 @@ namespace Esseti.ViewModels
                 MenuItems[i].IsActive = (i == index);
         }
 
+        /// <summary>
+        /// Komenda do kliknięcia - przełącza widok na listę wszystkich aktywności.
+        /// </summary>
         [RelayCommand]
         public void ShowAllActivities()
         {
@@ -110,6 +167,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda do kliknięcia - przełącza widok na listę projektów.
+        /// </summary>
         [RelayCommand]
         public void ShowAllProjects()
         {
@@ -121,6 +181,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda do kliknięcia - przełącza widok na listę członków koła.
+        /// </summary>
         [RelayCommand]
         public void ShowAllMembers()
         {
@@ -132,6 +195,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda do kliknięcia - przełącza widok na informacje o klubie/kole.
+        /// </summary>
         [RelayCommand]
         public void ShowClubInfo()
         {
@@ -143,6 +209,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda do kliknięcia - przełącza widok na podstronę z dokumentami.
+        /// </summary>
         [RelayCommand]
         public void ShowDocumentsPage()
         {
@@ -154,6 +223,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda do kliknięcia - przełącza widok na panel ustawień aplikacji.
+        /// </summary>
         [RelayCommand]
         public void ShowSettingsPage()
         {
@@ -166,6 +238,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Zmienia motyw kolorystyczny i logo z powitalnego na standardowy roboczy tryb aplikacji.
+        /// </summary>
         private void ChangeView()
         {
             _isViewChanged = true;
@@ -188,6 +263,10 @@ namespace Esseti.ViewModels
 
 
 
+        /// <summary>
+        /// Ładuje grafikę logo z zasobów aplikacji.
+        /// </summary>
+        /// <param name="path">Nazwa pliku z logo, który ma zostać wczytany.</param>
         private void LoadLogo(string path)
         {
             try
@@ -202,6 +281,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Czyści załadowaną bitmapę logo z pamięci RAM podczas zamykania.
+        /// </summary>
         public override void Dispose()
         {
             HeaderLogo?.Dispose();

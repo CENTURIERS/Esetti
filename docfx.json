@@ -1,0 +1,31 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Esseti.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "api/**.yml",
+          "api/toc.yml"
+        ]
+      },
+      {
+        "files": [
+          "dokumentacja.md",
+          "toc.yml"
+        ]
+      }
+    ],
+    "dest": "_site"
+  }
+}

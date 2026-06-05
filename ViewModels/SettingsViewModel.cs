@@ -8,24 +8,50 @@ using Esseti.Repositories.Interfaces;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// Model widoku obsługujący ekran Ustawień.
+    /// Zapewnia podgląd statystyk koła (liczba studentów, projektów itp.) oraz opcje backupu i importu bazy danych.
+    /// </summary>
     public partial class SettingsViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Repozytorium klubu służące do pobierania statystyk.
+        /// </summary>
         private readonly IClubRepository _clubRepository;
 
+        /// <summary>
+        /// Łączna liczba aktywnych członków koła.
+        /// </summary>
         [ObservableProperty]
         private int _totalActiveMembers;
 
+        /// <summary>
+        /// Łączna liczba zarejestrowanych projektów.
+        /// </summary>
         [ObservableProperty]
         private int _totalProjects;
 
+        /// <summary>
+        /// Łączna liczba zarejestrowanych aktywności.
+        /// </summary>
         [ObservableProperty]
         private int _totalActivities;
 
+        /// <summary>
+        /// Łączna liczba zorganizowanych wyjazdów/wycieczek.
+        /// </summary>
         [ObservableProperty]
         private int _totalTrips;
 
+        /// <summary>
+        /// Tytuł wyświetlany w nagłówku strony.
+        /// </summary>
         public override string PageTitle => "Ustawienia";
 
+        /// <summary>
+        /// Konstruktor modelu widoku ustawień. Pobiera asynchronicznie statystyki z bazy.
+        /// </summary>
+        /// <param name="clubRepository">Repozytorium klubu/koła.</param>
         public SettingsViewModel(IClubRepository clubRepository)
         {
             _clubRepository = clubRepository;
@@ -33,6 +59,9 @@ namespace Esseti.ViewModels
             _ = LoadStatsAsync();
         }
 
+        /// <summary>
+        /// Asynchroniczne ładowanie i przeliczanie statystyk koła naukowego do wyświetlenia na widoku.
+        /// </summary>
         private async Task LoadStatsAsync()
         {
             try
@@ -50,24 +79,43 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Flaga sterująca widocznością wyskakującego okienka (popup) ze statusem operacji na bazie.
+        /// </summary>
         [ObservableProperty]
         private bool _isStatusPopupVisible;
 
+        /// <summary>
+        /// Tytuł wyskakującego okienka statusu.
+        /// </summary>
         [ObservableProperty]
         private string _statusPopupTitle = string.Empty;
 
+        /// <summary>
+        /// Treść wiadomości w wyskakującym okienku statusu.
+        /// </summary>
         [ObservableProperty]
         private string _statusPopupMessage = string.Empty;
 
+        /// <summary>
+        /// Czy status w popupie dotyczy błędu (zmienia np. ikonę/kolor tekstu w widoku).
+        /// </summary>
         [ObservableProperty]
         private bool _isStatusError;
 
+        /// <summary>
+        /// Komenda zamykająca okienko statusu.
+        /// </summary>
         [RelayCommand]
         private void CloseStatusPopup()
         {
             IsStatusPopupVisible = false;
         }
 
+        /// <summary>
+        /// Komenda asynchroniczna tworząca kopię zapasową pliku bazy danych (SQLite).
+        /// Otwiera systemowe okno zapisu pliku i kopiuje tam aktualną bazę.
+        /// </summary>
         [RelayCommand]
         private async Task BackupDatabaseAsync()
         {
@@ -124,6 +172,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda asynchroniczna importująca bazę danych z zewnętrznego pliku SQLite.
+        /// Kopiuje wskazany plik do folderu aplikacji jako plik przygotowany do podmiany po restarcie.
+        /// </summary>
         [RelayCommand]
         private async Task ImportDatabaseAsync()
         {
@@ -183,4 +235,3 @@ namespace Esseti.ViewModels
         }
     }
 }
-

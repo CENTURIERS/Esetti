@@ -1,4 +1,4 @@
-﻿using Esseti.Data;
+using Esseti.Data;
 using Esseti.Repositories.Interfaces;
 using Esseti.Services;
 using Microsoft.EntityFrameworkCore;
@@ -9,17 +9,28 @@ using System.Threading.Tasks;
 
 namespace Esseti.Repositories
 {
+    /// <summary>
+    /// Repozytorium do zarządzania aktywnościami/wydarzeniami koła naukowego.
+    /// Zapisuje i modyfikuje dane w bazie (tabela Activities) za pomocą EF Core oraz dba o cache'owanie.
+    /// </summary>
     public class ActivityRepository : IActivityRepository
     {
         private readonly EssetiDbContext _context;
         private readonly ICacheService _cacheService;
 
+        /// <summary>
+        /// Konstruktor repozytorium aktywności.
+        /// Wstrzykuje bazę danych i cache do przechowywania wyników.
+        /// </summary>
+        /// <param name="context">Kontekst bazy danych EF Core.</param>
+        /// <param name="cacheService">Serwis cache.</param>
         public ActivityRepository(EssetiDbContext context, ICacheService cacheService)
         {
             _context = context;
             _cacheService = cacheService;
         }
 
+        /// <inheritdoc />
         public async Task<List<Activity>> GetAllActivitiesAsync()
         {
             return await _cacheService.GetOrLoadAsync("activities_all", () => _context.Activities
@@ -28,6 +39,7 @@ namespace Esseti.Repositories
                 .ToListAsync());
         }
 
+        /// <inheritdoc />
         public async Task<Activity?> GetActivityByIdAsync(int id)
         {
             return await _context.Activities
@@ -35,6 +47,7 @@ namespace Esseti.Repositories
                         .FirstOrDefaultAsync(a => a.ActivityId == id && a.IsActive);
         }
 
+        /// <inheritdoc />
         public async Task AddActivityAsync(Activity activity)
         {
             _context.Activities.Add(activity);
@@ -42,6 +55,7 @@ namespace Esseti.Repositories
             _cacheService.Invalidate("activities_all");
         }
 
+        /// <inheritdoc />
         public async Task UpdateActivityAsync(Activity activity, IEnumerable<int>? participantIds = null)
         {
             if (participantIds == null)
@@ -86,6 +100,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task UpdateActivityParticipantsAsync(int activityId, IEnumerable<int> participantIds)
         {
             var dbActivity = await _context.Activities
@@ -110,6 +125,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task DeleteSingleActivityAsync(int id)
         {
             var activity = await _context.Activities.FindAsync(id);
@@ -122,6 +138,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task DeleteActivitesAsync(IEnumerable<int> activitiesIds)
         {
             List<Activity> activitiesToDelete = await _context.Activities.Where(a => activitiesIds.Contains(a.ActivityId)).ToListAsync();

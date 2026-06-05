@@ -16,59 +16,166 @@ using Models.Activities;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// Model widoku do obsługi listy projektów.
+    /// Zajmuje się wyszukiwaniem, stronnicowaniem, a także popupami służącymi do dodawania, edycji oraz kasowania projektów.
+    /// </summary>
     public partial class ProjectsViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Tytuł wyświetlany na górze strony z listą projektów.
+        /// </summary>
         public override string PageTitle => "Lista Projektów";
+
+        /// <summary>
+        /// Włączamy nagłówek akcji, żeby pokazać wyszukiwarkę i przyciski akcji.
+        /// </summary>
         public override bool ShowActionHeader => true;
+
+        /// <summary>
+        /// Podpowiedź (placeholder) w wyszukiwarce projektów.
+        /// </summary>
         public override string SearchPlaceholder => "Szukaj projektów...";
 
+        /// <summary>
+        /// Kolekcja aktualnie wyświetlanych projektów na danej stronie (bindowana do widoku).
+        /// </summary>
         public ObservableCollection<ProjectItemViewModel> Projects { get; } = new();
+
+        /// <summary>
+        /// Lista wszystkich członków klubu/koła, potrzebna np. do wyboru lidera projektu.
+        /// </summary>
         public ObservableCollection<Models.Users.Member> ClubMembers { get; } = new();
 
+        /// <summary>
+        /// Pełna lista wszystkich projektów załadowanych z bazy danych do filtrowania.
+        /// </summary>
         private readonly List<ProjectItemViewModel> _allProjects = new();
 
+        /// <summary>
+        /// Repozytorium do obsługi bazy danych w kontekście projektów.
+        /// </summary>
         private readonly IProjectRepository _projectRepository;
+
+        /// <summary>
+        /// Repozytorium do obsługi bazy danych w kontekście członków.
+        /// </summary>
         private readonly IMemberRepository _memberRepository;
+
+        /// <summary>
+        /// Serwis nawigacyjny służący do przełączania ekranów.
+        /// </summary>
         private readonly INavigationService _navigationService;
 
+        /// <summary>
+        /// Projekt tymczasowo wybrany do usunięcia.
+        /// </summary>
         private ProjectItemViewModel? _projectToDelete;
+
+        /// <summary>
+        /// Projekt aktualnie poddawany edycji (null oznacza, że tworzymy nowy projekt).
+        /// </summary>
         private ProjectItemViewModel? _editingProject;
 
+        /// <summary>
+        /// Nazwa nowego/edytowanego projektu w formularzu popup.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectName = string.Empty;
+
+        /// <summary>
+        /// Opis projektu wprowadzany w popupie.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectDescription = string.Empty;
+
+        /// <summary>
+        /// Dodatkowe informacje o projekcie w formularzu.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectAdditionalInfo = string.Empty;
+
+        /// <summary>
+        /// Link do repozytorium GitHub projektu w formularzu.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectGithub = string.Empty;
+
+        /// <summary>
+        /// Szacowany czas trwania projektu (w godzinach/dniach) wpisany w formularzu.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectEstimatedTime = string.Empty;
+
+        /// <summary>
+        /// Data rozpoczęcia projektu jako tekst wpisany przez użytkownika.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectDateStart = DateTime.Now.ToString("dd.MM.yyyy");
+
+        /// <summary>
+        /// Data zakończenia projektu jako tekst wpisany przez użytkownika.
+        /// </summary>
         [ObservableProperty]
         private string _newProjectDateEnd = DateTime.Now.AddMonths(3).ToString("dd.MM.yyyy");
+
+        /// <summary>
+        /// Wybrany lider projektu z listy rozwijanej (ComboBox).
+        /// </summary>
         [ObservableProperty]
         private Models.Users.Member? _newProjectLeader;
         
+        /// <summary>
+        /// Czy popup dodawania/edycji projektu ma być widoczny.
+        /// </summary>
         [ObservableProperty]
         private bool _isAddEditPopupVisible;
+
+        /// <summary>
+        /// Dynamiczny tytuł wyskakującego okienka (np. "Nowy projekt" lub "Edycja projektu").
+        /// </summary>
         [ObservableProperty]
         private string _popupTitle = "Nowy projekt";
 
+        /// <summary>
+        /// Flaga błędu walidacji dla nazwy projektu.
+        /// </summary>
         [ObservableProperty]
         private bool _isNameInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla szacowanego czasu trwania.
+        /// </summary>
         [ObservableProperty]
         private bool _isEstTimeInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla daty rozpoczęcia.
+        /// </summary>
         [ObservableProperty]
         private bool _isDateStartInvalid;
+
+        /// <summary>
+        /// Flaga błędu walidacji dla daty zakończenia.
+        /// </summary>
         [ObservableProperty]
         private bool _isDateEndInvalid;
+
+        /// <summary>
+        /// Flaga informująca, czy cały formularz projektu jest poprawnie wypełniony.
+        /// </summary>
         [ObservableProperty]
         private bool _isFormValid = true;
+
+        /// <summary>
+        /// Komunikat tekstowy z opisem pierwszego napotkanego błędu walidacji.
+        /// </summary>
         [ObservableProperty]
         private string _validationError = string.Empty;
 
+        /// <summary>
+        /// Sprawdza poprawność pól formularza projektu i ustawia odpowiednie flagi błędów oraz komunikat tekstowy.
+        /// </summary>
         private void ValidateForm()
         {
             IsNameInvalid = string.IsNullOrWhiteSpace(NewProjectName);
@@ -85,6 +192,10 @@ namespace Esseti.ViewModels
             else ValidationError = string.Empty;
         }
 
+        /// <summary>
+        /// Metoda automatycznie reagująca na zmianę właściwości formularza, uruchamiająca walidację.
+        /// </summary>
+        /// <param name="e">Argumenty zdarzenia.</param>
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -97,10 +208,27 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Zwraca tekst na przycisk zaznaczania na podstawie aktualnego stanu zaznaczenia wszystkich elementów.
+        /// </summary>
         public string SelectAllText =>  IsAllSelected ? "Odznacz wszystko" : "Zaznacz wszystko";
+
+        /// <summary>
+        /// Czy jakikolwiek projekt jest obecnie zaznaczony.
+        /// </summary>
         public bool HasSelectedItems => IsAnySelected;
+
+        /// <summary>
+        /// Sformatowany tekst z informacją o liczbie zaznaczonych projektów.
+        /// </summary>
         public string SelectedCountText => $"Zaznaczono {SelectedCount} projektów";
         
+        /// <summary>
+        /// Konstruktor modelu widoku listy projektów. Wstrzykuje potrzebne repozytoria i serwis nawigacji oraz odpala asynchroniczne pobieranie danych.
+        /// </summary>
+        /// <param name="projectRepository">Repozytorium projektów.</param>
+        /// <param name="memberRepository">Repozytorium członków.</param>
+        /// <param name="navigationService">Wspólny serwis nawigacyjny.</param>
         public ProjectsViewModel(IProjectRepository projectRepository, IMemberRepository memberRepository, INavigationService navigationService)
         {
             _projectRepository = projectRepository;
@@ -110,6 +238,9 @@ namespace Esseti.ViewModels
             _ = LoadDataAsync();
         }
 
+        /// <summary>
+        /// Reakcja na zmianę zaznaczenia (IsSelected) na pojedynczym kafelku projektu.
+        /// </summary>
         private void OnProjectItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ProjectItemViewModel.IsSelected))
@@ -132,6 +263,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Odczepia subskrypcję zdarzeń od wszystkich modeli projektów w celu uniknięcia wycieków pamięci.
+        /// </summary>
         private void ClearProjectSubscriptions()
         {
             foreach (var vm in _allProjects)
@@ -140,6 +274,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Pobiera asynchronicznie listę projektów i członków z bazy danych, a potem aktualizuje listę.
+        /// </summary>
         private async Task LoadDataAsync()
         {
             try
@@ -193,9 +330,16 @@ namespace Esseti.ViewModels
         }
 
 
+        /// <summary>
+        /// Komenda przełączająca zaznaczenie wszystkich widocznych na bieżącej stronie elementów.
+        /// </summary>
         [RelayCommand]
         private void ToggleSelectedAll() => IsAllSelected = !IsAllSelected;
 
+        /// <summary>
+        /// Nadpisana obsługa zmiany zaznaczenia wszystkich elementów na liście.
+        /// </summary>
+        /// <param name="value">Czy zaznaczyć wszystko (true), czy odznaczyć (false).</param>
         protected override void OnIsAllSelectedChangedVirtual(bool value)
         {
             if (_isUpdatingSelection) return;
@@ -215,6 +359,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Przelicza ile projektów jest zaznaczonych i wywołuje powiadomienia o zmianie powiązanych właściwości.
+        /// </summary>
         public void UpdateSelectionState()
         {
             var selected = Projects.Where(p => p.IsSelected).ToList();
@@ -226,6 +373,9 @@ namespace Esseti.ViewModels
             OnPropertyChanged(nameof(SelectedCountText));
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup dodawania nowego projektu i resetująca pola formularza.
+        /// </summary>
         [RelayCommand]
         private void OpenAddPopup()
         {
@@ -245,11 +395,15 @@ namespace Esseti.ViewModels
             IsEstTimeInvalid = false;
             IsDateStartInvalid = false;
             IsDateEndInvalid = false;
-            IsFormValid = false; // Name is empty initially
+            IsFormValid = false; // Pusta nazwa na początku oznacza niepoprawny formularz
 
             IsAddEditPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup edycji projektu i uzupełniająca go szczegółowymi danymi z bazy.
+        /// </summary>
+        /// <param name="item">Model widoku projektu wybranego do edycji.</param>
         [RelayCommand]
         private async Task OpenEditPopup(ProjectItemViewModel item)
         {
@@ -277,9 +431,15 @@ namespace Esseti.ViewModels
             IsAddEditPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda zamykająca popup edycji/dodawania projektu.
+        /// </summary>
         [RelayCommand]
         private void ClosePopup() => IsAddEditPopupVisible = false;
 
+        /// <summary>
+        /// Komenda zapisująca dane projektu do bazy (tworzy nowy projekt lub aktualizuje istniejący).
+        /// </summary>
         [RelayCommand(CanExecute = nameof(IsFormValid))]
         private async Task SaveProject()
         {
@@ -337,6 +497,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda przekierowująca użytkownika do pełnego profilu szczegółowego danego projektu.
+        /// </summary>
+        /// <param name="item">Model widoku projektu.</param>
         [RelayCommand]
         private void OpenProfile(ProjectItemViewModel item)
         {
@@ -355,6 +519,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup potwierdzenia usunięcia pojedynczego projektu.
+        /// </summary>
+        /// <param name="item">Model widoku projektu przeznaczonego do usunięcia.</param>
         [RelayCommand]
         private void DeleteSingleProject(ProjectItemViewModel item)
         {
@@ -363,6 +531,9 @@ namespace Esseti.ViewModels
             IsPopupVisible = true;
         }
 
+        /// <summary>
+        /// Wykonuje usunięcie wybranego projektu lub wszystkich zaznaczonych z bazy danych i odświeża listę.
+        /// </summary>
         protected override async Task ExecuteConfirmDeleteAsync()
         {
             try
@@ -398,24 +569,43 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Reaguje na zamknięcie popupa kasowania i czyści referencję do wybranego projektu.
+        /// </summary>
         protected override void OnPopupClosed()
         {
             _projectToDelete = null;
         }
 
+        /// <summary>
+        /// Numer aktualnie wyświetlanej strony projektów.
+        /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
         [NotifyPropertyChangedFor(nameof(HasNextPage))]
         private int _currentPage = 1;
 
+        /// <summary>
+        /// Łączna liczba stron z wynikami.
+        /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
         [NotifyPropertyChangedFor(nameof(HasNextPage))]
         private int _totalPages = 1;
 
+        /// <summary>
+        /// Czy istnieje poprzednia strona.
+        /// </summary>
         public bool HasPreviousPage => CurrentPage > 1;
+
+        /// <summary>
+        /// Czy istnieje kolejna strona.
+        /// </summary>
         public bool HasNextPage => CurrentPage < TotalPages;
 
+        /// <summary>
+        /// Komenda przełączająca na następną stronę.
+        /// </summary>
         [RelayCommand]
         private void NextPage()
         {
@@ -426,6 +616,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda przełączająca na poprzednią stronę.
+        /// </summary>
         [RelayCommand]
         private void PreviousPage()
         {
@@ -436,12 +629,19 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Wywoływane, gdy użytkownik wpisze coś w wyszukiwarkę. Resetuje aktualną stronę i filtruje listę.
+        /// </summary>
+        /// <param name="value">Wyszukiwana fraza.</param>
         protected override void OnSearchQueryUpdated(string value)
         {
             CurrentPage = 1;
             ApplyFilter();
         }
 
+        /// <summary>
+        /// Filtruje listę projektów na podstawie wpisanego wyszukiwania oraz dzieli wyniki na strony (paginacja).
+        /// </summary>
         private void ApplyFilter()
         {
             Projects.Clear();

@@ -1,4 +1,4 @@
-﻿using Esseti.Data;
+using Esseti.Data;
 using Esseti.Repositories;
 using Esseti.Repositories.Interfaces;
 using Esseti.Services;
@@ -7,8 +7,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Esseti
 {
+    /// <summary>
+    /// Klasa konfigurująca nasz kontener DI (Dependency Injection).
+    /// Tutaj rejestrujemy serwisy, repozytoria i view modele, żeby framework wiedział, jak je wstrzykiwać.
+    /// </summary>
     public static class DependencyInjection
     {
+        /// <summary>
+        /// Rejestruje bazę danych, serwisy pomocnicze oraz wszystkie repozytoria w kontenerze DI.
+        /// </summary>
+        /// <param name="services">Kolekcja serwisów, do której dorzucamy nasze klasy.</param>
+        /// <returns>Zwraca zmodyfikowaną kolekcję serwisów (pozwala na chaining metod).</returns>
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddDbContext<EssetiDbContext>();
@@ -23,6 +32,12 @@ namespace Esseti
             return services;
         }
 
+        /// <summary>
+        /// Rejestruje ViewModele używane w aplikacji. 
+        /// Większość jest Transient (tworzone na żądanie za każdym razem), oprócz MainWindowViewModel, który jest Singletonem.
+        /// </summary>
+        /// <param name="services">Kolekcja serwisów.</param>
+        /// <returns>Zwraca tę samą kolekcję serwisów z dodanymi ViewModelami.</returns>
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {
             services.AddTransient<MembersViewModel>();

@@ -14,25 +14,61 @@ using Esseti.ViewModels.Member;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// Model widoku obsługujący "Centrum Dokumentów".
+    /// Umożliwia generowanie oficjalnych pism PDF, takich jak zaświadczenia o aktywności dla członków koła oraz kompletnej listy członków z podziałem na zarząd.
+    /// </summary>
     public partial class DocumentsViewModel : ViewModelBase
     {
-        public override string PageTitle => "Centrum Dokument\u00F3w";
+        /// <summary>
+        /// Tytuł wyświetlany na górze strony Centrum Dokumentów.
+        /// </summary>
+        public override string PageTitle => "Centrum Dokumentów";
 
+        /// <summary>
+        /// Repozytorium członków do odpytywania bazy o studentów.
+        /// </summary>
         private readonly IMemberRepository _memberRepository;
+
+        /// <summary>
+        /// Repozytorium klubu do wyciągania informacji o kole naukowym (np. nazwa, opiekun).
+        /// </summary>
         private readonly IClubRepository _clubRepository;
+
+        /// <summary>
+        /// Serwis odpowiedzialny za faktyczne wypluwanie plików PDF.
+        /// </summary>
         private readonly IPdfGeneratorService _pdfGeneratorService;
 
+        /// <summary>
+        /// Lista wszystkich aktywnych członków dostępnych do wyboru w celu wygenerowania dokumentu.
+        /// </summary>
         public ObservableCollection<MemberItemViewModel> AvailableMembers { get; } = new();
 
+        /// <summary>
+        /// Wybrany członek z listy rozwijanej (ComboBoxa).
+        /// </summary>
         [ObservableProperty]
         private MemberItemViewModel? _selectedMember;
 
+        /// <summary>
+        /// Data początkowa zakresu generowania zaświadczenia (domyślnie 6 miesięcy wstecz).
+        /// </summary>
         [ObservableProperty]
         private DateTimeOffset? _startDate = DateTimeOffset.Now.AddMonths(-6);
 
+        /// <summary>
+        /// Data końcowa zakresu generowania zaświadczenia (domyślnie dzisiaj).
+        /// </summary>
         [ObservableProperty]
         private DateTimeOffset? _endDate = DateTimeOffset.Now;
 
+        /// <summary>
+        /// Konstruktor modelu widoku Centrum Dokumentów. Wstrzykuje serwisy i repozytoria oraz pobiera listę aktywnych członków.
+        /// </summary>
+        /// <param name="memberRepository">Repozytorium członków koła.</param>
+        /// <param name="clubRepository">Repozytorium klubu.</param>
+        /// <param name="pdfGeneratorService">Serwis generowania PDF-ów.</param>
         public DocumentsViewModel(IMemberRepository memberRepository, IClubRepository clubRepository, IPdfGeneratorService pdfGeneratorService)
         {
             _memberRepository = memberRepository;
@@ -42,6 +78,9 @@ namespace Esseti.ViewModels
             _ = LoadMembersAsync();
         }
 
+        /// <summary>
+        /// Pobiera z bazy wszystkich aktywnych członków koła i tworzy dla nich modele widoku kafelków/linii.
+        /// </summary>
         private async Task LoadMembersAsync()
         {
             try
@@ -54,7 +93,7 @@ namespace Esseti.ViewModels
                     AvailableMembers.Clear();
                     foreach (var m in activeMembers)
                     {
-                        var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydzia\u0142u";
+                        var dept = m.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziału";
                         AvailableMembers.Add(new MemberItemViewModel(
                             memberId: m.MemberId,
                             avatar: m.MemberAvatar ?? Array.Empty<byte>(),
@@ -76,10 +115,13 @@ namespace Esseti.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"B\u0142\u0105d podczas \u0142adowania cz\u0142onk\u00F3w w centrum dokument\u00F3w: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Błąd podczas ładowania członków w centrum dokumentów: {ex.Message}");
             }
         }
 
+        /// <summary>
+        /// Komenda zaznaczająca wszystkich dostępnych członków na liście (bindowane np. pod przycisk "Zaznacz wszystko").
+        /// </summary>
         [RelayCommand]
         private void SelectAllMembers()
         {
@@ -89,6 +131,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda odznaczająca wszystkich członków na liście.
+        /// </summary>
         [RelayCommand]
         private void DeselectAllMembers()
         {
@@ -98,6 +143,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda asynchroniczna generująca zaświadczenie o aktywności naukowej (projekty, zadania) w wybranym przedziale czasowym.
+        /// Zapisuje plik PDF na pulpicie i próbuje go otworzyć.
+        /// </summary>
         [RelayCommand]
         private async Task GenerateActivityCertificateAsync()
         {
@@ -115,7 +164,7 @@ namespace Esseti.ViewModels
             }
 
             var club = await _clubRepository.GetClubInfoAsync();
-            var clubName = club?.Name ?? "Ko\u0142o naukowe";
+            var clubName = club?.Name ?? "Koło naukowe";
 
             var now = DateTime.Now;
             string academicYear = string.Empty;
@@ -154,7 +203,7 @@ namespace Esseti.ViewModels
             {
                 try
                 {
-                    using (var stream = Avalonia.Platform.AssetLoader.Open(new Uri("avares://Essetti/Assets/UR/urSygnetPdf.jpg")))
+                    using (var stream = Avalonia.Platform.AssetLoader.Open(new Uri("avares://Esseti/Assets/UR/urSygnetPdf.jpg")))
                     using (var ms = new MemoryStream())
                     {
                         stream.CopyTo(ms);
@@ -174,7 +223,7 @@ namespace Esseti.ViewModels
                 var fullMember = await _memberRepository.GetMemberByIdAsync(sm.MemberId);
                 if (fullMember == null) continue;
 
-                var dept = fullMember.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydzia\u0142u";
+                var dept = fullMember.MemberClubs?.FirstOrDefault()?.Club?.Department?.Name ?? "Brak wydziału";
 
                 var achievements = new List<string>();
                 int idx = 1;
@@ -185,8 +234,8 @@ namespace Esseti.ViewModels
                     {
                         var pFrom = p.DateStart?.ToString("MM.yyyy") ?? fromDateStr;
                         var pTo = p.DateEnd?.ToString("MM.yyyy") ?? toDateStr;
-                        var desc = !string.IsNullOrEmpty(p.Description) ? p.Description : (!string.IsNullOrEmpty(p.AdditionalInformation) ? p.AdditionalInformation : "Zadaniem studenta by\u0142 czynny udzia\u0142 w projekcie.");
-                        achievements.Add($"{idx++}. Udzia\u0142 w projekcie: \u201E{p.Name}\u201D w okresie {pFrom} r. \u2013 {pTo} r. {desc}");
+                        var desc = !string.IsNullOrEmpty(p.Description) ? p.Description : (!string.IsNullOrEmpty(p.AdditionalInformation) ? p.AdditionalInformation : "Zadaniem studenta był czynny udział w projekcie.");
+                        achievements.Add($"{idx++}. Udział w projekcie: „{p.Name}” w okresie {pFrom} r. – {pTo} r. {desc}");
                     }
                 }
 
@@ -195,14 +244,14 @@ namespace Esseti.ViewModels
                     foreach (var a in fullMember.Activities)
                     {
                         var aDate = a.Date.ToString("dd.MM.yyyy");
-                        var info = !string.IsNullOrEmpty(a.AdditionalInformation) ? a.AdditionalInformation : "Zaanga\u017Cowanie w organizacj\u0119 wydarzenia.";
-                        achievements.Add($"{idx++}. Udzia\u0142 w aktywno\u015Bci: \u201E{a.Name}\u201D dnia {aDate} r. {info}");
+                        var info = !string.IsNullOrEmpty(a.AdditionalInformation) ? a.AdditionalInformation : "Zaangażowanie w organizację wydarzenia.";
+                        achievements.Add($"{idx++}. Udział w aktywności: „{a.Name}” dnia {aDate} r. {info}");
                     }
                 }
 
                 if (achievements.Count == 0)
                 {
-                    achievements.Add("1. Czynny udzia\u0142 w spotkaniach ko\u0142a naukowego oraz zaanga\u017Cowanie w bie\u017C\u0105c\u0105 dzia\u0142alno\u015B\u0107 statutow\u0105.");
+                    achievements.Add("1. Czynny udział w spotkaniach koła naukowego oraz zaangażowanie w bieżącą działalność statutową.");
                 }
 
                 membersData.Add((fullMember, achievements, dept));
@@ -236,22 +285,26 @@ namespace Esseti.ViewModels
                     File.WriteAllText("pdf_error_certificate.txt", ex.ToString());
                 }
                 catch { }
-                Debug.WriteLine($"Nie mo\u017Cna wygenerowa\u0107 lub otworzy\u0107 za\u015Bwiadczenia: {ex}");
+                Debug.WriteLine($"Nie można wygenerować lub otworzyć zaświadczenia: {ex}");
             }
         }
 
+        /// <summary>
+        /// Komenda asynchroniczna generująca oficjalną listę członków koła w formacie PDF (z podziałem na zarząd i zwykłych członków).
+        /// Plik ląduje na pulpicie i uruchamia się automatycznie.
+        /// </summary>
         [RelayCommand]
         private async Task GenerateMembersListAsync()
         {
             var members = (await _memberRepository.GetAllMembersAsync()).Where(m => m.IsActive).ToList();
             var club = await _clubRepository.GetClubInfoAsync();
 
-            var clubName = club?.Name ?? "Ko\u0142o naukowe";
+            var clubName = club?.Name ?? "Koło naukowe";
             var supervisor = club?.SupervisorName ?? "Brak opiekuna";
             var supervisorEmail = club?.SupervisorEmail ?? "---";
             var supervisorPhone = club?.SupervisorPhone ?? "---";
 
-            var zarzadRoles = new[] { "Prezes", "Wiceprezes", "Skarbnik", "Sekretarz", "Zarz\u0105d" };
+            var zarzadRoles = new[] { "Prezes", "Wiceprezes", "Skarbnik", "Sekretarz", "Zarząd" };
             var zarzadList = members.Where(m => zarzadRoles.Contains(m.AuthorityRole?.Name ?? ""))
                                     .OrderBy(m => m.LastName)
                                     .ToList();
@@ -282,7 +335,7 @@ namespace Esseti.ViewModels
             {
                 try
                 {
-                    using (var stream = Avalonia.Platform.AssetLoader.Open(new Uri("avares://Essetti/Assets/UR/urSygnetPdf.jpg")))
+                    using (var stream = Avalonia.Platform.AssetLoader.Open(new Uri("avares://Esseti/Assets/UR/urSygnetPdf.jpg")))
                     using (var ms = new MemoryStream())
                     {
                         stream.CopyTo(ms);
@@ -322,7 +375,7 @@ namespace Esseti.ViewModels
                     File.WriteAllText("pdf_error.txt", ex.ToString());
                 }
                 catch { }
-                Debug.WriteLine($"Nie mo\u017Cna wygenerowa\u0107 lub otworzy\u0107 pliku listy: {ex}");
+                Debug.WriteLine($"Nie można wygenerować lub otworzyć pliku listy: {ex}");
             }
         }
     }

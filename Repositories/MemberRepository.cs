@@ -11,17 +11,29 @@ using System;
 
 namespace Esseti.Repositories
 {
+    /// <summary>
+    /// Repozytorium do zarządzania członkami koła naukowego.
+    /// Implementuje operacje CRUD na członkach w bazie danych przy użyciu Entity Framework Core.
+    /// Posiada też mechanizm cache'owania, żeby nie odpytywać bazy za każdym razem.
+    /// </summary>
     public class MemberRepository : IMemberRepository
     {
         private readonly EssetiDbContext _context;
         private readonly ICacheService _cacheService;
 
+        /// <summary>
+        /// Konstruktor repozytorium członków.
+        /// Wstrzykuje kontekst bazy danych i serwis do cache'owania.
+        /// </summary>
+        /// <param name="context">Kontekst bazy danych (EF Core DbContext).</param>
+        /// <param name="cacheService">Serwis do zarządzania cache'em.</param>
         public MemberRepository(EssetiDbContext context, ICacheService cacheService)
         {
             _context = context;
             _cacheService = cacheService;
         }
 
+        /// <inheritdoc />
         public async Task<List<Member>> GetAllMembersAsync()
         {
             return await _cacheService.GetOrLoadAsync("members_all", () => _context.Members
@@ -34,11 +46,13 @@ namespace Esseti.Repositories
                 .ToListAsync());
         }
 
+        /// <inheritdoc />
         public async Task<List<AuthorityRole>> GetAuthorityRolesAsync()
         {
             return await _cacheService.GetOrLoadAsync("authority_roles", () => _context.AuthorityRoles.ToListAsync());
         }
 
+        /// <inheritdoc />
         public async Task DeleteSingleMemberAsync(int id)
         {
             var member = await _context.Members.FindAsync(id);
@@ -51,6 +65,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task DeleteMembersAsync(IEnumerable<int> memberIds)
         {
             var members = await _context.Members.Where(m => memberIds.Contains(m.MemberId)).ToListAsync();
@@ -63,6 +78,7 @@ namespace Esseti.Repositories
             _cacheService.Invalidate("board_members");
         }
 
+        /// <inheritdoc />
         public async Task AddMemberAsync(Member member, int? departmentId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -180,6 +196,7 @@ namespace Esseti.Repositories
         }
 
 
+        /// <inheritdoc />
         public async Task<Member?> GetMemberByIdAsync(int id)
         {
             return await _context.Members
@@ -200,6 +217,7 @@ namespace Esseti.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        /// <inheritdoc />
         public async Task UpdateMemberAsync(Member member, List<int> remainingProjectIds, List<int> remainingActivityIds) 
         {
             var dbMember = await _context.Members
@@ -283,6 +301,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task UpdateMemberBasicInfoAsync(Member member, int? departmentId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -383,6 +402,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task UpdateMemberAvatarAsync(int memberId, byte[] avatarData)
         {
             var member = await _context.Members.FindAsync(memberId);
@@ -395,6 +415,7 @@ namespace Esseti.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task<List<Models.University.CollegeDepartment>> GetCollegeDepartmentsAsync()
         {
             return await _cacheService.GetOrLoadAsync("departments", () => _context.CollegeDepartments.ToListAsync());

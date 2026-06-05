@@ -20,68 +20,176 @@ using Models.ClubBase;
 
 namespace Esseti.ViewModels
 {
+    /// <summary>
+    /// Model widoku do obsługi listy członków koła/klubu.
+    /// Ogarnia wyświetlanie członków, wyszukiwanie, stronicowanie, a także wyskakujące okienka (popupy) do dodawania i edytowania osób.
+    /// </summary>
     public partial class MembersViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Tytuł wyświetlany na górze strony.
+        /// </summary>
         public override string PageTitle => "Lista członków";
 
+        /// <summary>
+        /// Pokazujemy nagłówek z akcjami (np. wyszukiwarka, przyciski).
+        /// </summary>
         public override bool ShowActionHeader => true;
 
+        /// <summary>
+        /// Tekst pomocniczy w wyszukiwarce.
+        /// </summary>
         public override string SearchPlaceholder => "Szukaj członków...";
 
+        /// <summary>
+        /// Kolekcja członków pokazywana na widoku (bindowana do listy).
+        /// </summary>
         public ObservableCollection<MemberItemViewModel> Members { get; } = new();
+
+        /// <summary>
+        /// Repozytorium do komunikacji z bazą danych w sprawach członków.
+        /// </summary>
         private readonly IMemberRepository _memberRepository;
+
+        /// <summary>
+        /// Lista wszystkich pobranych członków z bazy, służy do filtrowania w pamięci.
+        /// </summary>
         private readonly List<MemberItemViewModel> _allMembers = new();
+
+        /// <summary>
+        /// Tymczasowy obiekt członka, którego użytkownik chce usunąć.
+        /// </summary>
         private MemberItemViewModel? _memberToDelete;
 
+        /// <summary>
+        /// Imię nowego członka w formularzu dodawania.
+        /// </summary>
         [ObservableProperty] 
         private string _newFirstName = string.Empty;
 
+        /// <summary>
+        /// Nazwisko nowego członka w formularzu dodawania.
+        /// </summary>
         [ObservableProperty] 
         private string _newLastName = string.Empty;
 
+        /// <summary>
+        /// Email nowego członka w formularzu dodawania.
+        /// </summary>
         [ObservableProperty] 
         private string _newEmail = string.Empty;
 
+        /// <summary>
+        /// Numer telefonu nowego członka w formularzu dodawania.
+        /// </summary>
         [ObservableProperty] 
         private string _newPhoneNumber = string.Empty;
 
+        /// <summary>
+        /// Numer indeksu studenta w formularzu dodawania.
+        /// </summary>
         [ObservableProperty] 
         private string _newIndexNumber = string.Empty;
 
+        /// <summary>
+        /// Tablica bajtów z obrazkiem awatara nowego członka.
+        /// </summary>
         [ObservableProperty] 
         private byte[]? _newAvatar;
 
+        /// <summary>
+        /// Opis/biogram nowego członka.
+        /// </summary>
         [ObservableProperty]
         private string _newDescription = string.Empty;
 
+        /// <summary>
+        /// Kierunek studiów nowego członka.
+        /// </summary>
         [ObservableProperty]
         private string _newMajor = string.Empty;
 
+        /// <summary>
+        /// Lista dostępnych ról w klubie (np. prezes, członek) pobrana z bazy.
+        /// </summary>
         public ObservableCollection<AuthorityRole> AvailableRoles { get; } = new();
 
+        /// <summary>
+        /// Lista dostępnych wydziałów uczelni pobrana z bazy.
+        /// </summary>
         public ObservableCollection<Models.University.CollegeDepartment> AvailableDepartments { get; } = new();
 
+        /// <summary>
+        /// Wybrany wydział w formularzu dodawania.
+        /// </summary>
         [ObservableProperty]
         private Models.University.CollegeDepartment? _selectedDepartment;
 
+        /// <summary>
+        /// Wybrany wydział w formularzu edycji.
+        /// </summary>
         [ObservableProperty]
         private Models.University.CollegeDepartment? _editSelectedDepartment;
 
+        /// <summary>
+        /// Wybrana rola w formularzu dodawania.
+        /// </summary>
         [ObservableProperty]
         private AuthorityRole? _selectedRole;
 
+        /// <summary>
+        /// Czy imię przy dodawaniu jest niepoprawne.
+        /// </summary>
         [ObservableProperty] private bool _isAddFirstNameInvalid;
+
+        /// <summary>
+        /// Czy nazwisko przy dodawaniu jest niepoprawne.
+        /// </summary>
         [ObservableProperty] private bool _isAddLastNameInvalid;
+
+        /// <summary>
+        /// Czy email przy dodawaniu jest niepoprawny.
+        /// </summary>
         [ObservableProperty] private bool _isAddEmailInvalid;
+
+        /// <summary>
+        /// Czy numer indeksu przy dodawaniu jest niepoprawny.
+        /// </summary>
         [ObservableProperty] private bool _isAddIndexNumberInvalid;
+
+        /// <summary>
+        /// Czy cały formularz dodawania jest poprawny.
+        /// </summary>
         [ObservableProperty] private bool _isAddFormValid = true;
 
+        /// <summary>
+        /// Czy imię przy edycji jest niepoprawne.
+        /// </summary>
         [ObservableProperty] private bool _isEditFirstNameInvalid;
+
+        /// <summary>
+        /// Czy nazwisko przy edycji jest niepoprawne.
+        /// </summary>
         [ObservableProperty] private bool _isEditLastNameInvalid;
+
+        /// <summary>
+        /// Czy email przy edycji jest niepoprawny.
+        /// </summary>
         [ObservableProperty] private bool _isEditEmailInvalid;
+
+        /// <summary>
+        /// Czy numer indeksu przy edycji jest niepoprawny.
+        /// </summary>
         [ObservableProperty] private bool _isEditIndexNumberInvalid;
+
+        /// <summary>
+        /// Czy cały formularz edycji jest poprawny.
+        /// </summary>
         [ObservableProperty] private bool _isEditFormValid = true;
 
+        /// <summary>
+        /// Sprawdza poprawność pól w formularzu dodawania i aktualizuje stany walidacji.
+        /// </summary>
         private void ValidateAddForm()
         {
             IsAddFirstNameInvalid = string.IsNullOrWhiteSpace(NewFirstName);
@@ -92,6 +200,9 @@ namespace Esseti.ViewModels
             IsAddFormValid = !IsAddFirstNameInvalid && !IsAddLastNameInvalid && !IsAddEmailInvalid && !IsAddIndexNumberInvalid;
         }
 
+        /// <summary>
+        /// Sprawdza poprawność pól w formularzu edycji i aktualizuje stany walidacji.
+        /// </summary>
         private void ValidateEditForm()
         {
             IsEditFirstNameInvalid = string.IsNullOrWhiteSpace(EditFirstName);
@@ -102,6 +213,10 @@ namespace Esseti.ViewModels
             IsEditFormValid = !IsEditFirstNameInvalid && !IsEditLastNameInvalid && !IsEditEmailInvalid && !IsEditIndexNumberInvalid;
         }
 
+        /// <summary>
+        /// Metoda wywoływana, gdy zmieni się jakakolwiek właściwość. Wykorzystujemy ją do automatycznej walidacji formularzy na bieżąco.
+        /// </summary>
+        /// <param name="e">Argumenty zdarzenia zmiany właściwości.</param>
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -121,51 +236,100 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Czy popup z edycją na liście ma być otwarty.
+        /// </summary>
         [ObservableProperty]
         private bool _isListEditPopupVisible;
 
+        /// <summary>
+        /// Imię edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editFirstName = string.Empty;
 
+        /// <summary>
+        /// Nazwisko edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editLastName = string.Empty;
 
+        /// <summary>
+        /// E-mail edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editEmail = string.Empty;
 
+        /// <summary>
+        /// Numer telefonu edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editPhoneNumber = string.Empty;
 
+        /// <summary>
+        /// Numer indeksu edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editIndexNumber = string.Empty;
 
+        /// <summary>
+        /// Awatar edytowanego członka jako tablica bajtów.
+        /// </summary>
         [ObservableProperty]
         private byte[]? _editAvatar;
 
+        /// <summary>
+        /// Opis edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editDescription = string.Empty;
 
+        /// <summary>
+        /// Kierunek studiów edytowanego członka.
+        /// </summary>
         [ObservableProperty]
         private string _editMajor = string.Empty;
 
+        /// <summary>
+        /// Wybrana rola w formularzu edycji.
+        /// </summary>
         [ObservableProperty]
         private AuthorityRole? _editSelectedRole;
 
+        /// <summary>
+        /// Tekst błędu walidacji formularza dodawania.
+        /// </summary>
         [ObservableProperty]
         private string _addValidationError = string.Empty;
 
+        /// <summary>
+        /// Tekst błędu walidacji formularza edycji.
+        /// </summary>
         [ObservableProperty]
         private string _editValidationError = string.Empty;
 
+        /// <summary>
+        /// Aktualnie modyfikowany model widoku pojedynczego członka.
+        /// </summary>
         private MemberItemViewModel? _memberBeingEdited;
 
+        /// <summary>
+        /// Serwis nawigacyjny do skakania między ekranami.
+        /// </summary>
         private readonly INavigationService _navigationService;
 
+        /// <summary>
+        /// Reakcja na zamknięcie popupa - pusta implementacja.
+        /// </summary>
         protected override void OnPopupClosed()
         {
             
         }
 
+        /// <summary>
+        /// Obsługa zaznaczania lub odznaczania wszystkich członków na liście naraz.
+        /// </summary>
+        /// <param name="value">Czy zaznaczyć wszystko (true), czy odznaczyć (false).</param>
         protected override void OnIsAllSelectedChangedVirtual(bool value)
         {
             if (_isUpdatingSelection) return;
@@ -184,6 +348,11 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Konstruktor ViewModelu. Wstrzykuje zależności i asynchronicznie ładuje dane z bazy.
+        /// </summary>
+        /// <param name="memberRepository">Repozytorium danych o członkach.</param>
+        /// <param name="navigationService">Wspólny serwis nawigacyjny.</param>
         public MembersViewModel(IMemberRepository memberRepository, INavigationService navigationService)
         {
             _memberRepository = memberRepository;
@@ -191,6 +360,9 @@ namespace Esseti.ViewModels
             _ = LoadDataAsync();
         }
 
+        /// <summary>
+        /// Aktualizuje licznik zaznaczonych elementów na liście oraz flagę określającą, czy cokolwiek zaznaczono.
+        /// </summary>
         private void UpdateSelectionState()
         {
             var selected = Members.Where(m => !m.IsSystemAddTile && m.IsSelected).ToList();
@@ -198,6 +370,9 @@ namespace Esseti.ViewModels
             IsAnySelected = SelectedCount > 0;
         }
 
+        /// <summary>
+        /// Wykonuje usunięcie z bazy danych wybranego członka lub wszystkich zaznaczonych.
+        /// </summary>
         protected override async Task ExecuteConfirmDeleteAsync()
         {
             try
@@ -235,6 +410,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda przechodząca do widoku profilu szczegółowego danego członka.
+        /// </summary>
+        /// <param name="member">Model widoku klikniętego członka.</param>
         [RelayCommand]
         private void OpenProfile(MemberItemViewModel member)
         {
@@ -248,6 +427,10 @@ namespace Esseti.ViewModels
         }
 
 
+        /// <summary>
+        /// Komenda otwierająca okienko potwierdzenia usunięcia pojedynczej osoby.
+        /// </summary>
+        /// <param name="member">Model widoku członka przeznaczonego do usunięcia.</param>
         [RelayCommand]
         private void DeleteSingleMember(MemberItemViewModel member)
         {
@@ -257,6 +440,10 @@ namespace Esseti.ViewModels
             IsPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda otwierająca okienko edycji danych wybranej osoby i uzupełniająca formularz jej aktualnymi danymi.
+        /// </summary>
+        /// <param name="member">Model widoku członka, którego chcemy edytować.</param>
         [RelayCommand]
         private void EditMember(MemberItemViewModel member)
         {
@@ -278,12 +465,18 @@ namespace Esseti.ViewModels
             IsListEditPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda anulująca edycję i zamykająca okienko.
+        /// </summary>
         [RelayCommand]
         private void CancelEdit()
         {
             IsListEditPopupVisible = false;
         }
 
+        /// <summary>
+        /// Komenda asynchroniczna otwierająca systemowy eksplorator plików do wyboru nowego zdjęcia awatara przy edycji.
+        /// </summary>
         [RelayCommand]
         private async Task OpenEditAvatarPickerAsync()
         {
@@ -310,6 +503,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda zapisująca wprowadzone zmiany w danych członka koła w bazie danych.
+        /// </summary>
         [RelayCommand]
         private async Task ConfirmEditAsync()
         {
@@ -374,6 +570,9 @@ namespace Esseti.ViewModels
             IsListEditPopupVisible = false;
         }
 
+        /// <summary>
+        /// Komenda otwierająca popup dodawania nowego członka i czyszcząca formularz.
+        /// </summary>
         [RelayCommand]
         private void AddMember()
         {
@@ -392,17 +591,23 @@ namespace Esseti.ViewModels
             IsAddLastNameInvalid = false;
             IsAddEmailInvalid = false;
             IsAddIndexNumberInvalid = false;
-            IsAddFormValid = false; // Empty fields mean form is invalid initially
+            IsAddFormValid = false; // Puste pola oznaczają, że na starcie formularz jest niepoprawny
 
             IsAddPopupVisible = true;
         }
 
+        /// <summary>
+        /// Komenda anulująca dodawanie i zamykająca okienko.
+        /// </summary>
         [RelayCommand]
         private void CancelAdd()
         {
             IsAddPopupVisible = false;
         }
 
+        /// <summary>
+        /// Komenda asynchroniczna otwierająca systemowy eksplorator plików do wyboru zdjęcia awatara dla nowego członka.
+        /// </summary>
         [RelayCommand]
         private async Task OpenAvatarPickerAsync()
         {
@@ -429,12 +634,20 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Pomocnicza metoda walidująca adres e-mail za pomocą prostego wyrażenia regularnego.
+        /// </summary>
+        /// <param name="email">Adres e-mail do sprawdzenia.</param>
+        /// <returns>Zwraca true, jeśli format jest poprawny lub adres jest pusty, w przeciwnym razie false.</returns>
         private static bool IsValidEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email)) return true; // email is optional
+            if (string.IsNullOrWhiteSpace(email)) return true; // email jest opcjonalny
             return System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
         }
 
+        /// <summary>
+        /// Komenda zapisująca nowego członka w bazie danych.
+        /// </summary>
         [RelayCommand]
         private async Task ConfirmAddAsync()
         {
@@ -497,12 +710,21 @@ namespace Esseti.ViewModels
             IsAddPopupVisible = false;
         }
 
+        /// <summary>
+        /// Wywoływane po zmianie tekstu wyszukiwania. Resetuje stronę do 1 i filtruje listę członków.
+        /// </summary>
+        /// <param name="value">Nowa wpisana fraza.</param>
         protected override void OnSearchQueryUpdated(string value)
         {
             CurrentPage = 1;
             ApplyFilter();
         }
 
+        /// <summary>
+        /// Reaguje na zmianę zaznaczenia (IsSelected) na pojedynczym elemencie listy członków.
+        /// </summary>
+        /// <param name="sender">Element, w którym zaszła zmiana.</param>
+        /// <param name="e">Argumenty zdarzenia.</param>
         private void OnMemberItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(MemberItemViewModel.IsSelected))
@@ -528,6 +750,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Odpina zdarzenia od wszystkich modeli widoku członków, chroniąc przed wyciekami pamięci.
+        /// </summary>
         private void ClearMemberSubscriptions()
         {
             foreach (var vm in _allMembers)
@@ -536,6 +761,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Asynchronicznie pobiera z bazy dane o rolach, wydziałach i członkach, po czym aktualizuje listę.
+        /// </summary>
         private async Task LoadDataAsync()
         {
             try
@@ -589,19 +817,35 @@ namespace Esseti.ViewModels
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
         }
 
+        /// <summary>
+        /// Numer aktualnie wyświetlanej strony.
+        /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
         [NotifyPropertyChangedFor(nameof(HasNextPage))]
         private int _currentPage = 1;
 
+        /// <summary>
+        /// Łączna liczba stron z wynikami.
+        /// </summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPreviousPage))]
         [NotifyPropertyChangedFor(nameof(HasNextPage))]
         private int _totalPages = 1;
 
+        /// <summary>
+        /// Czy istnieje poprzednia strona.
+        /// </summary>
         public bool HasPreviousPage => CurrentPage > 1;
+
+        /// <summary>
+        /// Czy istnieje kolejna strona.
+        /// </summary>
         public bool HasNextPage => CurrentPage < TotalPages;
 
+        /// <summary>
+        /// Komenda przełączająca na następną stronę wyników.
+        /// </summary>
         [RelayCommand]
         private void NextPage()
         {
@@ -612,6 +856,9 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Komenda przełączająca na poprzednią stronę wyników.
+        /// </summary>
         [RelayCommand]
         private void PreviousPage()
         {
@@ -622,6 +869,10 @@ namespace Esseti.ViewModels
             }
         }
 
+        /// <summary>
+        /// Filtruje listę członków koła w oparciu o wpisane zapytanie, a także zarządza podziałem na strony.
+        /// Pierwsza strona zawiera kafelek szybkiego dodawania nowego członka.
+        /// </summary>
         private void ApplyFilter()
         {
             Members.Clear();

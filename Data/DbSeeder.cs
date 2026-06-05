@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,8 +12,17 @@ using Models.Users;
 
 namespace Esseti.Data
 {
+    /// <summary>
+    /// Klasa służąca do automatycznego napełniania (seedowania) bazy danych testowymi rekordami.
+    /// Przydatna sprawa, żeby po każdym usunięciu bazy nie klepać danych z palca.
+    /// </summary>
     public static class DbSeeder
     {
+        /// <summary>
+        /// Odpala cały proces siania danych. Najpierw usuwa starą bazę, tworzy nową czystą strukturę,
+        /// a potem po kolei ładuje testowe dane (role, uczelnię, koło naukowe, studentów, projekty itd.).
+        /// </summary>
+        /// <param name="context">Instancja kontekstu naszej bazy danych (EssetiDbContext).</param>
         public static async Task SeedAsync(EssetiDbContext context)
         {
             await context.Database.EnsureDeletedAsync();
@@ -29,6 +38,9 @@ namespace Esseti.Data
             await SeedTripsAsync(context);
         }
 
+        /// <summary>
+        /// Sypie do bazy podstawowe role w kołach naukowych (np. Zarząd, Członek, Skarbnik).
+        /// </summary>
         private static async Task SeedAuthorityRolesAsync(EssetiDbContext context)
         {
             var roles = new List<AuthorityRole>
@@ -44,6 +56,9 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Wrzuca do bazy strukturę uczelni (Uniwersytet Rzeszowski i Wydział).
+        /// </summary>
         private static async Task SeedUniversityStructureAsync(EssetiDbContext context)
         {
             var college = new College
@@ -75,6 +90,9 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Wrzuca podstawowe informacje o samym kole naukowym (nazwa, pokój, opiekun).
+        /// </summary>
         private static async Task SeedClubInfoAsync(EssetiDbContext context)
         {
             var club = new ClubInfo
@@ -91,6 +109,10 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Generuje pętlą 50 kont i profili członków koła (studentów) na potrzeby testów.
+        /// Pierwszy to prezes Kacper Ręczak.
+        /// </summary>
         private static async Task SeedAccountsAndMembersAsync(EssetiDbContext context)
         {
             var college = await context.Colleges.FirstAsync(c => c.CollegeId == 1);
@@ -170,6 +192,9 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Wrzuca sekcje tematyczne działające w kole (np. Gamedev, Robotyk, AI) i przypisuje do nich ludzi.
+        /// </summary>
         private static async Task SeedSectionsAsync(EssetiDbContext context)
         {
             var members = await context.Members.ToListAsync();
@@ -205,6 +230,9 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Tworzy 50 fikcyjnych projektów studenckich, przypisuje im sekcje, szefów oraz uczestników.
+        /// </summary>
         private static async Task SeedProjectsAsync(EssetiDbContext context)
         {
             var members = await context.Members.ToListAsync();
@@ -253,6 +281,9 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Tworzy testowe wydarzenia koła (np. warsztaty, spotkania) i przypisuje uczestników.
+        /// </summary>
         private static async Task SeedActivitiesAsync(EssetiDbContext context)
         {
             var members = await context.Members.ToListAsync();
@@ -292,6 +323,9 @@ namespace Esseti.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Dodaje do bazy wyjazdy/konferencje powiązane z kołem naukowym.
+        /// </summary>
         private static async Task SeedTripsAsync(EssetiDbContext context)
         {
             var club = await context.Clubs.FirstAsync(c => c.ClubId == 1);

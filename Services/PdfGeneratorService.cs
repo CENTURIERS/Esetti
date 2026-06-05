@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using QuestPDF.Fluent;
@@ -6,8 +6,12 @@ using QuestPDF.Helpers;
 
 namespace Esseti.Services
 {
+    /// <summary>
+    /// Klasa implementująca serwis generowania plików PDF przy użyciu QuestPDF.
+    /// </summary>
     public class PdfGeneratorService : IPdfGeneratorService
     {
+        /// <inheritdoc />
         public Task GenerateActivityCertificateAsync(
             string outputPath,
             byte[] logoBytes,
@@ -146,6 +150,7 @@ namespace Esseti.Services
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task GenerateMembersListAsync(
             string outputPath,
             byte[] logoBytes,
